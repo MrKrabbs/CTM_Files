@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><Task revision="1" schemaVersion="7.3">
+    <Registration>
+        <Name>Scoring</Name>
+        <Description>The Scoring task scores a data table by using SAS DATA step code generated from a prior modeling task.</Description>
+        <GUID>b1d3737e-3552-4b28-9941-7296555686d1</GUID>
+        <Procedures/>
+        <Links>
+            <Link href="https://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=01&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href="https://documentation.sas.com/?softwareId=PGMVIYA&amp;softwareVersion=01&amp;softwareContextId=data_step_cas&amp;requestor=inapp">The DATA Step</Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" defaultValue="">
+ 				<Roles>
+					<Role  maxVars="0" minVars="1" name="analysisVariables" order="true" type="N">Interval  inputs to bin:</Role>
+ 				</Roles>
+            </DataSource>
+            <DataSource  libraryEngineInclude="CAS" name="model1" defaultValue="">  
+				<Roles>
+					<Role  maxVars="0" minVars="1" name="willnotbeused" order="true" type="N">Interval  inputs to bin:</Role>
+ 				</Roles>      
+            </DataSource>
+            <DataSource  libraryEngineInclude="CAS,V9" name="model2" defaultValue="SASHELP.CARS">        
+            </DataSource>
+            <DataSource  libraryEngineInclude="CAS,V9" name="model3" defaultValue="SASHELP.CARS">        
+            </DataSource>
+            <DataSource libraryEngineInclude="CAS,V9" name="model4" defaultValue="SASHELP.CARS">        
+            </DataSource>
+        </DataSources>
+        
+        <Options>
+            <Option inputType="string" name="methodsGroup">Methods</Option>
+            <Option defaultValue="bucketChoice" inputType="combobox" name="binMethod">Method:</Option>
+            <Option inputType="string" name="bucketChoice">Bucket binning (default)</Option>
+          <!--  <Option inputType="string" name="winsorChoice">Winsorized binning</Option> -->
+            <Option inputType="string" name="quantileChoice">Quantile binning </Option>
+			<Option inputType="string" name="optionsTab">Options</Option>
+<!-- nBins: 2 <= nBins <= 1000 -->          
+            <Option decimalPlaces="0" defaultValue="20" inputType="numbertext" invalidMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" maxValue="1000" minValue="2" missingMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" name="nBins" promptMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" rangeMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" required="true">Number of bins:</Option>
+<!-- winsorRate: 0 < winsorRate < 0.5-->
+            <Option decimalPlaces="1,15" defaultValue="0.05" indent="1" inputType="numbertext" invalidMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" maxValue="0.49999999999" minValue="0.00000000001" missingMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" name="winsorRate" promptMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" rangeMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" required="true">Winsor rate:</Option> 
+            <Option inputType="string" name="dataTab">Data</Option> 
+            <Option inputType="string" name="dataGroup">Data</Option>
+            <Option inputType="string" name="scoringGroup">Output Data</Option>
+            <Option inputType="string" name="codeGroup">Scoring Type</Option> 
+            <Option defaultValue="1" inputType="radio" name="sasDataset" variable="scoreType">Use scoring code</Option>
+            <Option indent="1" inputType="string" name="astoreMsg">Specify a CAS table:</Option>
+            <Option inputType="radio" name="astoreData" variable="scoreType">Use saved scoring model</Option>
+            
+            
+            <Option inputType="string" name="outputLibrefNote">The following table must use a CAS engine libref.</Option>
+			<Option inputType="string" name="selectTableUsedInModel">Select the table that was used to build the model(s).</Option>
+			<Option inputType="string" name="selectModelsToJoin">Select up to four model(s) to add their predicted values.</Option>
+            <Option inputType="outputdata" libraryEngineInclude="CAS" name="outScoredDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+            <Option defaultExtension="sas" defaultName="score" indent="1" inputType="sasserverpath" name="scoringCodeFileName">Specify the SAS scoring code file.</Option>
+        </Options>
+    </Metadata>
+
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+ 				<OptionItem option="selectTableUsedInModel"/>
+                <DataItem data="dataset"/> 
+<!--<RoleItem role="analysisVariables"/> -->
+<OptionItem option="selectModelsToJoin"/>
+				<DataItem data="model1"/> 
+				<DataItem data="model2"/> 
+				<DataItem data="model3"/> 
+				<DataItem data="model4"/>          
+            </Group>
+   <!--         <Group open="true" option="codeGroup">
+                <OptionItem option="sasDataset"/>
+                <OptionItem option="scoringCodeFileName"/>
+                <OptionItem option="astoreData"/>
+                <OptionItem option="astoreMsg"/>
+                <DataItem data="astoreName"/>                
+            </Group> 
+            <Group open="true" option="scoringGroup">
+                <OptionItem option="outputLibrefNote"/>
+                <OptionItem option="outScoredDSName"/>
+
+            </Group> -->
+        </Container>
+        <Container option="optionsTab"> 
+            <Group open="true" option="methodsGroup">
+                <OptionItem option="nBins"/>
+                <OptionChoice option="binMethod">
+                    <OptionItem option="bucketChoice"/>
+                    <OptionItem option="quantileChoice"/>
+            <!--        <OptionItem option="winsorChoice"/> -->
+                </OptionChoice>
+      <!--          <OptionItem option="winsorRate"/> -->
+<!-- not supported yet
+            <OptionItem option="woe"/>
+            <RoleItem role="targetVariable"/>
+            <OptionItem option="responseOrderLabel"/>
+            <OptionItem option="ascResponseOrderChoice"/>
+            <OptionItem option="descResponseOrderChoice"/>
+
+            <OptionItem option="useWoeAdjust"/>
+            <OptionItem option="woeAdjust"/>
+-->
+            </Group>
+
+        </Container>
+    </UI>
+    
+    <Dependencies>
+ <!--     <Dependency condition="$scoreType == 'sasDataset'">
+         <Target action="show" conditionResult="true" option="scoringCodeFileName"/>
+         <Target action="hide" conditionResult="false" option="scoringCodeFileName"/>
+         <Target action="hide" conditionResult="true" option="astoreName"/>
+         <Target action="show" conditionResult="false" option="astoreName"/>  
+         <Target action="hide" conditionResult="true" option="astoreMsg"/>
+         <Target action="show" conditionResult="false" option="astoreMsg"/>          
+      </Dependency> 
+        <Dependency condition="($binMethod=='winsorChoice')">
+            <Target action="show" conditionResult="true" option="winsorRate"/>
+            <Target action="hide" conditionResult="false" option="winsorRate"/>
+        </Dependency>  --> 
+    </Dependencies>
+    
+    <CodeTemplate>
+        <![CDATA[
+ods noproctitle;
+
+%LET MyTable=%SCAN($dataset, 2, .);
+%LET MyLib=%SCAN($dataset, 2, .);
+
+
+
+data Casuser.Temp_merge;
+merge $dataset 
+
+$model1 
+#if (!($model2 =="SASHELP.CARS")) $model2 #end 
+#if (!($model3 =="SASHELP.CARS")) $model3 #end
+#if (!($model4 =="SASHELP.CARS")) $model4 #end
+;
+
+by uniqueRecordID;
+run;
+
+
+
+
+
+]]>
+    </CodeTemplate>
+</Task>

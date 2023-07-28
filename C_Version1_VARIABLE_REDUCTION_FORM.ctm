@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="3.0">
+    <Registration>
+        <Name>VariableReduction</Name>
+        <Description>C_Version1_VARIABLE_REDUCTION</Description>
+        <GUID>c177dc86-1140-4cb0-8dca-9c797c0257fa</GUID>
+        <Procedures>HPREDUCE</Procedures>
+        <Version>3.3</Version>
+        <Links>
+            <Link href="http://support.sas.com/documentation/onlinedoc/sasstudio/index.html">SAS Studio User's Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/documentation/cdl/en/prochp/66704/HTML/default/viewer.htm#prochp_hpimpute_overview.htm">The HPIMPUTE Procedure</Link>
+        </Links>
+        <Category>Auto_Severity_2015 templates</Category>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="dataset">
+                <Roles>
+                    <Role
+                        exclude="CategoricalVariables,DropVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0"
+                        name="ContinuousVariables" type="A">Select Continuous Variables</Role>
+                    <Role
+                        exclude="ContinuousVariables,DropVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0"
+                        name="CategoricalVariables" type="A">Select Categorical Variables</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0" name="DropVariables" type="A">Select Variables to drop</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,targetVariable"
+                        indent="1" maxVars="0" minVars="0"
+                        name="copyVariables" type="A">Additional variables to include in the output data set</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,weightVariable,IDVariable"
+                        maxVars="1" minVars="1" name="targetVariable" type="A">Target Variable</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,targetVariable,IDVariable"
+                        maxVars="1" minVars="0" name="weightVariable" type="A">Weight Variable (Optional !)</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,targetVariable,weightVariable"
+                        maxVars="1" minVars="0" name="IDVariable" type="A">Unique ID Variable</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA (Default=DataFldr.Send2Reduce)</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="targetRolesGroup">Select Target Variable</Option>
+            <Option inputType="string" name="weightRolesGroup">Select Weight Variable</Option>
+            <Option inputType="string" name="UniqueIDRolesGroup">Select Unique ID Variable</Option>
+            <Option inputType="string" name="explicitDropGroup"><![CDATA[<b><font color=#FF0000>Explicitly select variables to drop, this will help you account for all variables</b>]]></Option> 
+            <Option defaultValue="1" inputType="checkbox" name="outputDS">Create output data set</Option>
+            <Option defaultValue="HPimpute_scores" indent="1"
+                inputType="outputdata" name="outputDSName" required="true">Data set name:</Option>
+            <Option name="GROUPNUMSTEPPER" inputType="string">Select % of Vairance and Max Number of effects. Type or use arrows</Option>
+			<Option name="labelNumStepperEXAMPLE2" inputType="string">Percentage of explained variance desired: minimum value of 10% a maximum value of 100%. Default is 90%.</Option>
+			<Option name="advancedStepperEXAMPLE" defaultValue="90" inputType="numstepper" increment="10" minValue="10" maxValue="100" decimalPlaces="0,3" indent="1">Select Variance to explain:</Option>  
+			<Option name="labelNumStepperEXAMPLE3" inputType="string">Select the maximum number of variables that you think could be predictive: minimum value of 1 a maximum value of 2000.</Option>
+			<Option name="advancedStepperEXAMPLE3" defaultValue="2000" inputType="numstepper" increment="10" minValue="1" maxValue="2000" decimalPlaces="0,0" indent="1">Select Maximum Effects:</Option>      
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="targetRolesGroup">
+                <RoleItem role="targetVariable"/>
+            </Group>
+            <Group open="true" option="weightRolesGroup">
+                <RoleItem role="weightVariable"/>
+            </Group>
+     <!--      <Group open="true" option="UniqueIDRolesGroup">
+                <RoleItem role="IDVariable"/>
+            </Group> -->
+            <Group open="true" option="rolesGroup">
+                <RoleItem role="ContinuousVariables"/>
+                <RoleItem role="CategoricalVariables"/>
+             
+          </Group>
+          <Group open="true" option="GROUPNUMSTEPPER">
+				<OptionItem option="labelNumStepperEXAMPLE2"/>
+				<OptionItem option="advancedStepperEXAMPLE"/>
+				<OptionItem option="labelNumStepperEXAMPLE3"/>
+				<OptionItem option="advancedStepperEXAMPLE3"/>
+		</Group>
+
+   <!--         <Group open="true" option="explicitDropGroup">
+            	<RoleItem role="DropVariables"/>
+            </Group> -->
+        </Container>
+   <!--     <Container option="optionsTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <RoleItem role="copyVariables"/>
+            </Group>
+        </Container> 
+    -->
+    </UI>
+ <!--   <Dependencies>
+        <Dependency condition="($outputDS=='1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+        </Dependency>
+    </Dependencies>
+     <Requirements>
+       <Requirement condition="$ContinuousVariables.size() > 0 ||    $CategoricalVariables.size() > 0 ||    $DropVariables.size() > 0">
+            <Message nlsKey="meanMedianRandomMsgKey">Select at least one variable to replace its missing values with the mean, the pseudo-median, or a random number.</Message>
+        </Requirement> 
+    </Requirements>
+ -->
+    <CodeTemplate><![CDATA[
+
+ods noproctitle;
+
+*WHAT MUST BE DONE IS TO KNOW IF THE USER WANTS TO RUN IN MEMORY AND THEN POINT AT THE APPROPRIATE SOURCE;
+*AND HAVE THE APPROPRIATE OUTPUT;
+
+*IMPORTANT TO KNOW THAT ANY DATA THAT IS SMALL WILL ALWAYS BE SENT TO DISK.EVEN IF THE OUTPUT IS FROM AN IN-MEMORY PROCESS;
+*A GOOD EXAMPLE OF THIS IS THE HP REDUCE, THE OUTPUT IS ALWAYS SMALL REGARDLESS OF THE INPUT DATA AND REGARDLESS OF;
+*WHERE THE PROCESSING TAKES PLACE (MEMORY OR DISK) AS A RESULT THE OUTPUT OF REDUCE IS ALWAYS SENT TO DISK;
+
+#if ( $ContinuousVariables.size() > 0 )   
+   %LET CONT_RDC=#foreach( $item in $ContinuousVariables )$item #end; 
+#end
+#if ( $ContinuousVariables.size() > 0 )   
+   %LET CONT_QTE_RDC=#foreach( $item in $ContinuousVariables )'$item' #end; 
+#end
+#if ( $CategoricalVariables.size() > 0 )   
+   %LET CATG_RDC=#foreach( $item in $CategoricalVariables )$item #end; 
+#end
+#if ( $CategoricalVariables.size() > 0 )   
+   %LET CATG_QTE_RDC=#foreach( $item in $CategoricalVariables )'$item' #end; 
+#end
+
+
+
+#if( $targetVariable.size() > 0 )
+    %LET TRGT_RDC=#foreach( $item in $targetVariable )$item#end;
+#end
+ 
+%LET WEGHTRDC=1; 
+
+#if( $weightVariable.size() > 0 )
+%LET WEGHTRDC=#foreach( $item in $weightVariable )$item#end;
+#end
+
+%LET VAR2EXP=$advancedStepperEXAMPLE;
+%LET MAXEFF=$advancedStepperEXAMPLE3;
+%LET VARPRCNT=%SYSEVALF(&VAR2EXP/100);
+
+*below will pull off the numeric varaibles only (that were input as numeric by user);
+*to start the process of cretating our transformed numeric variables;
+proc contents data=&MODEL_DATA(keep=&cont_rdc) OUT=WORK.NBR_VAR(KEEP=NAME);RUN;
+
+PROC SQL ;
+	SELECT COUNT(*) INTO :DS2_CNT FROM WORK.NBR_VAR;
+	SELECT DISTINCT(NAME) INTO :DS2_NM1-:DS2_NM%TRIM(%LEFT(&DS2_CNT)) FROM WORK.NBR_VAR;
+	SELECT DISTINCT(NAME) INTO :MyList SEPARATED BY ' ' FROM WORK.NBR_VAR;
+	SELECT LEFT(TRIM(NAME)||"_SQRT") INTO :SQRTList SEPARATED BY ' ' FROM WORK.NBR_VAR;
+	SELECT LEFT(TRIM(NAME)||"_LOG") INTO :LOGList SEPARATED BY ' ' FROM WORK.NBR_VAR;
+	SELECT LEFT(TRIM(NAME)||"_SQRD") INTO :SQRDList SEPARATED BY ' ' FROM WORK.NBR_VAR;
+	SELECT LEFT(TRIM(NAME)||"_INV") INTO :INVList SEPARATED BY ' ' FROM WORK.NBR_VAR;
+
+QUIT;RUN;
+
+*the HPDS2 WILL CREATE OUR TRANSFORMED VARIABLES;
+*proc hpds2 data=MyData.Sev_Model(KEEP=&CONT_RDC &CATG_RDC &TRGT_RDC) out=&HPDS2OUT;
+
+%REDUCE_PATH;
+
+proc hpds2 data=&MODEL_DATA out=&HPDS2OUT;
+performance details;
+ 
+ 
+  data ds2gtf.out;
+   VARARRAY DOUBLE ORIG[&DS2_CNT] &MyList;
+   VARARRAY DOUBLE SQRTLST[&DS2_CNT] &SQRTList;
+   VARARRAY DOUBLE SQRDLST[&DS2_CNT] &SQRDList;
+   VARARRAY DOUBLE LOGLST[&DS2_CNT] &LOGList;
+   VARARRAY DOUBLE INVLST[&DS2_CNT] &INVList;
+
+  method run();
+  set ds2gtf.in();
+
+  DO I = 1 TO &DS2_CNT;
+  	SQRTLST[I]=SQRT(ORIG[I]);
+	SQRDLST[I]=(ORIG[I])**2;
+	LOGLST[I]=LOG(ORIG[I]);
+	IF ORIG[I] = 0 THEN INVLST[I]=0;
+	IF ORIG[I] NE 0 THEN INVLST[I]=(1/ORIG[I]);
+	/*LINE ABOVE GUARDS AGAINST DIVISION BY ZERO*/
+  END;
+
+	AVG_BY_EXPOSURE= &TRGT_RDC/&WEGHTRDC;
+	
+  end;
+  enddata;
+run;
+quit;
+
+
+
+*the ods statements below apply to HP Reduce;
+ods output SelectedEffects=WORK.MySelected;
+ods output SelectionSummary=WORK.MySummary;
+proc hpreduce data=&HPDS2OUT;*THIS WILL OUTPUT A CORRELATION TABLE WHAT CORRELATION IS SHOWN FOR CATEGORICAL VALUS corr outcp=corr;
+class &CATG_RDC;
+reduce supervised AVG_BY_EXPOSURE= &CONT_RDC 
+&SQRDList &SQRTList &LOGList &INVList &CATG_RDC/ VAREXP=&VARPRCNT MAXEFFECTS=&MAXEFF;
+
+run;
+
+*THE TABLE CALLED WORK.MYSUMMARY WILL LOOK LIKE THE DATA BELOW (HAVING DIFFFERENT VARIABLES);
+*/
+Iteration	Variable		Level		VarExp	SSE			MSE			AIC			AICC	BIC
+1			TRAVTIME		-			0.1465	0.8535		0.000194	-0.1575		0.8425	-0.1565
+2			CAR_TYPE		Sports Car	0.2798	0.7202		0.000164	-0.3269		0.6731	-0.3244
+3			RISK_SCORE_SQRT	-			0.3119	0.6881		0.000156	-0.372		0.628	-0.3681
+4			CAR_TYPE		Minivan		0.341	0.659		0.00015		-0.4148		0.5853	-0.4094
+5			TIF_INV			-			0.3479	0.6521		0.000148	-0.4248		0.5752	-0.418
+/*;
+
+
+************************ START OF PROCESS TO CREATE DROP LIST OF TRANSFORMED VARIABLES THAT ADD NO VALUE *************;
+proc contents data=&HPDS2OUT OUT=WORK.DS2_NAMES(KEEP=NAME);
+
+*BELOW WILL PULL OUT THE VARIABLE NAMES FOR OUR TRANSFORMED VARIABLES THAT WE CREATED IN OUR HPDS2;
+proc sql;
+CREATE TABLE DS2VARS AS 
+select Name
+from WORK.DS2_NAMES
+where (Name like '%_SQRT%') or (Name like '%_SQRD') OR (NAME LIKE '%_LOG') OR (NAME LIKE '%_INV');
+QUIT;
+RUN;
+
+*TAKE THE RESULTS OF OUR REDUCE PROC AND PULL OUT OUR TRANSFORMED VARIABLES;
+*THIS WILL START THE PROCESS OF FIGURING OUT WHICH TRANSFORAMTION NUMERIC VARIABLES THAT WE CREATED;
+*THAT WE SHOULD DROP BECAUSE THEY PROVIDE NO VALUE;
+*WILL USE THIS DROP LIST AGAINST THE PHYSICAL FILE FOR OUR SOURCE FILE AND AGAINST;
+*OUR VARIABLE RANK SUGGESTION;
+
+data vars2drop_step1;
+set WORK.MYSELECTED;
+LENGTH BASE_NAME $32.;
+
+IF INDEX(VARIABLE,'_SQRT')  THEN BASE_NAME=SUBSTR(VARIABLE,1,INDEX(VARIABLE,'_SQRT') -1);
+ELSE IF INDEX(VARIABLE,'_SQRD')  THEN BASE_NAME=SUBSTR(VARIABLE,1,INDEX(VARIABLE,'_SQRD') -1);
+ELSE IF INDEX(VARIABLE,'_LOG')  THEN BASE_NAME=SUBSTR(VARIABLE,1,INDEX(VARIABLE,'_LOG') -1);
+ELSE IF INDEX(VARIABLE,'_INV')  THEN BASE_NAME=SUBSTR(VARIABLE,1,INDEX(VARIABLE,'_INV') -1);
+ELSE BASE_NAME=VARIABLE;
+
+run;
+
+PROC SORT DATA=vars2drop_step1;
+BY BASE_NAME Number;
+RUN;
+
+*BELOW IS AN EXAMPLE OF WHAT OUR DATA LOOKS LIKE AT THIS POINT;
+/*
+Number	Variable	Type		BASE_NAME
+21		AGE_INV		INTERVAL	AGE
+22		AGE_SQRD	INTERVAL	AGE
+40		AGE			INTERVAL	AGE
+41		AGE_LOG		INTERVAL	AGE
+*/;
+
+*THE SORT(ABOVE) AND SET BY STATAEMENT BELOW SERVE THE PURPOSE OF KEEPING TWO TYPES OF VARIABLES;
+*TYPE ONE IS THE BASE VARIABLES (NOT TRANSFORMED) SUCH AS AGE...BLUEBOOK...;
+*TYPE TWO IS A TRANSFORMED VARIABLE THAT IS RANKED HIGHER THEN IT'S BASE VARIABLE BY THE HPREDUCE;
+*EXAMPLE: IF AGE_SQRT IS RANKED HIGHER THEN AGE, WE KEEP BOTH, HOWEVER, WILL ALWAYS KEEP AGE (BASE VARIABLE WITHOUT TRANSFORMATIONS);
+*IF AGE_SQRT WAS NOT RANKED HIGHER  THAN AGE, WE WOULD NOT KEEP AGE_SQRT;
+DATA vars2drop_step2;
+SET vars2drop_step1;
+BY BASE_NAME;
+
+LENGTH MY_KEEP $3.;
+MY_KEEP='NO';
+
+IF TYPE='CLASS' THEN 
+	DO;
+		MY_KEEP='YES';
+	END;
+ELSE;
+	DO;
+		IF ((FIRST.BASE_NAME) OR  TRIM(VARIABLE) =TRIM(BASE_NAME)) THEN MY_KEEP='YES';
+	END;
+
+IF MY_KEEP='YES';
+
+RUN;
+
+*BELOW IS AN EXAMPLE OF WHAT OUR DATA COULD LOOK LIKE;
+/*
+Number	Variable		Type		BASE_NAME	MY_KEEP
+21		AGE_INV			INTERVAL	AGE			YES
+40		AGE				INTERVAL	AGE			YES
+12		BLUEBOOK_SQRD	INTERVAL	BLUEBOOK	YES
+18		BLUEBOOK		INTERVAL	BLUEBOOK	YES
+6		CAR_AGE_INV		INTERVAL	CAR_AGE		YES
+37		CAR_AGE			INTERVAL	CAR_AGE		YES
+2		CAR_TYPE		CLASS		CAR_TYPE	YES
+20		CAR_USE			CLASS		CAR_USE		YES
+*/;
+
+*BELOW WILL PULL OFF ONLY THE TRANSFORMED VARIABLES FROM ABOVE TABLE THAT WE WILL END UP KEEPING;
+*THIS TABLE IS A LIST OF TRANSFORMED VARIABLES WE WANT TO KEEP;
+proc sql;
+CREATE TABLE RDC_VARS AS 
+select VARIABLE as Name
+from WORK.vars2drop_step2
+where (Variable like '%_SQRT%') or (Variable like '%_SQRD') OR (Variable LIKE '%_LOG') OR (Variable LIKE '%_INV');
+QUIT;
+RUN;
+
+*THE SQL BELOW SAYS GET THE TABLE THAT HAS ALL THE VARIABLE NAMES OF OUR TRANSFORMED VARIABLES THAT ;
+*WE CREATED IN HPDS2 EXCEPT THE ONES WE WANT TO KEEP (FROM THE TABLE ABOVE);
+proc sql;
+CREATE TABLE DROP_THESE AS 
+select NAME from WORK.DS2VARS
+except
+select NAME from WORK.RDC_VARS;
+QUIT;
+RUN;
+
+*BELOW WILL CREATE A LIST OF TRANSFORMED VARIABLES THAT ARE NOT RANKED HIGHER THAN THERE BASE VARIABLES;
+*THESE VARIABLES WILL GET DROPED FROM OUR OUTPUT THAT WAS CREATED BY HPDS2 ABOVE;
+PROC SQL ;
+	SELECT TRIM(LEFT(NAME)) INTO :TRANSDROPList SEPARATED BY ' ' FROM WORK.DROP_THESE;
+	SELECT CATT("'",TRIM(LEFT(NAME)),"'") INTO :TRANSWHERE SEPARATED BY ',' FROM WORK.DROP_THESE;
+QUIT;RUN;
+
+
+
+
+************************ START OF PROCESS TO CREATE DROP LIST OF TRANSFORMED VARIABLES THAT ADD NO VALUE *************;
+
+******************************* START OF PROCESS TO CREATE CONCISE SUGGESTION LIST FOR THE HPNEURAL PROCESS *********;
+
+*TO MEASURE THE IMPACT(VAREXP_IMPACT) OF EACH VARIABLE NEED TO KNOW WHAT THE PREVIOUS AMOUNT OF VARIABLE EXPLAINED WAS (VAREXP);
+*TO DO THIS WE USE THE LAG FUNCTION;
+DATA MYSUM2;
+SET WORK.MYSUMMARY;
+PREVIOUS_VAREXP=LAG(VAREXP);
+VAREXP_IMPACT=VAREXP-PREVIOUS_VAREXP;
+RUN;
+
+*THIS STEP DOES TWO THINGS. FIGURES OUT WHAT TYPE THE VARIABLE IS: IF NUMERIC THEN TYPE=1, IF CHARACCTER THEN TYPE=2;
+*THE SECOND THING IT DOES IS FIX THE VAREXP_IMPACT OF THE FIRST RECORD SINCE THE FIRST RECORD HAS NO PREVIOUS RECORD SINCE IT'S THE FIRST RECORD;
+DATA MYSUM3;
+SET MYSUM2;
+LENGTH TYPE  8.;
+TYPE=2;
+IF ITERATION=1 THEN VAREXP_IMPACT=VAREXP;
+IF LEVEL=' -' THEN TYPE=1;
+RUN;
+
+*THIS SUMS UP ALL THE VARIABLE IMPACTS BY GROUP. MEANING CATEGORY VARIABLES WILL HAVE MULTIPLE RECORDS;
+*EXAMPLE IS CAR_TYPE, YOU WOULD HAVE ONE RECORD FOR EACH CAR_TYPE AND EACH ONE HAS A VARIABLE IMPACT;
+*WE WANT TO SUM UP ALL IMPACTS FOR CAR_TYPE INTO ONE RECORD. STEP BELOW HAS NO REAL IMPACT ON NUMERIC VARIABLES;
+*SINCE THEY ALREADY ONLY HAVE ONE RECORD FOR EACH NUMERIC VARIABLE;
+*THE WHERE CLAUSE IS POPULATED BY THE &TRANSWHERE MACRO THAT WAS CREATED IN THE BUILD DROP LIST FOR TRANSFORMED PROCESS;
+PROC SQL;
+CREATE TABLE MYSUM4 AS 
+SELECT VARIABLE, TYPE, SUM(VAREXP_IMPACT) AS VARIABLE_IMPACT_ON_EXPLAINED_VAR FROM WORK.MYSUM3
+WHERE VARIABLE NOT IN (&TRANSWHERE)
+group by VARIABLE, TYPE
+ORDER BY VARIABLE_IMPACT_ON_EXPLAINED_VAR DESC;
+QUIT;
+RUN;
+
+*BELOW WILL SIMPLY ADD A ROW ID. THIS METHOD IS CLUMSY BUT i CAN'T THINKI OF A BETTER WAY;
+
+DATA DATAFLDR.REDUCE_RANK&MDLUZER;
+SET MYSUM4;
+REDUCE_RNK=_N_;
+RUN;
+****THIS WILL OUTPUT THE DATASET CREATED FOR OUR TRANSFORMED VARIABLES IN HPDS2, HOWEVER, WILL DROP VARIABLES;
+****THAT HAD NO VALUE;
+DATA &REDUCE_FOLDER..REDUCE_OUT&MDLUZER;
+	SET &REDUCE_FOLDER..DS2_OUT&MDLUZER(DROP=&TRANSDROPList AVG_BY_EXPOSURE);
+RUN;
+
+**** START OF PROCESS TO CREATE A DATASET SO WE CAN LOAD VARIABLE_NAME\RANK\VARIABLE_IMPACT_VARIANCE_EXPLANATION;
+**** INTO A DROP DOWN FOR THE USER IN TEH HP NEURAL NETWORK PROCESS;
+
+
+**** GET ALL VARIABLES NAMES FROM OUR SOURCE DATA THAT HAS THE TRANSFORMED VARS ADDED ON;
+PROC CONTENTS DATA=&REDUCE_FOLDER..REDUCE_OUT&MDLUZER NODETAILS NOPRINT 
+		OUT=DATAFLDR.SRC_RDC_NAMES&MDLUZER(KEEP=NAME TYPE);
+
+*PROC PRINT DATA=WORK.SRC_RDC_NAMES;
+*PROC CONTENTS DATA=WORK.SRC_RDC_NAMES;
+
+DATA BUILD_VAR_RANK_IMPACT;
+	SET DATAFLDR.REDUCE_RANK&MDLUZER;
+LENGTH REDUCEINFO $100.;
+REDUCEINFO=CATT(TRIM(LEFT(VARIABLE)), "\",TRIM(PUT(REDUCE_RNK,8.)),"\",TRIM(PUT(VARIABLE_IMPACT_ON_EXPLAINED_VAR,8.5)));
+RUN;
+
+
+PROC SQL ;
+	CREATE TABLE DATAFLDR.RANK_W_VAR_RNK_IMPACT&MDLUZER AS SELECT COALESCE(B.REDUCEINFO, 
+		A.NAME) AS VARS_4_NEURAL, B.REDUCE_RNK, B.VARIABLE FROM DATAFLDR.SRC_RDC_NAMES&MDLUZER AS 
+		A LEFT JOIN WORK.BUILD_VAR_RANK_IMPACT AS B ON 
+		COMPRESS(A.NAME)=COMPRESS(B.VARIABLE);
+QUIT;run;
+
+
+
+DATA ADD_2ND_SORT_VAR;
+SET DATAFLDR.RANK_W_VAR_RNK_IMPACT&MDLUZER;
+
+LENGTH RANKED $1.;
+RANKED='Y';
+IF REDUCE_RNK=. THEN RANKED='N';
+RUN;
+
+
+***************  THE SORT BELOW GETS ME THE DESIRED SORT OUTCOME   ********;
+				PROC SORT DATA=ADD_2ND_SORT_VAR OUT=VARS_GOOD_SORT SORTSEQ=linguistic;
+					by DESCENDING RANKED REDUCE_RNK VARS_4_NEURAL Variable;
+				run;
+
+*INTENT BELOW IS TO CREATE A DATASET THAT WILL POPULATE THE NEURAL NETWORK DROP DOWN IN;
+*A LOGICAL ORDER;
+
+proc transpose data=VARS_GOOD_SORT out=DATAFLDR.SEND2NEURAL&MDLUZER(DROP=I _NAME_);
+	var REDUCE_RNK;
+	id VARS_4_NEURAL;
+run;
+
+*********************END OF PROCESS TO CREATE CONCISE SUGGESTION LIST FOR THE HPNEURAL PROCESS***************;
+
+			]]></CodeTemplate>
+
+</Task>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-16"?><Task schemaVersion="7.2">
+   <Registration>
+      <Name>Create Webpage</Name>
+      <Description>Create web page V2</Description>
+      <GUID>9D9A8489-F1D2-4DC2-A521-60RSEA692412</GUID>
+      <Procedures>SORT</Procedures>
+      <Version>5.2</Version>
+      <Links>
+         <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=5.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+         <Link href=""> </Link>
+         <Link href=""> </Link>
+		 <Link href="http://documentation.sas.com/?softwareId=MVADOC&amp;softwareVersion=5.2_9.4&amp;softwareContextId=proc_sort&amp;requestor=inapp">The SORT Procedure</Link>
+         <Link href=""> </Link>
+         <Link href=""> </Link>
+         <Link href="http://support.sas.com/training/studio">SAS Tutorials</Link>
+      </Links>
+	</Registration>
+   
+   
+	<Metadata>
+		
+      <DataSources>
+         <DataSource name="dataset" libraryEngineInclude="CAS,V9" where="true">
+         <Roles>
+            <Role exclude="scoringintervalvars" maxVars="0" minVars="0" name="scoringnominalvars" order="true" type="C">Score nominal variables:</Role>
+			<Role exclude="scoringnominalvars" maxVars="0" minVars="0" name="scoringintervalvars" order="true" type="N">Score interval variables:</Role>
+         </Roles>
+         </DataSource>
+
+      </DataSources>
+      
+      <Options>
+         <Option inputType="string" name="datatab">DATA</Option>
+         <Option inputType="string" name="datagrp">DATA</Option>
+         <Option inputType="string" name="rolesgrp">ROLES</Option>
+      
+         <Option inputType="string" name="optiontab">OPTIONS</Option> 
+         <Option inputType="string" name="ordergrp">OUTPUT ORDER</Option>
+         <Option defaultValue="ascendingChoice" inputType="combobox" name="ordercombo">Sort order:</Option>
+         <Option inputType="string" name="ascendingChoice">Ascending</Option>
+         <Option inputType="string" name="descendingChoice">Descending</Option>
+         <Option defaultValue="yesChoice" inputType="combobox" name="maintainOrder">Maintain original order within groups:</Option>
+         <Option inputType="string" name="yesChoice">Yes</Option>
+         <Option inputType="string" name="noChoice">No (potentially faster)</Option>
+         <Option inputType="string" name="dupgrp">DUPLICATE RECORDS</Option>
+         <Option defaultValue="1" inputType="radio" name="keepAll" variable="keepObs">Keep all records</Option>
+         <Option inputType="radio" name="keepFirst" variable="keepObs">Keep first record of each 'Sort by' group</Option>
+         <Option inputType="string" name="resultsgrp">RESULTS</Option>
+         <Option defaultValue="0" inputType="checkbox" name="overwrite">Sort in place</Option>
+         <Option defaultValue="work.sortDS" inputType="outputdata" name="outputDS" required="true" unique="true">Output data set</Option>
+         <Option inputType="string" name="noDropMsg">No columns are dropped when 'Sort in place' is selected</Option>
+         <Option inputType="string" name="inPlaceMsg">Sort in place does not use the 'Columns to drop' list and keeps all duplicate records</Option>
+         <Option inputType="string" name="whereMsg">Sort in place does not honor the data set filter.</Option>
+          <Option defaultValue="Code goes here" inputType="inputtext" width="100%" missingMessage="Missing code." name="textCode" promptMessage="Enter code here." required="true">SAS Code:</Option>
+      </Options>
+      
+   </Metadata>
+   
+   <UI>
+
+      <Container option="datatab">
+         <Group open="true" option="datagrp">
+            <DataItem data="dataset"/>
+            <OptionItem option="whereMsg"/>
+         </Group>
+         
+         <Group open="true" option="rolesgrp">
+				<RoleItem role="scoringnominalvars"/>
+				<RoleItem role="scoringintervalvars"/>
+                <OptionItem option="textCode"/>
+         </Group>
+      </Container>
+
+
+   </UI>
+   
+   <Dependencies>
+
+      
+      <!--Dependency condition="$dataset.getWhereClause() == ''">
+         <Target conditionResult="true" option="overwrite" action="show"/>
+         <Target conditionResult="false" option="overwrite" action="hide"/>
+      </Dependency-->
+   </Dependencies>
+
+  	<CodeTemplate>
+		<![CDATA[
+
+<?xml version="1.0" encoding="utf-8"?>
+<Task schemaVersion="7.2">
+  <Registration>
+    <Name>Score_Prompts</Name>
+    <Description></Description>
+    <Version>5.2</Version>
+  </Registration>
+  <Metadata>
+    <DataSources>
+<DataSource name="dataset" where="true" libraryEngineInclude="CAS,V9">
+        <Filters>#foreach($item in $scoringnominalvars)  
+          <Filter name="filter$item">
+            <Column column="$item" sortBy="label" sortDirection="ascending"/>
+          </Filter>#end
+        </Filters>
+      </DataSource>
+    </DataSources>
+scoringintervalvars
+    <Options>
+      <Option name="_program" inputType="inputtext" active="true" defaultValue=""/>
+      <Option name="_action"  inputType="inputtext" active="true" defaultValue="wait"/>
+
+      <Option name="blankline" inputType="string"/>
+
+ #foreach($item in $scoringnominalvars) <Option name="$item" inputType="combobox" width="100%" filter="filter$item" required="true">Select a $item:</Option>#end
+ #foreach($item in $scoringintervalvars) <Option defaultValue="0" inputType="numbertext" invalidMessage="Enter a number greater than zero." maxValue="1000000" minValue="1" missingMessage="Enter a number greater than zero." name="$item" promptMessage="Enter a number greater than zero." rangeMessage="This number is out of range.  Enter a number between 0 and 100." required="true">Key in your $item:</Option>#end
+  </Options>
+  </Metadata>
+  <UI>
+    <DataItem data="dataset"/>
+    <OptionItem option="blankline"/>
+
+#foreach($item in $scoringnominalvars)
+    <OptionChoice option="$item"/>#end
+##   <OptionItem option="blankline"/>#end 
+
+#foreach($item in $scoringintervalvars)
+    <OptionChoice option="$item"/>#end
+ ##   <OptionItem option="blankline"/>#end
+
+  </UI>
+  <CodeTemplate/>
+</Task>
+
+
+/*below is the task we want our webpage to execute   */
+
+/*  Declare input parameters */
+%global #foreach($item in $scoringnominalvars) $item #end #foreach($item in $scoringintervalvars) $item #end;
+
+cas;
+caslib _all_ assign;
+
+proc casutil;
+	droptable casdata="TEMP4_SCORE" incaslib="PUBLIC" quiet;
+run;
+
+proc casutil;
+	droptable casdata="TEMP_SCORED" incaslib="PUBLIC" quiet;
+run;
+
+DATA PUBLIC.TEMP4_SCORE;
+#foreach($item in $scoringnominalvars) $item="&$item";#end
+#foreach($item in $scoringintervalvars) $item="&$item";#end
+;
+run;
+
+$textCode
+
+proc casutil;
+	droptable casdata="TEMP4_SCORE" incaslib="PUBLIC" quiet;
+run;
+
+proc casutil;
+	droptable casdata="TEMP_SCORED" incaslib="PUBLIC" quiet;
+run;
+
+quit;
+
+
+
+		]]>
+	</CodeTemplate>      
+</Task>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><Task runNLS="never" schemaVersion="5.4">
+	<Registration>
+	<Name>Find Variables</Name>
+	<Description>This is a blank task</Description>
+	<GUID>726B2B12-4542-4200-96F4-9693445D767F</GUID>
+	<Procedures>TBD</Procedures>
+	<Version>3.8</Version>
+	<Links>
+		<Link href="http://documentation.sas.com/?softwareId=STUDIOMID&amp;softwareVersion=3.8&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+	</Links>
+	<Category>Data</Category>
+   </Registration>
+	
+	<Metadata>
+		
+		<DataSources>	
+		</DataSources>
+
+		<Options>
+					<Option inputType="string" name="OPTIONSTABLETAB">SEARCH CRITERIA</Option>
+					
+
+			<Option inputType="string" name="labelOptionTableEXAMPLE">Place your search</Option>
+		    <OptionTable addRemoveRowTools="true" initialNumberOfRows="1" name="optionTableEXAMPLE" showColumnHeadings="true">
+				<Columns>
+					<Column label="Search Criteria" name="txt">
+					<Option inputType="textbox" required="true"/>
+					</Column>
+<!-- 					<Column label="Number Stepper" name="numStep"> -->
+<!-- 					<Option defaultValue="3" inputType="numstepper" required="false"/> -->
+<!-- 					</Column> -->
+				 </Columns>
+		    </OptionTable>
+
+		</Options>
+		
+	</Metadata>
+	
+	<UI>
+		<Container option="OPTIONSTABLETAB">
+			<OptionItem option="labelOptionTableEXAMPLE"/>
+			<OptionItem option="optionTableEXAMPLE"/>
+		</Container>
+
+	</UI>
+	
+
+	
+  	<CodeTemplate>
+		<![CDATA[
+
+PROC SQL sortseq=linguistic noprint;
+	Create Table my_matches as 
+
+#foreach($item in $optionTableEXAMPLE.rows.values)
+	 SELECT libname, memname, memtype, name, type, length, npos, varnum, label, format, informat FROM SASHELP.VCOLUMN
+		WHERE UPCASE(LIBNAME) NOT IN ('SASHELP','MAPS','MAPSSAS','MAPSGFK') AND prxmatch("/$item.txt/I",name)
+	union
+	 SELECT libname, memname, memtype, name, type, length, npos, varnum, label, format, informat FROM SASHELP.VCOLUMN
+		WHERE UPCASE(LIBNAME) NOT IN ('SASHELP','MAPS','MAPSSAS','MAPSGFK') AND prxmatch("/$item.txt/I",label)
+
+	 #if( $foreach.hasNext ) union #end
+#end
+order by name;
+
+	select COUNT(*) INTO :recsFound from work.my_matches;
+QUIT;
+
+
+
+		proc print data=work.my_matches(obs=1000);
+
+
+
+		]]>
+	</CodeTemplate>
+</Task>

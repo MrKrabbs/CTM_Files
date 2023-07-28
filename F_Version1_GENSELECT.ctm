@@ -1,0 +1,1952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task runNLS="never" schemaVersion="4.0">
+
+    <!-- IMPORTANT: Use runNLS="never" because there are duplicate nls keys -->    
+	<Registration>
+
+
+
+        <Name>F_Version1_GENSELECT</Name>
+        <Description>Generalized Linear Models for Freq, Severity and Pure Premium</Description>
+        <GUID>99ab89d3-6e48-4926-ac92-14151d6acbe4</GUID>
+        <Procedures>HPGENSELECT</Procedures>
+        <Version>3.4</Version>
+        <Links>
+            <Link href="http://support.sas.com/documentation/onlinedoc/sasstudio/index.html">SAS Studio User's Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/documentation/cdl/en/stathpug/66860/HTML/default/viewer.htm#stathpug_hpgenselect_overview.htm">The HPGENSELECT Procedure</Link>
+        </Links>
+        <Category>High-Performance Statistics</Category>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="dataset">
+                <Roles>
+                    <Role
+                        exclude="continuousVariables,classVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="1" minVars="1" name="responseVariable" type="A">Response:</Role>
+                    <Role
+                        exclude="continuousVariables,classVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="1" minVars="1"
+                        name="numericResponseVariable" type="N">Response:</Role>
+                    <Role
+                        exclude="trialsVariable,continuousVariables,classVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="1" minVars="1" name="eventVariable" type="N">Number of events:</Role>
+                    <Role
+                        exclude="eventVariable,continuousVariables,classVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="1" minVars="1" name="trialsVariable" type="N">Number of trials:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,classVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="0" minVars="0"
+                        name="continuousVariables" order="true" type="N">Continuous variables:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,continuousVariables,offsetVariable,idVariables,freqVariable,weightVariable"
+                        maxVars="0" minVars="0" name="classVariables"
+                        order="true" type="A">Classification variables:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,idVariables,freqVariable,weightVariable"
+                        maxVars="1" minVars="0" name="offsetVariable" type="N">Offset variable:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,offsetVariable,freqVariable,weightVariable"
+                        indent="1" maxVars="0" minVars="0"
+                        name="idVariables" order="true" type="A">Additional variables to include in the output data set:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,offsetVariable,idVariables,weightVariable"
+                        maxVars="1" minVars="0" name="freqVariable" type="N">Frequency count:</Role>
+                    <Role
+                        exclude="responseVariable,numericResponseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,offsetVariable,idVariables,freqVariable"
+                        maxVars="1" minVars="0" name="weightVariable" type="N">Weight variable:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="methodsGroup2">METHODS (for Binning Continuous variables)</Option>
+		<Option defaultValue="bucketChoice" inputType="combobox" name="binMethod">Method:</Option>
+		<Option inputType="string" name="bucketChoice">Bucket binning</Option>
+		<Option inputType="string" name="winsorChoice">Winsorized binning</Option>
+		<Option inputType="string" name="pseudoChoice">Pseudo-quantile binning</Option>
+		<Option name="GROUPBIN" inputType="string">Do you want to skip the binning of Continuous variables (for display only)?</Option>
+		<Option name="labelRADIOBIN" inputType="string">DEFAULT IS (NO) , LEAVE THE BINNING PROCESS ON. TO TURN OFF THE BINNING PROCESS SELECT THE YES BUTTON BELOW. YOU HAVE BINNING ALGORITHM CHOICES. SEE OPTIONS TAB</Option>
+		<Option name="NO" variable="radioBIN_CHOICE" defaultValue="1" inputType="radio">NO</Option>
+		<Option name="YES" variable="radioBIN_CHOICE" inputType="radio">YES</Option>
+		<!-- nBins: 2 <= nBins <= 1000 -->
+		<Option decimalPlaces="0" defaultValue="16"
+		inputType="numbertext"
+		invalidMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+		maxValue="1000" minValue="2"
+		missingMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+		name="nBins"
+		promptMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+		rangeMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+		rangeMessageKey="nBinsRangeKey" required="true" width="100px">Number of bins:</Option>
+		<!-- winsorRate: 0 < winsorRate < 0.5-->
+		<Option defaultValue="0.05" indent="1"
+		inputType="numbertext"
+		invalidMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+		maxValue="0.49999999999" minValue="0.00000000001"
+		missingMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+		name="winsorRate"
+		promptMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+		rangeMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+		rangeMessageKey="winsorRateRangeKey" required="true" width="100px">Winsor rate:</Option>
+		            <Option inputType="string" name="GROUPRADIO">AIC TABLE</Option>
+            <Option inputType="string" name="labelRADIO">How would you like to view AIC from your iterations?</Option>
+            <Option defaultValue="1" inputType="radio" name="NameNoDup" variable="AIC_RADIO">Most recent Named Iterations (duplicates of Iteration Names not allowed)</Option>
+            <Option inputType="radio" name="NameWDups" variable="AIC_RADIO">All Named Iterations (duplicates allowed)</Option>
+            <Option inputType="radio" name="All_Iterations" variable="AIC_RADIO">All Iterations Named and Un-Named</Option>
+            <Option inputType="string" name="GROUP_ITERATION_NAME">ITERATION NAME</Option>
+            <Option inputType="string" name="label_ITERATION_NAME">An example of a Iteration Name: "Model_Selection_Turned_Off". Leave no spaces in name.Max length of name=32</Option>
+            <Option defaultValue="" indent="1" inputType="inputtext"
+                missingMessage="Missing text."
+                name="text_ITERATION_NAME"
+                promptMessage="Enter Iteration Name." required="false">Iteration Name:</Option>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA:Select DATAFLDR.BIN_FROM_(NEURAL OR SOURCE)</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+            <Option inputType="string" name="classParamGroup">Parameterization of Effects</Option>
+            <Option defaultValue="glmParamChoice" inputType="combobox" name="classParam">Coding:</Option>
+            <Option inputType="string" name="glmParamChoice">GLM coding</Option>
+            <Option inputType="string" name="refParamChoice">Reference coding</Option>
+            <Option inputType="string" name="classMissingGroup">Treatment of Missing Values</Option>
+            <Option inputType="string" name="classMissingNote">An observation is excluded from the analysis if any variable in the model contains a missing value. In addition, an observation is excluded if any classification variable contains a missing value (regardless of whether the classification variable is used in the model).</Option>
+            <Option inputType="string" name="modelGroup">MODEL EFFECTS</Option>
+            <Option inputType="string" name="modelTab">MODEL</Option>
+            <Option
+                excludeTools="POLYEFFECT,TWOFACT,THREEFACT,NFACTPOLY"
+                inputType="modelbuilder" name="modelBuilder"
+                roleClassification="classVariables"
+                roleContinuous="continuousVariables" width="100%">Model</Option>
+            <Option inputType="string" name="responseGroup">Response</Option>
+            <Option inputType="string" name="explanatoryGroup">Explanatory Variables</Option>
+            <Option inputType="checkbox" name="eventTrialsData">Response data consists of numbers of events and trials</Option>
+            <!-- Distributions -->
+            <Option defaultValue="normalChoice" inputType="combobox" name="distribution">Distribution:</Option>
+            <Option inputType="string" name="binaryChoice">Binomial</Option>
+            <Option inputType="string" name="gammaChoice">Gamma</Option>
+            <Option inputType="string" name="invGaussianChoice">Inverse Gaussian</Option>
+            <Option inputType="string" name="multinomialChoice">Multinomial</Option>
+            <Option inputType="string" name="negBinomialChoice">Negative binomial</Option>
+            <Option inputType="string" name="normalChoice">Normal</Option>
+            <Option inputType="string" name="poissonChoice">Poisson</Option>
+            <Option inputType="string" name="tweedieChoice">Tweedie</Option>
+            <!-- Link functions -->
+            <Option defaultValue="defaultLinkChoice"
+                inputType="combobox" name="linkFx">Link function:</Option>
+            <Option defaultValue="logitChoice" inputType="combobox" name="binomialDistLinkFx">Link function:</Option>
+            <Option defaultValue="glogitChoice" inputType="combobox" name="multinomialDistLinkFx">Link function:</Option>
+            <Option defaultValue="logChoice" inputType="combobox" name="tweedieLinkFx">Link function:</Option>
+            <Option inputType="string" name="defaultLinkChoice">Default</Option>
+            <Option inputType="string" name="cLogLogChoice">Complementary log-log</Option>
+            <Option inputType="string" name="logLogChoice">Log-log</Option>
+            <Option inputType="string" name="logitChoice">Logit</Option>
+            <Option inputType="string" name="glogitChoice">Generalized logit</Option>
+            <Option inputType="string" name="probitChoice">Probit</Option>
+            <Option inputType="string" name="identityChoice">Identity</Option>
+            <Option inputType="string" name="reciprocalChoice">Reciprocal</Option>
+            <Option inputType="string" name="reciprocalSqChoice">Reciprocal square</Option>
+            <Option inputType="string" name="logChoice">Logarithm</Option>
+            <Option defaultValue="lastRefChoice" indent="1"
+                inputType="combobox" name="refCombo">Reference category:</Option>
+            <Option defaultValue="lastRefChoice" indent="1"
+                inputType="combobox" name="eventCombo">Event of interest:</Option>
+            <Option inputType="string" name="firstRefChoice">First ordered category</Option>
+            <Option inputType="string" name="lastRefChoice">Last ordered category</Option>
+            <Option inputType="string" name="specifyRefChoice">Select custom category</Option>
+            <Option indent="2" inputType="distinct" name="refLevelCombo" source="responseVariable">Custom category:</Option>
+            <Option defaultValue="tweediePowerEstimateChoice" indent="1"
+                inputType="combobox" name="tweediePowerCombo">Tweedie power parameter:</Option>
+            <Option inputType="string" name="tweediePowerEstimateChoice">Estimate the value</Option>
+            <Option inputType="string" name="tweediePowerSpecifyValueChoice">Specify a custom value</Option>
+            <Option indent="2" inputType="numbertext"
+                invalidMessage="Enter a number greater than or equal to 1.1 for the Tweedie power parameter"
+                maxValue="900000000000" minValue="1.1"
+                missingMessage="Enter a number greater than or equal to 1.1 for the Tweedie power parameter"
+                name="tweediePowerValue"
+                promptMessage="Enter a number greater than or equal to 1.1 for the Tweedie power parameter"
+                rangeMessage="Enter a number greater than or equal to 1.1 for the Tweedie power parameter"
+                rangeMessageKey="tweediePowerValueInvalidKey"
+                required="true" width="100px">Tweedie power:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="intercept">Include an intercept in the model</Option>
+            <Option inputType="string" name="methodsGroup">METHODS</Option>
+            <Option inputType="string" name="dispersionGroup">Dispersion</Option>
+            <Option defaultValue="estimateDispersionChoice"
+                inputType="combobox" name="dispersionCombo">Dispersion parameter:</Option>
+            <Option inputType="string" name="estimateDispersionChoice">Estimate value</Option>
+            <Option inputType="string" name="customDispersionChoice">Specify custom value</Option>
+            <Option indent="1" inputType="numbertext"
+                invalidMessage="Enter a number greater than 0 for the dispersion parameter"
+                maxValue="900000000000" minValue="0.0000000001"
+                missingMessage="Enter a number greater than 0 for the dispersion parameter"
+                name="dispersionValue"
+                promptMessage="Enter a number greater than 0 for the dispersion parameter"
+                rangeMessage="Enter a number greater than 0 for the dispersion parameter"
+                rangeMessageKey="dispersionValueInvalidKey"
+                required="true" width="100px">Custom dispersion value:</Option>
+            <Option inputType="string" name="resultsGroup">RESULTS</Option>
+            <Option inputType="string" name="tablesGroup">STATISTICS</Option>
+            <Option defaultValue="defaultChoice" inputType="combobox" name="tableChoice">Select statistics to display:</Option>
+            <Option inputType="string" name="defaultChoice">Default statistics</Option>
+            <Option inputType="string" name="customChoice">Default &amp; additional statistics</Option>
+            <Option inputType="string" name="noneChoice">None</Option>
+            <Option indent="1" inputType="checkbox" name="cl">Confidence limits for estimates</Option>
+            <Option defaultValue="confidence95" indent="2"
+                inputType="combobox" name="confidence">Confidence level:</Option>
+            <Option inputType="string" name="confidence90">90%</Option>
+            <Option inputType="string" name="confidence95">95%</Option>
+            <Option inputType="string" name="confidence99">99%</Option>
+            <Option indent="1" inputType="checkbox" name="corrEst">Correlations of parameter estimates</Option>
+            <Option indent="1" inputType="checkbox" name="covEst">Covariances of parameter estimates</Option>
+            <!-- Optimization techniques -->
+            <Option inputType="string" name="optimizationGroup">Optimization</Option>
+            <Option defaultValue="nrRidgeChoice" inputType="combobox" name="optMethod">Method:</Option>
+            <Option inputType="string" name="noneOptChoice">None</Option>
+            <Option inputType="string" name="congraChoice">Conjugate-gradient</Option>
+            <Option inputType="string" name="doglegChoice">Double dogleg</Option>
+            <Option inputType="string" name="nrRidgeChoice">Newton-Raphson with ridging</Option>
+            <Option inputType="string" name="nrLineSearchChoice">Newton-Raphson with line search</Option>
+            <Option inputType="string" name="simplexChoice">Nelder-Mead simplex</Option>
+            <Option inputType="string" name="quasiNewtonChoice">Dual quasi-Newton</Option>
+            <Option inputType="string" name="trustRegionChoice">Trust-region</Option>
+            <Option defaultValue="maxiterDefaultChoice"
+                inputType="combobox" name="maxiterCombo">Maximum number of iterations:</Option>
+            <Option inputType="string" name="maxiterDefaultChoice">Use default value</Option>
+            <Option inputType="string" name="maxiterCustomChoice">Use custom value</Option>
+            <Option inputType="numbertext"
+                invalidMessage="Enter a number greater than or equal to 0 for the maximum number of iterations"
+                maxValue="9000000000000" minValue="0"
+                missingMessage="Enter a number greater than or equal to 0 for the maximum number of iterations"
+                name="maxiter"
+                promptMessage="Enter a number greater than or equal to 0 for the maximum number of iterations"
+                rangeMessage="Enter a number greater than or equal to 0 for the maximum number of iterations"
+                rangeMessageKey="maxiterInvalidKey" required="true" width="100px">Custom maximum number of iterations:</Option>
+            <Option defaultValue="1E-8" inputType="validationtext"
+                invalidMessage="Enter a numeric value for the relative gradient convergence criterion"
+                missingMessage="Enter a numeric value for the relative gradient convergence criterion"
+                name="gconv"
+                promptMessage="Enter a numeric value for the relative gradient convergence criterion"
+                regExp="^[+]?\d+-[Ee]\d+" width="100px">Relative gradient convergence criterion:</Option>
+            <!-- Output data set options -->
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="outputGroup">OUTPUT DATA SET</Option>
+            <Option inputType="checkbox" name="outputDS">Create output data set</Option>
+            <Option defaultValue="HPgenselect" indent="1"
+                inputType="outputdata" name="outputDSName" required="true">Data set name:</Option>
+            <Option indent="1" inputType="string" name="residualStatsGroup">Residuals</Option>
+            <Option indent="1" inputType="string" name="predictedStatsGroup">Predicted Values</Option>
+            <Option inputType="checkbox" name="linp">Linear predictors</Option>
+            <Option inputType="checkbox" name="pred">Predicted values</Option>
+            <Option inputType="checkbox" name="clPred">Confidence limits for predicted values</Option>
+            <Option inputType="checkbox" name="residual">Residuals</Option>
+            <Option inputType="checkbox" name="pearson">Pearson residuals</Option>
+            <Option inputType="checkbox" name="adjPearson">Adjusted Pearson residuals</Option>
+            <Option defaultValue="confidence95" indent="1"
+                inputType="combobox" name="outputConfidence">Confidence level:</Option>
+            <!-- Model selection methods -->
+            <Option inputType="string" name="selectionTab">SELECTION</Option>
+            <Option inputType="string" name="selectionGroup">MODEL SELECTION</Option>
+            <Option defaultValue="noneSelectionChoice"
+                inputType="combobox" name="selectionMethod">Selection method:</Option>
+            <Option inputType="string" name="noneSelectionChoice">None</Option>
+            <Option inputType="string" name="forwardChoice">Forward selection</Option>
+            <Option inputType="string" name="backwardChoice">Backward elimination</Option>
+            <Option inputType="string" name="stepwiseChoice">Stepwise selection</Option>
+            <Option defaultValue="sigLevelChoice" inputType="combobox" name="chooseMethod">Select best model by:</Option>
+            <Option inputType="string" name="sigLevelChoice">Significance level</Option>
+            <Option inputType="string" name="aicChoice">Akaike's information criterion</Option>
+            <Option inputType="string" name="aiccChoice">Akaike's information criterion corrected for small-sample bias</Option>
+            <Option inputType="string" name="sbcChoice">Schwarz Bayesian criterion</Option>
+            <!-- 0 < slEntry < 1 -->
+            <Option decimalPlaces="1,15" defaultValue="0.05"
+                inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model"
+                maxValue="1" minValue="0"
+                missingMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model"
+                name="slEntry"
+                promptMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model"
+                rangeMessageKey="slEntryInvalidKey" required="true" width="100px">Significance level to add an effect to the model:</Option>
+            <!-- 0 < slStay < 1 -->
+            <Option decimalPlaces="1,15" defaultValue="0.05"
+                inputType="numbertext"                
+				invalidMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model"
+                maxValue="1" minValue="0"
+                missingMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model"
+                name="slStay"
+                promptMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model"
+                rangeMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model"
+                rangeMessageKey="slStayInvalidKey" required="true" width="100px">Significance level to remove an effect from the model:</Option>
+            <Option inputType="string" name="selectionDetailsGroup">DETAILS</Option>
+            <Option defaultValue="summaryDetailsChoice"
+                inputType="combobox" name="detailsCombo">Selection process details:</Option>
+            <Option inputType="string" name="summaryDetailsChoice">Selection summary</Option>
+            <Option inputType="string" name="stepDetailsChoice">Details for each step</Option>
+            <Option inputType="string" name="allDetailsChoice">All</Option>
+            <Option inputType="string" name="hierarchyLabel">Model effects hierarchy: For any term to be in the model, all model effects contained in the term must be present in the model</Option>
+            <Option defaultValue="1" inputType="checkbox" name="hierarchy">Maintain hierarchy of effects</Option>
+            <!--     <Option name="GROUPLISTS" inputType="string">LISTS</Option>
+       
+            <Option inputType="string" name="labelMULTIENTRY">An example of a multiple entry.  This control allows the user to add their own values to create a list.</Option>
+            <Option inputType="multientry" name="multientryEXAMPLE">Multiple entry:</Option>
+       --> 
+       	    <Option name="GRPREBINCHK" inputType="string">RE-BIN CONTINUOUS VARIABLES</Option>
+	    <Option name="labelReBin" inputType="string">By default, binning occurs only on the first iteration, if you decide to change your Binning Algorithm, you will need to check this box to trigger an update of the Binning process.</Option>
+            <Option name="chkReBin" defaultValue="0" inputType="checkbox">Changed my binning options and wish to Re-Bin? Default is no(unchecked)</Option>
+       
+		</Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="GROUP_ITERATION_NAME">
+                <OptionItem option="label_ITERATION_NAME"/>
+                <OptionItem option="text_ITERATION_NAME"/>
+            </Group>
+       <!--     <Group open="true" option="GROUPBIN">
+    		<OptionItem option="labelRADIOBIN"/>
+		<OptionItem option="NO"/>
+		<OptionItem option="YES"/>
+	   </Group>  -->
+            <Group open="true" option="rolesGroup">
+                <Group open="true" option="responseGroup">
+                    <OptionChoice option="distribution">
+                        <OptionItem option="binaryChoice"/>
+                        <OptionItem option="gammaChoice"/>
+                        <OptionItem option="invGaussianChoice"/>
+                        <OptionItem option="multinomialChoice"/>
+                        <OptionItem option="negBinomialChoice"/>
+                        <OptionItem option="normalChoice"/>
+                        <OptionItem option="poissonChoice"/>
+                        <OptionItem option="tweedieChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="tweediePowerCombo">
+                        <OptionItem option="tweediePowerEstimateChoice"/>
+                        <OptionItem option="tweediePowerSpecifyValueChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="tweediePowerValue"/>
+                    <OptionItem option="eventTrialsData"/>
+                    <RoleItem role="eventVariable"/>
+                    <RoleItem role="trialsVariable"/>
+                    <RoleItem role="responseVariable"/>
+                    <RoleItem role="numericResponseVariable"/>
+                    <OptionChoice option="refCombo">
+                        <OptionItem option="firstRefChoice"/>
+                        <OptionItem option="lastRefChoice"/>
+                        <OptionItem option="specifyRefChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="eventCombo">
+                        <OptionItem option="firstRefChoice"/>
+                        <OptionItem option="lastRefChoice"/>
+                        <OptionItem option="specifyRefChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="refLevelCombo"/>
+                    <OptionChoice option="linkFx">
+                        <OptionItem option="defaultLinkChoice"/>
+                        <OptionItem option="cLogLogChoice"/>
+                        <OptionItem option="identityChoice"/>
+                        <OptionItem option="logChoice"/>
+                        <OptionItem option="logLogChoice"/>
+                        <OptionItem option="logitChoice"/>
+                        <OptionItem option="probitChoice"/>
+                        <OptionItem option="reciprocalChoice"/>
+                        <OptionItem option="reciprocalSqChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="binomialDistLinkFx">
+                        <OptionItem option="logitChoice"/>
+                        <OptionItem option="cLogLogChoice"/>
+                        <OptionItem option="logLogChoice"/>
+                        <OptionItem option="logitChoice"/>
+                        <OptionItem option="probitChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="tweedieLinkFx">
+                        <OptionItem option="logChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="multinomialDistLinkFx">
+                        <OptionItem option="glogitChoice"/>
+                    </OptionChoice>
+                </Group>
+                <Group open="true" option="explanatoryGroup">
+                    <RoleItem role="classVariables"/>
+                    <Group option="classParamGroup">
+                        <OptionChoice option="classParam">
+                            <OptionItem option="glmParamChoice"/>
+                            <OptionItem option="refParamChoice"/>
+                        </OptionChoice>
+                    </Group>
+                    <Group option="classMissingGroup">
+                        <OptionItem option="classMissingNote"/>
+                    </Group>
+                    <RoleItem role="continuousVariables"/>					
+                    <RoleItem role="offsetVariable"/>
+                </Group>
+            </Group>
+            <Group open="true" option="GROUPRADIO">
+                <OptionItem option="labelRADIO"/>
+                <OptionItem option="NameNoDup"/>
+                <OptionItem option="NameWDups"/>
+                <OptionItem option="All_Iterations"/>
+            </Group>
+            <Group open="true" option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+                <RoleItem role="weightVariable"/>               
+            </Group>
+          
+ 
+            <!--MKB
+        	
+				<OptionItem option="labelMULTIENTRY"/>
+				<OptionChoice option="multientryEXAMPLE">
+				</OptionChoice> 
+		
+		    -->
+        </Container>
+        <Container option="modelTab">
+            <Group open="true" option="modelGroup">
+                <OptionItem option="modelBuilder"/>
+                <OptionItem option="intercept"/>
+            </Group>
+        </Container>
+        <Container option="selectionTab">
+            <Group open="true" option="selectionGroup">
+                <OptionChoice option="selectionMethod">
+                    <OptionItem option="noneSelectionChoice"/>
+                    <OptionItem option="forwardChoice"/>
+                    <OptionItem option="backwardChoice"/>
+                    <OptionItem option="stepwiseChoice"/>
+                </OptionChoice>
+                <OptionItem option="slEntry"/>
+                <OptionItem option="slStay"/>
+                <OptionChoice option="chooseMethod">
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="sigLevelChoice"/>
+                </OptionChoice>
+            </Group>
+            <Group option="selectionDetailsGroup">
+                <OptionChoice option="detailsCombo">
+                    <OptionItem option="summaryDetailsChoice"/>
+                    <OptionItem option="stepDetailsChoice"/>
+                    <OptionItem option="allDetailsChoice"/>
+                </OptionChoice>
+                <OptionItem option="hierarchyLabel"/>
+                <OptionItem option="hierarchy"/>
+            </Group>
+        </Container>
+        <Container option="optionsTab">
+            <Group option="methodsGroup">
+                <Group option="dispersionGroup">
+                    <OptionChoice option="dispersionCombo">
+                        <OptionItem option="estimateDispersionChoice"/>
+                        <OptionItem option="customDispersionChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="dispersionValue"/>
+                </Group>
+                <Group option="optimizationGroup">
+                    <OptionChoice option="optMethod">
+                        <OptionItem option="noneOptChoice"/>
+                        <OptionItem option="congraChoice"/>
+                        <OptionItem option="doglegChoice"/>
+                        <OptionItem option="quasiNewtonChoice"/>
+                        <OptionItem option="simplexChoice"/>
+                        <OptionItem option="nrLineSearchChoice"/>
+                        <OptionItem option="nrRidgeChoice"/>
+                        <OptionItem option="trustRegionChoice"/>
+                    </OptionChoice>
+                    <OptionChoice option="maxiterCombo">
+                        <OptionItem option="maxiterDefaultChoice"/>
+                        <OptionItem option="maxiterCustomChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="maxiter"/>
+                    <!--
+					<OptionItem option="gconv"/>
+-->
+                </Group>
+            </Group>
+   <!--         <Group open="true" option="tablesGroup">
+                <OptionChoice option="tableChoice">
+                    <OptionItem option="defaultChoice"/>
+                    <OptionItem option="customChoice"/>
+                    <OptionItem option="noneChoice"/>
+                </OptionChoice>
+                <OptionItem option="cl"/>
+                <OptionChoice option="confidence">
+                    <OptionItem option="confidence90"/>
+                    <OptionItem option="confidence95"/>
+                    <OptionItem option="confidence99"/>
+                </OptionChoice>
+                <OptionItem option="corrEst"/>
+                <OptionItem option="covEst"/>
+            </Group> 
+            <Group open="true" option="methodsGroup2">
+			<OptionItem option="nBins"/>
+		<OptionChoice option="binMethod">
+			<OptionItem option="bucketChoice"/>
+			<OptionItem option="winsorChoice"/>
+			<OptionItem option="pseudoChoice"/>
+		</OptionChoice>
+			<OptionItem option="winsorRate"/>
+	    </Group>
+	    <Group open="true" option="GRPREBINCHK">
+	     	<OptionItem option="labelReBin"/>
+	  	<OptionItem option="chkReBin"/>
+	    </Group>
+-->
+        </Container>
+        
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <Group open="true" option="predictedStatsGroup">
+                    <OptionItem option="linp"/>
+                    <OptionItem option="pred"/>
+                    <OptionItem option="clPred"/>
+                    <OptionChoice option="outputConfidence">
+                        <OptionItem option="confidence90"/>
+                        <OptionItem option="confidence95"/>
+                        <OptionItem option="confidence99"/>
+                    </OptionChoice>
+                </Group>
+                <Group option="residualStatsGroup">
+                    <OptionItem option="residual"/>
+                    <OptionItem option="pearson"/>
+                    <OptionItem option="adjPearson"/>
+                </Group>
+                <RoleItem role="idVariables"/>
+            </Group>
+        </Container>
+
+    </UI>
+    <Dependencies>
+	<Dependency condition="( !($eventTrialsData=='1') &amp;&amp; !($distribution == 'binaryChoice' || $distribution == 'multinomialChoice') )">
+            <Target action="show" conditionResult="true" option="numericResponseVariable"/>
+            <Target action="hide" conditionResult="false" option="numericResponseVariable"/>
+            <Target action="hide" conditionResult="true" option="responseVariable"/>
+            <Target action="show" conditionResult="false" option="responseVariable"/>
+        </Dependency>
+        <Dependency condition="(!($eventTrialsData=='1') &amp;&amp; ($distribution == 'binaryChoice' || $distribution == 'multinomialChoice'))">
+            <Target action="hide" conditionResult="true" option="numericResponseVariable"/>
+            <Target action="show" conditionResult="false" option="numericResponseVariable"/>
+            <Target action="show" conditionResult="true" option="responseVariable"/>
+            <Target action="hide" conditionResult="false" option="responseVariable"/>
+        </Dependency>
+        <Dependency condition="($distribution=='binaryChoice')">
+            <Target action="show" conditionResult="true" option="eventTrialsData"/>
+            <Target action="hide" conditionResult="false" option="eventTrialsData"/>
+        </Dependency>
+        <Dependency condition="($eventTrialsData=='1')">
+            <Target action="show" conditionResult="true" option="eventVariable"/>
+            <Target action="hide" conditionResult="false" option="eventVariable"/>
+            <Target action="show" conditionResult="true" option="trialsVariable"/>
+            <Target action="hide" conditionResult="false" option="trialsVariable"/>
+            <Target action="hide" conditionResult="true" option="responseVariable"/>
+            <Target action="hide" conditionResult="true" option="numericResponseVariable"/>
+            <Target action="hide" conditionResult="true" option="distribution"/>
+            <Target action="show" conditionResult="false" option="distribution"/>
+        </Dependency>
+        <Dependency condition="(!($eventTrialsData=='1') &amp;&amp; $distribution=='binaryChoice')">
+            <Target action="show" conditionResult="true" option="eventCombo"/>
+            <Target action="hide" conditionResult="false" option="eventCombo"/>
+        </Dependency>
+        <Dependency condition="($eventTrialsData=='1' ||  !( ($distribution &amp;&amp; ($distribution=='multinomialChoice' || $distribution=='binaryChoice' || $distribution=='tweedieChoice'))  ) )">
+            <Target action="show" conditionResult="true" option="linkFx"/>
+            <Target action="hide" conditionResult="false" option="linkFx"/>
+        </Dependency>
+        <Dependency condition="($distribution &amp;&amp; $distribution=='multinomialChoice')">
+            <Target action="show" conditionResult="true" option="multinomialDistLinkFx"/>
+            <Target action="hide" conditionResult="false" option="multinomialDistLinkFx"/>
+            <Target action="show" conditionResult="true" option="refCombo"/>
+            <Target action="hide" conditionResult="false" option="refCombo"/>
+        </Dependency>
+        <Dependency condition="(!($eventTrialsData=='1') &amp;&amp;  ($distribution &amp;&amp; $distribution=='binaryChoice') )">
+            <Target action="show" conditionResult="true" option="binomialDistLinkFx"/>
+            <Target action="hide" conditionResult="false" option="binomialDistLinkFx"/>
+        </Dependency>
+        <Dependency condition="($eventCombo == 'specifyRefChoice' || $refCombo == 'specifyRefChoice')">
+            <Target action="show" conditionResult="true" option="refLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="refLevelCombo"/>
+        </Dependency>
+        <Dependency condition="( $distribution=='gammaChoice' || $distribution=='invGaussianChoice' || $distribution=='normalChoice' || $distribution=='negBinomialChoice' || $distribution=='tweedieChoice' )">
+            <Target action="show" conditionResult="true" option="dispersionGroup"/>
+            <Target action="hide" conditionResult="false" option="dispersionGroup"/>
+        </Dependency>
+        <Dependency condition="($dispersionCombo &amp;&amp; $dispersionCombo == 'customDispersionChoice')">
+            <Target action="show" conditionResult="true" option="dispersionValue"/>
+            <Target action="hide" conditionResult="false" option="dispersionValue"/>
+        </Dependency>
+        <Dependency condition="($distribution=='tweedieChoice')">
+            <Target action="show" conditionResult="true" option="tweedieLinkFx"/>
+            <Target action="hide" conditionResult="false" option="tweedieLinkFx"/>
+            <Target action="show" conditionResult="true" option="tweediePowerCombo"/>
+            <Target action="hide" conditionResult="false" option="tweediePowerCombo"/>
+        </Dependency>
+        <Dependency condition="($distribution=='tweedieChoice' &amp;&amp; $tweediePowerCombo=='tweediePowerSpecifyValueChoice')">
+            <Target action="show" conditionResult="true" option="tweediePowerValue"/>
+            <Target action="hide" conditionResult="false" option="tweediePowerValue"/>
+        </Dependency>
+        <Dependency condition="($radioBIN_CHOICE=='YES')">
+	     <Target action="show" conditionResult="false" option="continuousVariables"/>
+	     <Target action="hide" conditionResult="true" option="continuousVariables"/>
+	     <Target action="show" conditionResult="false" option="methodsGroup2"/>
+     	     <Target action="hide" conditionResult="true" option="methodsGroup2"/>
+     	     <Target action="show" conditionResult="false" option="GRPREBINCHK"/>
+     	     <Target action="hide" conditionResult="true" option="GRPREBINCHK"/>
+	</Dependency>
+        <Dependency condition="($tableChoice=='customChoice')">
+            <Target action="show" conditionResult="true" option="cl"/>
+            <Target action="hide" conditionResult="false" option="cl"/>
+            <Target action="show" conditionResult="true" option="corrEst"/>
+            <Target action="hide" conditionResult="false" option="corrEst"/>
+            <Target action="show" conditionResult="true" option="covEst"/>
+            <Target action="hide" conditionResult="false" option="covEst"/>
+            <Target action="show" conditionResult="true" option="confidence"/>
+            <Target action="hide" conditionResult="false" option="confidence"/>
+        </Dependency>
+        <Dependency condition="($cl=='1')">
+            <Target action="show" conditionResult="true" option="confidence"/>
+            <Target action="hide" conditionResult="false" option="confidence"/>
+        </Dependency>
+        <Dependency condition="($binMethod=='winsorChoice')">
+           <Target action="show" conditionResult="true" option="winsorRate"/>
+           <Target action="hide" conditionResult="false" option="winsorRate"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+            <Target action="show" conditionResult="true" option="predictedStatsGroup"/>
+            <Target action="hide" conditionResult="false" option="predictedStatsGroup"/>
+            <Target action="show" conditionResult="true" option="linp"/>
+            <Target action="hide" conditionResult="false" option="linp"/>
+            <Target action="show" conditionResult="true" option="pred"/>
+            <Target action="hide" conditionResult="false" option="pred"/>
+            <Target action="show" conditionResult="true" option="idVariables"/>
+            <Target action="hide" conditionResult="false" option="idVariables"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; !($distribution=='multinomialChoice'))">
+            <Target action="show" conditionResult="true" option="clPred"/>
+            <Target action="hide" conditionResult="false" option="clPred"/>
+            <Target action="show" conditionResult="true" option="residualStatsGroup"/>
+            <Target action="hide" conditionResult="false" option="residualStatsGroup"/>
+            <Target action="show" conditionResult="true" option="residual"/>
+            <Target action="hide" conditionResult="false" option="residual"/>
+            <Target action="show" conditionResult="true" option="pearson"/>
+            <Target action="hide" conditionResult="false" option="pearson"/>
+            <Target action="show" conditionResult="true" option="adjPearson"/>
+            <Target action="hide" conditionResult="false" option="adjPearson"/>
+        </Dependency>
+        <Dependency condition="($clPred=='1')">
+            <Target action="show" conditionResult="true" option="outputConfidence"/>
+            <Target action="hide" conditionResult="false" option="outputConfidence"/>
+        </Dependency>
+        <Dependency condition="($selectionMethod == 'noneSelectionChoice')">
+            <Target action="hide" conditionResult="true" option="chooseMethod"/>
+            <Target action="show" conditionResult="false" option="chooseMethod"/>
+            <Target action="hide" conditionResult="true" option="selectionDetailsGroup"/>
+            <Target action="show" conditionResult="false" option="selectionDetailsGroup"/>
+        </Dependency>
+        <Dependency condition="($selectionMethod == 'forwardChoice' || $selectionMethod == 'stepwiseChoice')">
+            <Target action="show" conditionResult="true" option="slEntry"/>
+            <Target action="hide" conditionResult="false" option="slEntry"/>
+        </Dependency>
+        <Dependency condition="($selectionMethod == 'backwardChoice' || $selectionMethod == 'stepwiseChoice')">
+            <Target action="show" conditionResult="true" option="slStay"/>
+            <Target action="hide" conditionResult="false" option="slStay"/>
+        </Dependency>
+        <Dependency condition="($selectionMethod == 'forwardChoice' || $selectionMethod == 'backwardChoice' || $selectionMethod == 'stepwiseChoice')">
+            <Target action="show" conditionResult="true" option="hierarchy"/>
+            <Target action="hide" conditionResult="false" option="hierarchy"/>
+            <Target action="show" conditionResult="true" option="hierarchyLabel"/>
+            <Target action="hide" conditionResult="false" option="hierarchyLabel"/>
+        </Dependency>
+        <Dependency condition="(($maxiterCombo=='maxiterCustomChoice'))">
+            <Target action="show" conditionResult="true" option="maxiter"/>
+            <Target action="hide" conditionResult="false" option="maxiter"/>
+        </Dependency>
+    </Dependencies>
+    <Requirements>
+        <!-- NO LONGER USED: intercept only model is allowed -->
+		<Requirement condition="($continuousVariables.size() > 0 || $classVariables.size() > 0 )">
+			<Message nlsKey="continuousClassRequirementKey">Select at least one continuous or one classification variable.</Message>
+		</Requirement>
+
+		<Requirement condition="($continuousVariables.size() == 0 &amp;&amp; $classVariables.size() == 0 ) ||
+			($modelBuilder.size() > 0)">
+			<Message nlsKey="modelEffectsNeededRequirementKey">Add one or more effects to the model on the MODEL tab.</Message>
+		</Requirement>
+
+        <Requirement condition="(!($outputDS=='1') ||           (($outputDS=='1') &amp;&amp;(           $linp == '1' ||           $pred == '1' ||           $clPred == '1' ||           $pearson == '1' ||           $residual == '1' ||           $adjPearson == '1'               )))">
+            <Message nlsKey="outputRequirementKey">Select at least one statistic to include in the output data set.</Message>
+        </Requirement>
+    </Requirements>
+    <CodeTemplate><![CDATA[
+OPTIONS MERROR SYMBOLGEN MLOGIC MPRINT SOURCE SOURCE2;
+ods output close;
+#macro( ModelEffects $modelBuilder) 
+#if ( $modelBuilder ) 
+#foreach( $item in $modelBuilder )
+## if first element is 'm', then this is a main effect
+#if ( $item.get(0) == 'm' )
+#foreach( $subitem in $item.get(1) )$CTMUtil.toSASName($subitem) #end
+## if first element is 'i', then this is an interaction effect
+#elseif ( $item.get(0) == 'i' )
+#foreach( $subitem in $item.get(1) )$CTMUtil.toSASName($subitem)#if($velocityCount < $item.get(1).size())*#else #end#end 
+## if first element is 'n', then this is a nested effect
+#elseif ( $item.get(0) == 'n' )
+#foreach( $subitem1 in $item.get(1) )$CTMUtil.toSASName($subitem1)#if($velocityCount < $item.get(1).size())*#end#end(#foreach($subitem2 in $item.get(2))$CTMUtil.toSASName($subitem2)#if($velocityCount < $item.get(2).size())*#end#end) 
+#end
+#end 
+#end 
+#end
+
+## Calculate alpha from confidence
+#if ($cl == 1)
+#if ($confidence == "confidence95") #set( $alpha = 0.05 ) #elseif ($confidence == "confidence99") #set( $alpha = 0.01 ) #else #set( $alpha = 0.10 ) #end
+#end
+
+*WE WANT TO INITIALIZE OUR MACROS TO ZERO TO MAKE SURE NO CARRY OVER FROM PREVIOUS ITERATION;
+%LET WITH_REF=;
+%LET WO_REF=;
+*The code below pulls all variables from the table Base_w_default where their name is in the list of variables;
+*from Model Effect AND not flagged as a variable to treat as continuous;
+#if ( $classVariables.size() > 0 ) 
+
+PROC SQL ;
+    CREATE VIEW REF_VW AS SELECT BASE_W_NAME_DEFAULT FROM 
+        DATAFLDR.BASE_W_DEFAULT&MDLUZER WHERE (COMPRESS(NAME) IN 
+        (#foreach($item in $classVariables) '$item' #end)) ;
+
+
+
+    QUIT;RUN;
+
+
+%runquit;
+
+*THE CODE BELOW WILL LOAD OUR MACRO VARIABLES IF TEH VARAIBLE HAS A BASE OR RFERENCE LEVEL IT WILL LOOK LIKE THIS;
+*CAR_TYPE(REF="SUV" ) TELLING SAS TO MAKE THE BASE LEVEL SUV FOR THE VARIABLE CAR_TYPE;
+*IF A VARIABLE DOES NOT HAVE A BASE LEVEL, THEN THE CODE WILL LOOK LIKE THIS ;
+*CAR_TYPE AND THIS WILL SHOW UP IN THE SECOND CLASS STATEMENT(WE HAVE TWO THAT IS ALLOWED) THEY KEY HERE IS TO NOTE;
+*THE CODE THAT RUNS AFTER THIS AND IT IS ORDER=FREQ REF=FIRST THIS TELLS SAS THAT WHEN WE DON'T HAVE A BASE LEVEL;
+*WE WANT TO USER THE CATEGORY VALUE\SEGMENT WITH THE MOST FREQUENCIES AS OUR BASE. DOING THIS BECAUSE THE BASE LEVEL;
+*WHEN NOT EXPLICITLY DEFIND(REF="SUV") COULD JUMP AROUND WHICH RUINS OUR PARAMETER ESTIMATES WHEN COMPARING VERSIONS;
+*HARD TO SEE WHAT HAPPENS FROM ONE ITERATION TO THE NEXT IF THE BASE LEVEL KEEPS JUMPING. THE MACROS BELOW STOP;
+*THAT FROM HAPPENING;
+
+PROC SQL ;
+    SELECT BASE_W_NAME_DEFAULT INTO:WITH_REF SEPARATED BY ' ' FROM REF_VW WHERE BASE_W_NAME_DEFAULT LIKE '%REF=%';
+    SELECT BASE_W_NAME_DEFAULT INTO:WO_REF   SEPARATED BY ' ' FROM REF_VW WHERE BASE_W_NAME_DEFAULT NOT LIKE '%REF=%';
+QUIT;RUN;
+
+
+
+
+
+
+
+*IF THE MACRO IS BLANK OR EMPTY IT WILL RETURN A VALUE OF 1. IF IT'S NOT EMPTY, WILL RETURN A VALUE OF ZERO;
+*EXECUTE MACRO LIKE THIS X=%ISBLANK(&CHECK);
+
+
+*BELOW DOES THIS: IF OUR MACRO VARIABLES ARE NOT EMPTY THEN ADD TEH WORD CLASS IN FRONT OF OUR VARIABLES;
+*IF THE MACRO IS EMPTYP THEN ADD * TO THE MACRO, THIS WILL THEN COMMENT OUT THE LINE WHEN THE HP GENSELECT IS RAN;
+
+%MACRO LOAD_CLASS;
+    %LOCAL CLS_VALUE WO_REF_CLS;
+    %GLOBAL REF_CLS NOREF_CLS USE_THIS_DATA;
+    %LET REF_CLS=;
+    %LET NOREF_CLS=;
+	%*WE DONT HAVE TO HAVE BASE LEVELS IF THE MODEL IS FILED YOU PROBABLY WILL HAVE BASE LEVELS BUT NOT ALWAYS;
+	%*WE NEED TO BE PREPARED FOR BOTH CASES IF WE HAVE NO BASE LEVELS LOAD MACRO WITH ASTERISKS COMMENT SO SAS SKIPS OVER;
+	%*WE HAVE THIS SET UP TO USE 2 CLASS STATEMENTS  THE FIRST FOR THE BASE LEVELS AND THE SECOND FOR THE NONBASE LEVELS;
+	%*THIS IS DONE SO THE FIRST CLASS STATEMENT IN HPGENSELECT SAYS USE BASE LEVEL AS YOUR BASE;
+	%*THE SECOND CLASS STATEMENT SAYS FOR THESE VARIABLES USE THE SEGMENT WITH THE HIGHEST FREQUENCY;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    %IF %isBlank(&WITH_REF) %THEN
+        %DO;
+            %LET CLS_VALUE=%STR(*);
+        %END;
+    %ELSE
+        %DO;
+            %LET CLS_VALUE=CLASS;
+        %END;
+    %let REF_CLS=&CLS_VALUE &WITH_REF;
+
+    %IF %isBlank(&WO_REF) %THEN
+        %DO;
+            %LET WO_REF_CLS=%STR(*);
+        %END;
+    %ELSE
+        %DO;
+            %LET WO_REF_CLS=CLASS;
+        %END;
+    %let NOREF_CLS=&WO_REF_CLS &WO_REF;
+    
+  
+    
+%MEND LOAD_CLASS;
+
+%LOAD_CLASS;
+
+%runquit; 
+  
+#end
+
+
+%LET GLM_DATA=$dataset;
+
+%MACRO GLM_FROM_WHERE;
+%GLOBAL NERL_FLAG;
+	%*BELOW WILL FIGURE OUT WHICH DATA SOURCE TO USE;
+	%LET NERL_FLAG=;
+
+	%IF &GLM_DATA=DATAFLDR.BIN_FROM_NEURAL&MDLUZER %THEN %LET NERL_FLAG=NEURAL_PREDICTED;
+
+
+%MEND GLM_FROM_WHERE;
+
+%GLM_FROM_WHERE;
+
+
+
+*THE PURPOSE OF BELOW: WE WANT TO ASK HP GENSELECT TO OUTPUT ALL VARIABLES. TO DO THIS WE NEED TO TELL HP GENSELECT;
+*ALL THE VARIABLE NAMES, THE MACRO ABOVE DETERMINES IF BINNING WAS TURNED OFF, IF BINNING WAS TURNED OFF WE GET;
+*THE NAMES FROM OUR INPUT DATASET USED FOR MODELING. IF BINNING IS ON, WE USE THE OUTPUT FROM THE BIN PROCESS;
+*TO GET THE NAMES FROM THAT WILL BE PASSED TO HPGENSELECT AND TOLD TO OUTPUT THESE VAIRABLES (ALL VARIABLES);
+
+
+
+%LET DATACONT=;
+%LET HP_BIN_OUT=;
+%LET HP_NBR_OUT=;
+%LET HP_CTG_OUT=;
+
+PROC CONTENTS DATA=DATAFLDR.BIN_CHAR&MDLUZER OUT=CHECK_BIN_DROP(KEEP=NAME TYPE) NODETAILS NOPRINT;
+RUN;
+
+#if ( $continuousVariables.size() > 0 ) 
+
+
+%LET HP_NBR_OUT=#foreach($item in $continuousVariables) $item #end;
+
+    
+PROC SQL ;
+    SELECT NAME INTO:HP_BIN_OUT SEPARATED BY ' ' FROM CHECK_BIN_DROP WHERE TRIM(SUBSTR(NAME,5)) IN  
+          (#foreach($item in $continuousVariables) '$item' #end) AND SUBSTR(NAME,1,3)='BIN';
+
+    QUIT;RUN;
+
+
+
+#end
+%runquit;
+#if ( $classVariables.size() > 0 ) 
+
+%LET HP_CTG_OUT=#foreach($item in $classVariables) $item #end;
+ 
+#end
+
+
+%LET ITERATION_NAME=$text_ITERATION_NAME; 
+%LET WEIGHT_OUT=;
+#if( $weightVariable.size() > 0 )
+    %LET WEIGHT_OUT=#foreach( $item in $weightVariable)$item#end;
+#end
+
+
+%LET TARGET=#foreach( $item in $numericResponseVariable)$item#end;
+ 
+proc datasets lib=DATAFLDR nolist;
+	modify BIN_CHAR&MDLUZER;
+	label 
+		&TARGET='OBSERVED';
+
+quit;RUN;
+
+%GLM_PATH;
+
+## PROC statement
+
+
+
+proc hpgenselect data=&GLM_IN
+#if ($tableChoice == "noneChoice") noprint
+#elseif ($tableChoice == "customChoice")
+#if ($corrEst == 1) corr #end
+#if ($covEst == 1) cov #end
+#end
+   technique=#if($optMethod =="nrRidgeChoice") nrridg
+#elseif ($optMethod == "congraChoice") congra
+#elseif ($optMethod == "doglegChoice") dbldog
+#elseif ($optMethod == "quasiNewtonChoice") quanew
+#elseif ($optMethod == "simplexChoice") nmsimp
+#elseif ($optMethod == "nrLineSearchChoice") newrap
+#elseif ($optMethod == "trustRegionChoice") trureg		
+#elseif ($optMethod == "noneOptChoice") none
+#end
+   
+
+#if($maxiterCombo=='maxiterCustomChoice') maxiter=$maxiter#end
+;
+
+## CLASS statement
+#if ( $classVariables.size() > 0 ) 
+
+
+
+
+&REF_CLS / PARAM=GLM;
+&NOREF_CLS /ORDER=FREQ REF=FIRST PARAM=GLM; 
+ 
+#end
+
+## MODEL statement  
+   model
+#if(!($eventTrialsData == '1'))
+## Single response variable 
+   
+   #if ($responseVariable)  
+      #set( $respVar = $responseVariable )
+   #elseif ($numericResponseVariable)
+      #set( $respVar = $numericResponseVariable )
+   #end
+   
+   #foreach( $item in $respVar ) $item#end
+   #if($distribution == "binaryChoice")(event=#if ($eventCombo=='firstRefChoice') first
+      #elseif ($eventCombo=='lastRefChoice') last
+      #else '$refLevelCombo'
+      #end)
+   #elseif($distribution == "multinomialChoice" && ($multinomialDistLinkFx == 'glogitChoice'))(ref=#if ($refCombo=='firstRefChoice') first#elseif ($refCombo=='lastRefChoice') last#else '$refLevelCombo'#end)
+   #end = 
+#else
+## Event/trials variables
+   #foreach( $item in $eventVariable ) $item #end / #foreach( $item in $trialsVariable ) $item #end = 
+#end
+
+#ModelEffects($modelBuilder)/
+#if (!($intercept == 1)) noint #end
+#if ($cl=='1') cl alpha=$alpha #end
+
+   dist=#if($eventTrialsData == '1') binomial
+#elseif($distribution == "binaryChoice") binomial
+#elseif($distribution == "gammaChoice") gamma
+#elseif($distribution == "invGaussianChoice") inversegaussian
+#elseif($distribution == "multinomialChoice") multinomial link=glogit
+#elseif($distribution == "negBinomialChoice") negativebinomial
+#elseif($distribution == "normalChoice") normal
+#elseif($distribution == "poissonChoice") poisson
+#elseif($distribution == "tweedieChoice") tweedie#if ($tweediePowerValue) p=$tweediePowerValue#end
+#end
+
+#if($linkFx && !($linkFx  == "defaultLinkChoice"))
+ link=#if ($linkFx == "logitChoice") logit
+   #elseif ($linkFx == "probitChoice") probit
+   #elseif ($linkFx == "cLogLogChoice") cloglog
+   #elseif ($linkFx == "logLogChoice") loglog
+   #elseif ($linkFx == "identityChoice") identity
+   #elseif ($linkFx == "reciprocalChoice") inv
+   #elseif ($linkFx == "reciprocalSqChoice") inv2
+   #elseif ($linkFx == "logChoice") log
+   #end
+#end
+#if($binomialDistLinkFx && !($binomialDistLinkFx == "defaultLinkChoice"))
+ link=#if  ($binomialDistLinkFx == "logitChoice") logit
+   #elseif ($binomialDistLinkFx == "probitChoice") probit
+   #elseif ($binomialDistLinkFx == "cLogLogChoice") cloglog
+   #elseif ($binomialDistLinkFx == "logLogChoice") loglog
+   #end
+#end
+
+#if ($offsetVariable.size() > 0) offset=#foreach( $item in $offsetVariable ) $item #end #end
+#if($dispersionValue) dispersion=$dispersionValue#end
+  ; 
+
+#if ($outputDS == '1')
+   output out=$outputDSName
+   #if($linp == 1) linp #end
+   #if($pred == 1) pred #end
+   #if($clPred == 1) lower upper #end
+   #if($residual == 1) residual #end
+   #if($pearson == 1) pearson #end
+   #if($adjPearson == 1) adjpearson #end
+   #if($clPred == 1)
+      #if ($outputConfidence == "confidence95") #set( $clAlpha = 0.05 ) #elseif ($outputConfidence == "confidence99") #set( $clAlpha = 0.01 ) #else #set( $clAlpha = 0.10 ) #end
+ / alpha=$clAlpha
+
+
+
+
+
+   #end
+;
+#end
+
+## SELECTION statement
+#if (!($selectionMethod == 'noneSelectionChoice'))
+   selection #if($selectionMethod == 'forwardChoice')method=forward( slentry=$slEntry 
+   #elseif ($selectionMethod == 'backwardChoice')method=backward( slstay=$slStay 
+   #elseif ($selectionMethod == 'stepwiseChoice')method=stepwise( slentry=$slEntry slstay=$slStay 
+   #end
+   #if(!($chooseMethod == "sigLevelChoice")) choose=#if($chooseMethod == "aicChoice") aic
+      #elseif($chooseMethod == "aiccChoice") aicc
+      #elseif($chooseMethod == "sbcChoice") sbc
+      #end  
+   #end
+   )
+   #if($detailsCombo == 'stepDetailsChoice') details=steps
+   #elseif($detailsCombo == 'allDetailsChoice') details=all
+   #end
+
+   #if($selectionMethod == 'forwardChoice' || $selectionMethod == 'backwardChoice' || $selectionMethod == 'stepwiseChoice')
+      #if($hierarchy == 1) hierarchy=single
+      #else hierarchy=none
+      #end	
+   #end	## end of #if($selectionMethod == 'forwardChoice'...
+;
+#end
+
+#if( $idVariables.size() > 0 )
+    id #foreach( $item in $idVariables ) $item #end;
+#end
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+
+#if( $weightVariable.size() > 0 )
+    weight #foreach( $item in $weightVariable ) $item #end;
+#end
+ 
+
+
+id &HP_BIN_OUT &HP_NBR_OUT &HP_CTG_OUT &TARGET &WEIGHT_OUT &NERL_FLAG;
+
+output out=&GLM_OUT PRED=GLM_PRED;
+ods output  ParameterEstimates=tempParmeterEstimates FitStatistics=fs_out(rename=(label=FitMeasure));
+
+
+
+
+run;
+%runquit;
+#*
+%LET COMBVARS=$multientryEXAMPLE;
+%LET COMBVARS=%QSYSFUNC(TRANSLATE(%SUPERQ(COMBVARS),//%STR(),[%NRSTR(,)]));
+%put multientryEXAMPLE=$multientryEXAMPLE;
+*#
+
+
+
+
+
+%LET SLCT_MTHD=;
+%LET BEST_MDL=;
+## load selection method into macro
+#if ($selectionMethod == 'noneSelectionChoice') %LET SLCT_MTHD=NONE;
+   #elseif($selectionMethod == 'forwardChoice') %LET SLCT_MTHD =forward( slentry=$slEntry); 
+   #elseif ($selectionMethod == 'backwardChoice') %LET SLCT_MTHD=backward( slstay=$slStay); 
+   #elseif ($selectionMethod == 'stepwiseChoice') %LET SLCT_MTHD=stepwise( slentry=$slEntry slstay=$slStay); 
+#end
+
+
+## load method of choosing model into macro
+
+#if($chooseMethod == "sigLevelChoice") %LET BEST_MDL=SIG_LVL;
+   #elseif($chooseMethod == "aicChoice") %LET BEST_MDL=AIC;
+   #elseif($chooseMethod == "aiccChoice") %LET BEST_MDL=AICC;
+   #elseif($chooseMethod == "sbcChoice") %LET BEST_MDL=SBC;
+#end  
+
+## load HOW USER WOULD LIKE TO SEE AIC INTO MACRO
+
+
+
+#if($AIC_RADIO == 'NameNoDup') %LET AIC_VERZN=1;*MOST RECENT NAMED ITERATIONS(NO DUPLICATES OF ITERATINS NAMES ALLOWED;
+	#elseif($AIC_RADIO == 'NameWDups') %LET AIC_VERZN=2;*NAMED ITERATIONS DUPES ALLOWED;
+	#elseif($AIC_RADIO == 'All_Iterations') %LET AIC_VERZN=3;*ALL ITERATIONS;
+	
+#end     
+*IN THE EVENT OF A DATA ERROR WE WANT TO MAKE SURE BAD DATA DOES NOT GET WRITTEN TO OUR PERMANENT DATASETS;
+*BY DELETING OUR PREVIOUS VERSION WORK FILES IF A DATA ERROR OCCURRS THEN OUR WORK DATASETS WILL NOT BE CREATED;
+*AND THE RISK OF WRITING BAD DATA TO OUR PERMANENT DATASETS IS ZERO;
+
+PROC DATASETS LIB=WORK;
+DELETE
+SORTTempTableSorted
+TRNSTransposed
+FIT_VW
+ONE_RUN
+AIC_TABLE
+TBL_INFO_TRANS
+MOST_RECENT
+CORRECT_VERSIONS
+EST_SHELL
+SHELL_TRANS
+CORRECT_VRSNS_WO_SHL_VW
+SHELL_VARS_VW
+SHELL_DT_VW
+COMPARZZ;
+
+
+
+
+
+
+QUIT;
+RUN;
+
+
+
+
+
+PROC SQL ;
+    CREATE VIEW WORK.SORTTempTableSorted AS SELECT T.Value FROM WORK.FS_OUT as 
+        T;
+
+
+QUIT;
+
+%runquit;
+
+PROC TRANSPOSE DATA=WORK.SORTTempTableSorted 
+        OUT=WORK.TRNSTransposed(LABEL="Transposed WORK.FS_OUT") PREFIX=Column 
+        NAME=Source LABEL=Label;
+    VAR Value;
+
+    /* -------------------------------------------------------------------
+    End of task code
+    ------------------------------------------------------------------- */
+RUN;
+
+QUIT;
+
+DATA FIT_VW;
+    SET WORK.TRNSTransposed;
+    RENAME Column1=TWO_LOG_LIKLIHD Column2=AIC Column3=AICC Column4=BIC 
+        Column5=PearsonChiSq Column6=PearsonDF;
+    DROP Source;
+RUN;
+
+*%clear_AIC;
+*this will delete the data DATAFLDR.TBL_MODEL_INFO&MDLUZER SO WE CAN START OVER;
+*%clearVersions;
+* this will zap the dataset DATAFLDR.MODEL_VERSIONS&MDLUZER SO WE CAN START OVER;
+**************************  PROCESS OF CREATING VERSIONS FOR PARAMETER ESTIMATES   ********;
+*************************   NEED TO PUT IN TEMPLATE MACRO VARIABLED CALLED NAMED_ONLY********;
+**************************  THIS WILL LIMIT THE ESTIMATES TO BE FOR ONLY ITERATIONS WHERE******;
+**************************  WHERE THE USER PROVIDED A NAME                               ******;
+******************************PROC SQL BELOW IS MEANT TO HOUSE A VERSION THAT HAS ESTIMATES OF COEFFICENTS  *******;
+
+%runquit;
+proc contents data=WORK.tempParmeterEstimates out=Lvl_name(keep=name);run;
+
+
+
+
+PROC SQL;
+	SELECT COUNT(*) INTO :Level_cnt FROM Lvl_name WHERE upcase(name)='LEVEL';
+QUIT;RUN;
+
+
+
+%macro Level_chk;
+
+
+
+%if &Level_cnt=0 %then 
+		%DO;
+
+			proc sql;
+				alter table WORK.tempParmeterEstimates
+				add Level char length=50 label='Level';
+
+
+
+
+
+
+
+				insert into WORK.tempParmeterEstimates
+				set Effect='Dummy_Catg',
+				Parameter='Dummy_catg',
+				Level='Dummy_catg',
+				Estimate=0,
+				DF=1,
+				stdErr=0,
+				ChiSq=0,
+				ProbChiSq=0;
+			quit;run;
+
+		%END;
+%MEND LEVEL_CHK;
+
+%Level_chk;
+%runquit;
+
+PROC SQL ;
+    CREATE TABLE WORK.ONE_RUN AS SELECT DISTINCT "&MODEL_NAME" as MODEL_NAME 
+        LENGTH=32, "&ITERATION_NAME" AS ITERATION_NAME LENGTH=32, t2.AIC 
+        label='AIC(Smaller is better)', T1.EFFECT LENGTH=32, trim(T1.LEVEL) AS 
+        LEVEL LENGTH=50, T1.ESTIMATE, T1.StdERR, DATETIME() as RUNTIME 
+        format=DATETIME19., "&SYSUSERID" as PERSON, "&SLCT_MTHD" AS 
+        MDL_SLCTN_MTHD LENGTH=40, "&BEST_MDL" AS SIG_OR_AIC LENGTH=10, 
+        t2.TWO_LOG_LIKLIHD, t2.AICC label='AICC(Smaller is better)', t2.BIC 
+        label='BIC(Smaller is better)', t2.PearsonChiSq as PersonChiSq_Mdl, 
+        t2.PearsonDF as PearsonDF_Mdl FROM WORK.tempParmeterEstimates t1 CROSS 
+        JOIN WORK.FIT_VW t2 WHERE effect not in ('Dispersion', 'Intercept');
+
+
+
+
+
+
+
+
+
+
+
+QUIT;
+
+run;
+%runquit;
+
+PROC APPEND BASE=DATAFLDR.MODEL_VERSIONS&MDLUZER FORCE DATA=WORK.ONE_RUN;
+    QUIT;
+    ****************************   END OF VERSION FOR PARAMETER ESTIMATES    *********************************;
+    ******************************THIS WILL ADD A RECORD TO THE VERSION AIC TABLE**********************;
+
+PROC SQL ;
+    CREATE TABLE WORK.AIC_TABLE AS SELECT DISTINCT "&ITERATION_NAME" AS 
+        ITERATION_NAME LENGTH=32, "&MODEL_NAME" as MODEL_NAME LENGTH=32, t2.AIC 
+        label='AIC(Smaller is better)', T1.EFFECT LENGTH=32, DATETIME() as 
+        RUNTIME format=DATETIME19., "&SYSUSERID" as PERSON, "&SLCT_MTHD" AS 
+        MDL_SLCTN_MTHD LENGTH=40, "&BEST_MDL" AS SIG_OR_AIC LENGTH=10, COUNT(DISTINCT T1.EFFECT) AS VARZ_IN_MDL, 
+        t2.TWO_LOG_LIKLIHD, t2.AICC label='AICC(Smaller is better)', t2.BIC 
+        label='BIC(Smaller is better)', t2.PearsonChiSq as PersonChiSq_Mdl, 
+        t2.PearsonDF as PearsonDF_Mdl FROM WORK.tempParmeterEstimates t1 CROSS 
+        JOIN WORK.FIT_VW t2 WHERE effect not in ('Dispersion', 'Intercept');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUIT;
+
+run;
+%runquit;
+
+proc transpose data=WORK.AIC_TABLE out=WORK.TBL_INFO_TRANS(DROP=SOURCE) 
+        prefix=VAR_RTM name=Source label=Label;
+    by ITERATION_NAME AIC RUNTIME MDL_SLCTN_MTHD SIG_OR_AIC TWO_LOG_LIKLIHD 
+        AICC BIC PersonChiSq_Mdl PearsonDF_Mdl MODEL_NAME PERSON VARZ_IN_MDL;
+
+
+
+
+    var Effect;
+    *COPY AIC RUNTIME PERSON MDL_SLCTN_MTHD MDL_SLCTN_SIG_LVL TWO_LOG_LIKLIHD AICC BIC PersonChiSq_Mdl PearsonDF_Mdl;
+run;
+
+*BELOW WILL EQUAL 1 IF DATASET EXISTS, WILL EQUAL ZERO IF IT DOES NOT;
+
+%MACRO MY_APPND;
+    %IF %sysfunc(exist(DATAFLDR.TBL_MODEL_INFO&MDLUZER, data)) %THEN
+        %DO;
+
+            DATA DATAFLDR.TBL_MODEL_INFO&MDLUZER;
+                SET WORK.TBL_INFO_TRANS DATAFLDR.TBL_MODEL_INFO&MDLUZER;
+            %END;
+        %ELSE
+            %DO;
+
+            DATA DATAFLDR.TBL_MODEL_INFO&MDLUZER;
+                SET WORK.TBL_INFO_TRANS;
+            %END;
+    RUN;
+
+%MEND MY_APPND;
+
+%MY_APPND;
+********************************* BELOW WILL CREATE TEH CORRECT FILE TO SEND TO THE CREATE SHELL PROCESS *********;
+********************************* DEPENDING ON WHAT THE USER SELECTED IN TEH GENSELECT INPUT TEMPLATE    *********;
+********************************* WILL DETERMINE OUTPUT OF THIS PROCESS                                  *********;
+
+PROC SQL ;
+    CREATE TABLE WORK.MOST_RECENT AS SELECT DISTINCT ITERATION_NAME, 
+        MAX(RUNTIME) AS MOST_RECENT format=DATETIME19.
+
+
+
+
+FROM DATAFLDR.MODEL_VERSIONS&MDLUZER GROUP BY ITERATION_NAME;
+QUIT;
+
+RUN;
+%runquit;
+%LET SQL_WHERE=;
+
+%macro AIC_VIEW;
+    %GLOBAL SQL_WHERE;
+
+    %IF %EVAL(&AIC_VERZN)=1 %then
+        %LET SQL_WHERE=FROM DATAFLDR.MODEL_VERSIONS&MDLUZER T1 INNER JOIN WORK.MOST_RECENT T2 ON T1.ITERATION_NAME=T2.ITERATION_NAME AND PUT(T1.RUNTIME, 
+            DATETIME19.2)=PUT(T2.MOST_RECENT, DATETIME19.2);
+
+    %IF %EVAL(&AIC_VERZN)=2 %then
+        %LET SQL_WHERE=FROM DATAFLDR.MODEL_VERSIONS&MDLUZER T1 WHERE ITERATION_NAME IS NOT MISSING ;
+
+    %IF %EVAL(&AIC_VERZN)=3 %then
+        %LET SQL_WHERE=FROM DATAFLDR.MODEL_VERSIONS&MDLUZER T1;
+%MEND AIC_VIEW;
+
+%AIC_VIEW;
+
+PROC SQL ;
+    CREATE TABLE WORK.CORRECT_VERSIONS AS SELECT T1.* &SQL_WHERE;
+QUIT;
+
+RUN;
+****************************** END OF PROCESS OF CREATING FILE TO SEND TO CREATE SHELL PROCESS     **********;
+*NEED A SHELL TO HOUSE VARIABLES FROM ALL ITERATIONS BECAUSE NOT ALL ITERATIONS WILL HAVE SAME VARIABLES   ;
+**************************************  CREATE SHELL FOR ALL VARIABLES       **************************************;
+%runquit;
+
+proc sql ;
+    create table WORK.EST_SHELL as select distinct effect LENGTH=32, 
+        "VARIABLES FROM ALL ITERATIONS" AS ITERATION_NAME LENGTH=32 from 
+        WORK.CORRECT_VERSIONS;
+quit;
+
+
+
+proc transpose data=WORK.EST_SHELL out=WORK.SHELL_TRANS(DROP=SOURCE) prefix=VAR_RTM 
+        name=Source label=Label;
+
+
+
+
+    by ITERATION_NAME;
+    var Effect;
+run;
+
+*WE WILL ADD 50 YEARS TO TODAYS DATE SO THAT OUR "VARIABLES FROM ALL ITERATIONS WILL BE ON TOP" IN TERMS OF MOST RECENT;
+*IN OUR VA AIC TABLE;
+
+DATA WORK.SHELL_DT_VW /VIEW=WORK.SHELL_DT_VW;
+SET WORK.SHELL_TRANS;
+
+
+X=DATETIME();
+RUNTIME=intnx('dtyear',X,50);
+
+FORMAT RUNTIME DATETIME19.;
+DROP X; 
+       
+run;
+
+
+*ABOVE CODE CREATED A SHELL, NOW LETS GET THE RIGHT VERSIONS RECORDS TO JOIN WIHT SHELL;
+*LETS GET ONLY THE REQUESTED VERSIONS;
+
+PROC SQL ;
+    CREATE VIEW WORK.CORRECT_VRSNS_WO_SHL_VW AS SELECT DISTINCT T1.* FROM DATAFLDR.TBL_MODEL_INFO&MDLUZER T1 INNER 
+        JOIN WORK.CORRECT_VERSIONS T2 ON 
+
+
+
+
+        TRIM(T1.ITERATION_NAME)=TRIM(T2.ITERATION_NAME) AND PUT(T1.RUNTIME, 
+        DATETIME19.)=PUT(T2.RUNTIME, DATETIME19.)
+        ORDER BY T1.RUNTIME DESCENDING;
+
+
+QUIT;RUN;
+
+
+
+
+data WORK.SHELL_VARS_VW /VIEW=WORK.SHELL_VARS_VW;
+    set WORK.SHELL_DT_VW WORK.CORRECT_VRSNS_WO_SHL_VW;
+    LENGTH NAME_ONLY $1.;
+
+    IF ITERATION_NAME='' THEN
+        NAME_ONLY='N';
+    ELSE
+        NAME_ONLY='Y';
+run;
+
+%runquit;
+*BELOW WILL TAKE ALL OUR VARIABLES THAT WERE CREATED IN OUR SHELL AND THEN SETUP SO WE CAN COUNT HOW MANY VARIABLES TOTAL;
+
+proc contents data=WORK.SHELL_TRANS(KEEP=VAR_RTM:) noprint 
+        out=shell_vars(KEEP=NAME);
+run;
+
+*BELOW WILL NOW COUNT THE VARIABLES TO HELP SETUP THE DO LOOP IN THE ARRAY FOR PROPER SORTING;
+
+PROC SQL ;
+    SELECT COUNT(*) INTO :SHELL_CNT FROM shell_vars;
+QUIT;RUN;
+
+
+
+DATA _NULL_;
+	CALL SYMPUT('ANCHOR', COMPRESS('MDL_INPT'||PUT(&SHELL_CNT,Z2.)));
+	CALL SYMPUT('VAR_RTM_END', COMPRESS('VAR_RTM'||&SHELL_CNT));
+	%LET SHL_PLS_ONE=%EVAL(&SHELL_CNT + 1);
+RUN;
+
+*PART THAT HAD REALLY CONFUSED ME IS THAT ROWS DO NOT MAKE DIMENSIONS;
+*IF YOUR DATA HAD ONE MILLION RECORDS THAT DOES NOT MEAN YOU NEED AN ARRAY WITH ONE MILLION ITEMS;
+*THINK OF EACH ROW OF DATA AS A SEPARATE DATASET;
+
+data WORK.COMPARZZ;
+    FORMAT ITERATION_NAME RUNTIME AIC MDL_INPT01-&ANCHOR;
+    set WORK.SHELL_VARS_VW;
+    ARRAY ALLDATA{&shell_cnt} VAR_RTM1-&VAR_RTM_END;
+    ARRAY TOPROW{&shell_cnt} $32. _temporary_;
+    ARRAY MDL_INPT{&shell_cnt} $32. MDL_INPT01-&ANCHOR;
+    RETAIN TOPROW;
+
+    IF _n_=1 then
+        DO;
+
+            DO j=1 to &SHELL_CNT;
+                TOPROW{j}=ALLDATA{j};
+            END;
+        END;
+
+    DO M=1 TO &SHELL_CNT;
+
+        DO L=1 TO &SHELL_CNT;
+
+            IF ALLDATA{M}=TOPROW{L} THEN
+                MDL_INPT{L}=ALLDATA{M};
+        END;
+    END;
+    DROP J M L VAR_RTM:;
+    
+    IF MDL_SLCTN_MTHD IN ('NONE','') THEN SIG_OR_AIC='';
+
+
+
+RUN;
+
+%runquit;
+
+%MACRO ADD_DUMMY_VARS;
+	PROC SORT DATA=WORK.COMPARZZ;
+		BY RUNTIME;
+	RUN;
+
+	DATA DATAFLDR.AIC_TBL_&MDLUZER;
+		SET WORK.COMPARZZ;
+		PREVIOUS_AIC=LAG(AIC);
+
+		%DO A=&SHL_PLS_ONE %TO 50;
+			%LET TEMPA=%SYSFUNC(PUTN(&A,Z2.));
+			%LET NEWVARA=MDL_INPT&TEMPA;
+			LENGTH &NEWVARA $32.;
+			MDL_INPT&TEMPA=' ';
+		%END;
+	RUN;
+
+%MEND ADD_DUMMY_VARS;
+
+%ADD_DUMMY_VARS;
+%runquit; 
+
+********************************   PROC HP SUMMARY ************************************;
+
+
+
+
+*summarize the data down to the categories and leave with averages for the observed severity and predicted severity;
+*IF I USE WAYS=0 THAT WILL GENERATE A DUMMY RECORD SET;
+
+%LET WEIGHT_4HPSUM=;
+%LET SUM_MY_WGT=;
+%LET WGT_SHAPE=;
+
+%MACRO USE_WEIGHT;
+	%LOCAL WEIGHT_VALUE;
+	%GLOBAL WEIGHT_4HPSUM SUM_MY_WGT WGT_SHAPE;
+	
+	
+	%IF %isBlank(&WEIGHT_OUT) %THEN
+		%DO;
+			%LET WEIGHT_VALUE=%STR(*);
+			%LET SUM_MY_WGT=;
+		%END;
+	%ELSE
+		%DO;
+			%LET WEIGHT_VALUE=WEIGHT;
+			%LET SUM_MY_WGT=SUM%STR(%()&WEIGHT_OUT%STR(%)=)SUM&WEIGHT_OUT;
+			%LET WGT_SHAPE=SUM&WEIGHT_OUT;
+		%END;
+		
+	%let WEIGHT_4HPSUM=&WEIGHT_VALUE &WEIGHT_OUT;
+
+%MEND USE_WEIGHT;
+
+%USE_WEIGHT;
+%RUNQUIT;
+
+PROC HPSUMMARY DATA=&GLM_OUT MISSING;
+	CLASS &HP_BIN_OUT &HP_CTG_OUT;
+	VAR &TARGET GLM_PRED &HP_NBR_OUT;
+	WAYS 1;
+	&WEIGHT_4HPSUM;
+	OUTPUT OUT=MDL_DATA &SUM_MY_WGT MEAN= /AUTONAME;
+	
+RUN;
+
+%RUNQUIT;
+*****************************    END OF PROC HP SUMMARY **********************************;
+%LET TARGETMEAN=%TRIM(&TARGET)_MEAN;
+
+PROC DATASETS LIB=WORK;
+	DELETE CHAR_ONLY BIN_ONLY;
+QUIT;
+
+RUN;
+
+proc contents data=WORK.MDL_DATA(DROP=&TARGETMEAN _FREQ_ _TYPE_ 
+		GLM_PRED_MEAN &WGT_SHAPE) out=metaclass(KEEP=TYPE NAME) noprint NODETAILS;
+RUN;
+
+PROC SQL ;
+	SELECT COUNT(*) INTO :BIN_OBS FROM METACLASS WHERE SUBSTR(NAME, 1, 3)='BIN';
+	SELECT COUNT(*) INTO :CHAR_OBS FROM METACLASS WHERE ((SUBSTR(NAME, 1, 3) NOT='BIN') AND (NAME NOT LIKE '%_Mean%'));
+QUIT;
+
+*BELOW WE DUMMY A VARIABLE IN FOR SEGMENT VALUE IN CASE NONE WERE SELECTED;
+*WE DO THIS SO THE PROGRAM DOES NOT BOMB. THE DUMMY VARIABLE IS HARMLESS;
+*THIS WAS FASTEST\EASIEST WAY TO DEAL WITH AN EMPTY SELECTION;
+%LET USE_SEGMENT_VALUE=T1.SEGMENT_VALUE;
+
+%MACRO CHK_INPUTS;
+
+%GLOBAL SUPPORT_VW;
+%LOCAL CHAR_PORTION BIN_PORTION;
+%LET CHAR_PORTION=;
+%LET BIN_PORTION=;
+
+%IF %EVAL(&CHAR_OBS) > 0 %THEN
+		%DO;
+			%LET CHAR_PORTION=WORK.CHAR_ONLY;
+		%END;
+		
+
+%IF %EVAL(&BIN_OBS) > 0 %THEN
+		%DO;
+			%LET BIN_PORTION=WORK.BIN_ONLY;
+		%END;
+%ELSE	
+		%DO;
+			%LET USE_SEGMENT_VALUE=0 AS SEGMENT_VALUE;
+		%END;
+		
+%LET SUPPORT_VW=&CHAR_PORTION &BIN_PORTION;
+
+%MEND CHK_INPUTS;
+
+%CHK_INPUTS;		
+
+
+%macro Bin_only;
+
+%IF %EVAL(&BIN_OBS) > 0 %THEN %DO;
+
+	PROC SQL ;
+	SELECT DISTINCT(NAME) INTO :BIN_NM1-:BIN_NM%TRIM(%LEFT(&BIN_OBS)) FROM 
+
+		METACLASS WHERE SUBSTR(NAME, 1, 3)='BIN';
+	SELECT DISTINCT(COMPRESS(CAT(SUBSTR(NAME, 5), '_MEAN'))) 
+		INTO :BIN_AVG1-:BIN_AVG%TRIM(%LEFT(&BIN_OBS)) FROM METACLASS WHERE 
+		SUBSTR(NAME, 1, 3)='BIN';
+	QUIT;RUN;
+
+
+
+
+
+	PROC DATASETS LIB=WORK;
+		DELETE BIN_ONLY BIN;
+	QUIT;
+
+
+	RUN;
+	%GLOBAL R;
+
+
+	%DO R=1 %TO &BIN_OBS;
+
+		data BIN;
+
+
+			set WORK.MDL_DATA(KEEP=&&BIN_NM&R &TARGETMEAN GLM_PRED_MEAN 
+				_FREQ_ &&BIN_AVG&R &WGT_SHAPE);
+			LENGTH VARIABLZ SEGMENT $50.;
+			LENGTH SEGMENT_VALUE 8.;
+			VARIABLZ="&&BIN_NM&R";
+
+
+
+
+
+			IF &&BIN_NM&R='' THEN
+				DELETE;
+			SEGMENT=COMPRESS(%TRIM(&&BIN_NM&R)||'_'||PUT(&&BIN_AVG&R, BEST6.));
+			SEGMENT_VALUE=&&BIN_AVG&R;
+			DROP &&BIN_NM&R &&BIN_AVG&R;
+
+		RUN;
+
+
+
+
+		PROC APPEND BASE=WORK.BIN_ONLY FORCE DATA=WORK.BIN;
+	%END;
+%END;
+
+%MEND Bin_only;
+
+%Bin_only;
+
+
+%runquit;
+
+%macro CHAR_only;
+
+PROC DATASETS LIB=WORK;
+DELETE CHAR_ONLY CHAR;
+QUIT;RUN;
+
+%IF %EVAL(&CHAR_OBS) > 0 %THEN %DO;
+
+PROC SQL;
+	SELECT DISTINCT(NAME) INTO :CHAR_NM1-:CHAR_NM%TRIM(%LEFT(&CHAR_OBS)) FROM METACLASS WHERE ((SUBSTR(NAME,1,3) NOT = 'BIN') AND (NAME NOT LIKE '%_Mean%'));
+	SELECT (TYPE) INTO :CHAR_TYP1-:CHAR_TYP%TRIM(%LEFT(&CHAR_OBS)) FROM metaclass WHERE ((SUBSTR(NAME,1,3) NOT = 'BIN') AND (NAME NOT LIKE '%_Mean%'));
+QUIT;RUN;
+
+
+
+
+
+
+%GLOBAL C ;
+
+
+%DO C=1 %TO &CHAR_OBS;
+
+	data CHAR;
+	
+			set WORK.MDL_DATA(KEEP=&&CHAR_NM&C &TARGETMEAN _FREQ_ GLM_PRED_MEAN &WGT_SHAPE);
+			LENGTH VARIABLZ SEGMENT $50.;
+			VARIABLZ = "&&CHAR_NM&C";
+					IF &&CHAR_NM&C ='' THEN DELETE;
+
+					%IF (&&CHAR_TYP&C=1) %THEN %DO;
+
+
+
+
+
+
+
+
+
+						SEGMENT=COMPRESS(PUT(&&CHAR_NM&C,BEST6.));
+					%END;
+					%ELSE %DO;
+
+
+
+
+						SEGMENT = &&CHAR_NM&C;
+					%END;
+			
+			DROP &&CHAR_NM&C;
+			
+	RUN;
+	PROC APPEND BASE=WORK.CHAR_ONLY FORCE
+			DATA=WORK.CHAR;
+
+
+
+%END;
+
+%END;
+
+%MEND CHAR_only;
+
+%CHAR_only;
+
+
+*BELOW WILL COMBINE THE BIN VARS AND THE CHARACTER VARS IN A VIEW SO WE LOSE NO TIME IN MOVING DATA;
+
+DATA CONT_CATG_VW /VIEW=CONT_CATG_VW;
+SET &SUPPORT_VW;
+
+RUN;
+
+
+
+PROC SQL;**get the intercept from the parameter table so we can tag it to all our data;
+	SELECT ESTIMATE INTO :INTERCEPT FROM WORK.tempParmeterEstimates WHERE UPCASE(EFFECT) = 'INTERCEPT';
+	SELECT DISTINCT RUNTIME INTO :RUNTM FROM WORK.ONE_RUN;
+	SELECT DISTINCT MODEL_NAME INTO :MDLNM FROM WORK.ONE_RUN;
+	SELECT DISTINCT ITERATION_NAME INTO :ITNAME FROM WORK.ONE_RUN;
+QUIT;RUN;
+
+
+
+*get parameters for categorical variables TABLE WAS CALLED WORK.ADD_ON_PARAM;
+
+
+
+
+
+
+
+
+
+
+
+PROC SQL;
+   CREATE TABLE WORK.CATG_PARAM AS 
+   SELECT t1.*,t2.ESTIMATE as PARAMETER,t2.stdErr as SE, "&INTERCEPT" as Intercept,INPUT("&RUNTM",DATETIME19.) AS RUNTIME FORMAT=DATETIME19.,
+   "&MDLNM" AS MDL_NAME LABEL='MODEL NAME' LENGTH=32,"&ITNAME" AS ITERATION_NAME 
+         
+      FROM CONT_CATG_VW t1
+           LEFT JOIN WORK.tempParmeterEstimates t2 ON COMPRESS((UPCASE(t1.VARIABLZ||t1.SEGMENT))) = COMPRESS((UPCASE(t2.EFFECT||t2.LEVEL)));
+QUIT;RUN;
+*get parameters for continuous variables TABLE WAS CALLED WORK.ADD_ON_PARAM2;
+
+
+
+
+
+PROC SQL;
+   CREATE TABLE WORK.CONT_PARAM AS 
+   SELECT t1.*,t2.ESTIMATE as CONT_PARAM,t2.stdErr
+      FROM WORK.CATG_PARAM t1
+           LEFT JOIN WORK.tempParmeterEstimates t2 ON COMPRESS((UPCASE(t1.VARIABLZ))) = COMPRESS((UPCASE('BIN_'||t2.EFFECT)));
+
+
+
+QUIT;RUN;
+
+
+
+
+
+
+
+
+
+
+
+%runquit;
+
+
+
+*this will grab records that are base (having parameter = 0) as determined by User (setting Company base factors) or SAS HPGenselec;
+
+PROC SQL;
+CREATE TABLE WORK.REF_SEGS AS
+SELECT EFFECT AS VARIABLZ LENGTH=50, LEVEL AS SEGMENT LENGTH 50
+FROM WORK.tempParmeterEstimates
+WHERE ESTIMATE =0;
+
+
+QUIT;RUN;
+
+
+
+
+
+
+
+/*
+NAME
+Auto_Loss_Mean
+CONT_PARAM
+Intercept
+PARAMETER
+SE
+StdErr
+VARIABLZ
+_FREQ_
+GLM_PRED_MEAN
+PROC CONTENTS DATA=WORK.CONT_PARAM OUT=LOOK(KEEP=NAME); RUN;PROC PRINT;
+*/
+
+PROC SQL;
+   CREATE TABLE WORK.FIND_BASE AS 
+   SELECT t1.VARIABLZ,t1.GLM_PRED_MEAN AS BASE_PRED, &TARGETMEAN AS BASE_ACTUAL,t1.PARAMETER AS BASE_PARAM,t1._FREQ_
+         
+      FROM WORK.CONT_PARAM t1
+           INNER JOIN WORK.REF_SEGS t2 ON COMPRESS(CAT(t1.VARIABLZ,t1.SEGMENT)) = COMPRESS(CAT(t2.VARIABLZ,t2.SEGMENT));
+
+QUIT;RUN;
+
+
+
+
+%macro WEIGHT_IT;
+
+DATA WGT_SCENARIOS_VW /VIEW=WGT_SCENARIOS_VW;
+	SET WORK.CONT_PARAM;
+	LENGTH WGT_SCENARIO 8.;
+
+	%IF %ISBLANK(&WGT_SHAPE) %THEN
+		%DO;
+			WGT_SCENARIO=0;
+		%END;
+	%ELSE
+		%DO;
+			WGT_SCENARIO=&WGT_SHAPE;
+		%END;
+RUN;
+
+%MEND WEIGHT_IT;
+
+%WEIGHT_IT;
+%RUNQUIT;
+
+PROC SQL ;
+	CREATE VIEW WORK.ADD_BASE_VW AS SELECT T1._FREQ_, T1.&TARGETMEAN, 
+		T1.GLM_PRED_MEAN, T1.VARIABLZ, T1.SEGMENT, COALESCE(T1.PARAMETER, 0) AS 
+		VAR_PARAM, COALESCE(T1.CONT_PARAM, 0) AS CONT_PARAM, T1.Intercept, 
+		T1.RUNTIME, T1.MDL_NAME, 
+		&USE_SEGMENT_VALUE,
+		CASE when (T1.PARAMETER IN (0, .) 
+
+		AND T1.CONT_PARAM IN (0, .)) THEN 0 when (T1.stdErr=.) THEN T1.SE ELSE 
+		T1.stdErr END AS stdError,
+		CASE WHEN T1.WGT_SCENARIO=0 THEN T1._FREQ_ 
+		ELSE T1.WGT_SCENARIO
+   		END AS SUM_OF_WEIGHT LABEL='SUM OF WEIGHT',
+   		T2.BASE_PRED, T2.BASE_ACTUAL, 
+		COALESCE(T2.BASE_PARAM, 0) AS BASE_PARAM, CASE when ((T1.PARAMETER=.) 
+		AND (T1.CONT_PARAM=.)) THEN 'N' ELSE 'Y' END AS IN_MODEL FROM WORK.WGT_SCENARIOS_VW T1
+		 LEFT JOIN WORK.FIND_BASE t2 ON t1.VARIABLZ=t2.VARIABLZ;
+
+
+
+
+
+
+QUIT;
+
+RUN;
+%runquit;
+
+
+PROC SQL ;
+	CREATE TABLE WORK.NERL_MAYBE AS SELECT *, CASE WHEN ABS(CONT_PARAM) > 0 
+		THEN EXP(SEGMENT_VALUE *(CONT_PARAM-(2*stdERROR))) WHEN ABS(VAR_PARAM) > 0 
+		THEN EXP(VAR_PARAM -(2*stdERROR)) ELSE EXP(0) END AS PARAM_LCL, CASE WHEN 
+		ABS(CONT_PARAM) > 0 THEN EXP(SEGMENT_VALUE *(CONT_PARAM+(2*stdERROR))) WHEN 
+		ABS(VAR_PARAM) > 0 THEN EXP(VAR_PARAM +(2*stdERROR)) ELSE EXP(0) END AS 
+		PARAM_UCL, CASE WHEN ABS(CONT_PARAM) > 0 THEN EXP(SEGMENT_VALUE * CONT_PARAM) 
+		WHEN ABS(VAR_PARAM) > 0 THEN EXP(VAR_PARAM) ELSE EXP(0) END AS PARAM_RAISED 
+		FROM WORK.ADD_BASE_VW;
+QUIT;
+
+
+DATA VW_CREATE_JOIN_VAR /VIEW=VW_CREATE_JOIN_VAR;
+SET WORK.NERL_MAYBE;
+
+LENGTH JOINVAR $50.;
+
+IF SUBSTR(VARIABLZ,1,4)='BIN_' THEN JOINVAR=SUBSTR(VARIABLZ,5,LENGTH(VARIABLZ)-4);
+ELSE JOINVAR=VARIABLZ;
+RUN;
+
+PROC SQL ;
+	CREATE TABLE DATAFLDR.MDL_VIZ_&MDLUZER AS SELECT t1.*, t2.REDUCE_RNK, 
+		t2.WGT_USED_NERL, t2.IN_NEURAL FROM WORK.VW_CREATE_JOIN_VAR t1 LEFT JOIN 
+		DATAFLDR.COMBINE_REDUCE_NERL&MDLUZER t2 ON (t1.JOINVAR=t2.Variable);
+QUIT;RUN;
+*make sure our labels are consistent for VA;
+
+proc datasets lib=DATAFLDR nolist;
+	modify MDL_VIZ_&MDLUZER;
+	label 
+		PARAM_RAISED	= 'EXP(PARAMETER*(1 OR SEGMENT_VALUE))'
+		VARIABLZ	 	= 'VARIABLZ'
+		SEGMENT 		= 'SEGMENT'
+		&TARGETMEAN 	= 'ACTUALS'
+		BASE_ACTUAL 	= 'BASE_ACTUAL'
+		BASE_PRED 		= 'BASE_PRED'
+		GLM_PRED_MEAN		='GLM_MODEL_PREDICTED'
+		VAR_PARAM		='CATEGORICAL PARAMETER USED IN MODEL'
+		INTERCEPT		='INTERCEPT'
+		RUNTIME 		='MODEL CREATION TIME'
+		BASE_PARAM		='BASE PARAMETER'
+		CONT_PARAM      ='CONTINUOUS PARAMETER USED IN MODEL'
+
+
+
+
+
+
+		PARAM_LCL		='Lower CL FOR PARAMETER ESTIMATE'
+		PARAM_UCL  		='Upper CL FOR PARAMETER ESTIMATE'
+		stdError		='stdError for Parameter Estimate'
+		IN_MODEL		='IN';
+
+
+	RENAME
+		&TARGETMEAN 		=ACTUALS
+		GLM_PRED_MEAN		=MODEL_PREDICTED;
+	
+
+
+quit;RUN;
+
+
+%runquit;
+
+%LASR_LOAD(MDL_VIZ_&MDLUZER,DATAFLDR.MDL_VIZ_&MDLUZER);
+%LASR_LOAD(AIC_TBL_&MDLUZER,DATAFLDR.AIC_TBL_&MDLUZER);
+
+
+	]]></CodeTemplate>
+</Task>
+

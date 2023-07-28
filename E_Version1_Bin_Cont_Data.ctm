@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="3.5">
+    <Registration>
+        <Name>E_Version1_Bin_Cont_Data</Name>
+
+        <Description>The Bin Continuous Data task divides the data values of a continuous variable into intervals and replaces the values for each interval with a single value that is representative of the interval.</Description>
+        <GUID>646c13f5-8e12-48d6-962e-2a992ab543c5</GUID>
+
+
+        <Procedures>HPBIN</Procedures>
+        <Version>3.4</Version>
+        <Links>
+            <Link href="http://support.sas.com/documentation/onlinedoc/sasstudio/index.html">SAS Studio User's Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/documentation/cdl/en/prochp/66704/HTML/default/viewer.htm#prochp_hpbin_overview.htm">The HPBIN Procedure</Link>
+        </Links>
+        <Category>High-Performance Statistics</Category>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="dataset">
+                <Roles>
+                    <Role exclude="freqVariable" maxVars="0" minVars="1"
+                        name="analysisVariables" type="N">Variables to bin:</Role>
+                    <!--
+<Role name="targetVariable" type="A" minVars="0" maxVars="1" exclude="analysisVariables,freqVariable" nlsKey="analysisVariablesKey">Target variable for weight of evidence:</Role>
+-->
+                    <Role exclude="analysisVariables" indent="1"
+                        maxVars="0" minVars="0" name="idVariables"
+
+                        order="true" type="A">Additional variables to include in the output data set:</Role>
+                    <Role exclude="analysisVariables" maxVars="1"
+                        minVars="0" name="freqVariable" type="N">Frequency count(Optional!):</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA (Open DATAFLDR and select BIN_FROM_NEURAL OR BIN_FROM_SOURCE}</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+            <Option inputType="string" name="methodsGroup">METHODS</Option>
+            <Option defaultValue="bucketChoice" inputType="combobox" name="binMethod">Method:</Option>
+            <Option inputType="string" name="bucketChoice">Bucket binning</Option>
+            <Option inputType="string" name="winsorChoice">Winsorized binning</Option>
+            <Option inputType="string" name="pseudoChoice">Pseudo-quantile binning</Option>
+            <!-- nBins: 2 <= nBins <= 1000 -->
+            <Option decimalPlaces="0" defaultValue="16"
+                inputType="numbertext"
+                invalidMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+                maxValue="1000" minValue="2"
+                missingMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+                name="nBins"
+                promptMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+                rangeMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins"
+                rangeMessageKey="nBinsRangeKey" required="true" width="100px">Number of bins:</Option>
+            <!-- winsorRate: 0 < winsorRate < 0.5-->
+            <Option defaultValue="0.05" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+                maxValue="0.49999999999" minValue="0.00000000001"
+                missingMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+                name="winsorRate"
+                promptMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+                rangeMessage="Enter a number greater than zero and less than 0.5 for the winsor rate"
+                rangeMessageKey="winsorRateRangeKey" required="true" width="100px">Winsor rate:</Option>
+            <Option inputType="checkbox" name="woe">Compute weight of evidence and information value</Option>
+            <!-- woeAdjust: 0 <= woeAdjust <= 1.0 -->
+            <Option defaultValue="0.5" indent="1"
+                inputType="validationtext"
+                invalidMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor"
+                missingMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor"
+                name="woeAdjust"
+                promptMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor"
+                regExp="[0]?[.]\d+|1.0{0,}" required="true" width="100px">Adjustment factor:</Option>
+            <Option inputType="string" name="tablesGroup">STATISTICS</Option>
+            <Option defaultValue="defaultChoice" inputType="combobox" name="statsCombo">Select statistics to display:</Option>
+            <Option inputType="string" name="defaultChoice">Default statistics</Option>
+            <Option inputType="string" name="customChoice">Default &amp; additional statistics</Option>
+            <Option inputType="string" name="noneChoice">None</Option>
+            <Option indent="1" inputType="string" name="additionalTablesLabel">Additional Statistics</Option>
+            <Option indent="1" inputType="checkbox" name="basicStats">Basic statistics</Option>
+            <Option indent="1" inputType="checkbox" name="quantileStats">Quantile statistics</Option>
+            <Option inputType="string" name="outputTab">OUTPUT</Option>
+            <Option inputType="string" name="outputGroup">OUTPUT DATA SET</Option>
+            <Option inputType="checkbox" name="outputDS">Create output data set</Option>
+            <Option defaultValue="HPbin" indent="1"
+                inputType="outputdata" name="outputDSName" required="true">Data set name:</Option>
+            <Option inputType="string" name="showDataGroup">Show Output Data</Option>
+            <Option defaultValue="0" inputType="checkbox" name="showData">Show output data</Option>
+            <Option defaultValue="showSubsetDataChoice"
+                inputType="combobox" name="showDataCombo">Show:</Option>
+            <Option inputType="string" name="showSubsetDataChoice">Show subset of output data</Option>
+            <Option inputType="string" name="showAllDataChoice">Show all output data</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1"
+                indent="1" inputType="numstepper"
+                invalidMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                minValue="1"
+                missingMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                name="subsetNobs"
+                promptMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                rangeMessage="Enter an integer greater than 0 for the number of observations to be shown"
+                rangeMessageKey="subsetNobsRangeKey" required="true" width="100px">Number of observations to show:</Option>
+            <Option inputType="string" name="subsetTitle">Subset of {dataSetName}</Option>
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <RoleItem role="analysisVariables"/>
+                <!--
+				<RoleItem role="targetVariable"/>
+-->
+            </Group>
+
+            <Group open="true" option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+            </Group>
+
+        </Container>
+        <Container option="optionsTab">
+            <Group open="true" option="methodsGroup">
+                <OptionItem option="nBins"/>
+                <OptionChoice option="binMethod">
+                    <OptionItem option="bucketChoice"/>
+                    <OptionItem option="winsorChoice"/>
+                    <OptionItem option="pseudoChoice"/>
+                </OptionChoice>
+                <OptionItem option="winsorRate"/>
+                <!--
+			<OptionItem option="woe"/>
+			<OptionItem option="woeAdjust"/>
+-->
+            </Group>
+
+            <Group open="true" option="tablesGroup">
+                <OptionChoice option="statsCombo">
+                    <OptionItem option="defaultChoice"/>
+                    <OptionItem option="customChoice"/>
+                    <OptionItem option="noneChoice"/>
+                </OptionChoice>
+                <OptionItem option="additionalTablesLabel"/>
+                <OptionItem option="basicStats"/>
+                <OptionItem option="quantileStats"/>
+            </Group>
+
+        </Container>
+
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <RoleItem role="idVariables"/>
+                <Group open="true" option="showDataGroup">
+                    <OptionItem option="showData"/>
+                    <OptionChoice option="showDataCombo">
+                        <OptionItem option="showSubsetDataChoice"/>
+                        <OptionItem option="showAllDataChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="subsetNobs"/>
+                </Group>
+            </Group>
+        </Container>
+
+    </UI>
+    <Dependencies>
+        <Dependency condition="($binMethod=='winsorChoice')">
+            <Target action="show" conditionResult="true" option="winsorRate"/>
+            <Target action="hide" conditionResult="false" option="winsorRate"/>
+        </Dependency>
+
+        <Dependency condition="($statsCombo=='customChoice')">
+            <Target action="show" conditionResult="true" option="additionalTablesLabel"/>
+            <Target action="hide" conditionResult="false" option="additionalTablesLabel"/>
+            <Target action="show" conditionResult="true" option="basicStats"/>
+            <Target action="hide" conditionResult="false" option="basicStats"/>
+            <Target action="show" conditionResult="true" option="quantileStats"/>
+            <Target action="hide" conditionResult="false" option="quantileStats"/>
+        </Dependency>
+        <!-- Commented out
+
+
+		
+		<Dependency condition="($targetVariable.size() > 0)">
+			<Target option="woe" conditionResult="true"  action="show"/>
+			<Target option="woe" conditionResult="false" action="hide"/>
+			<Target option="woeAdjust" conditionResult="true"  action="show"/>
+			<Target option="woeAdjust" conditionResult="false" option="woeAdjust" action="hide"/>
+		</Dependency>	
+
+		<Dependency condition="($woe=='1')">
+			<Target option="woeAdjust" conditionResult="true"  action="enable"/>
+			<Target option="woeAdjust" conditionResult="false" action="disable"/>
+		</Dependency>
+ Commented out -->
+
+
+        <Dependency condition="($outputDS=='1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+            <Target action="show" conditionResult="true" option="idVariables"/>
+            <Target action="hide" conditionResult="false" option="idVariables"/>
+            <Target action="show" conditionResult="true" option="showDataGroup"/>
+            <Target action="hide" conditionResult="false" option="showDataGroup"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; $showData == '1')">
+            <Target action="show" conditionResult="true" option="showDataCombo"/>
+            <Target action="hide" conditionResult="false" option="showDataCombo"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; $showData == '1' &amp;&amp; $showDataCombo == 'showSubsetDataChoice')">
+            <Target action="show" conditionResult="true" option="subsetNobs"/>
+            <Target action="hide" conditionResult="false" option="subsetNobs"/>
+        </Dependency>
+
+    </Dependencies>
+
+    <Requirements>
+        <Requirement condition="!($statsCombo == 'noneChoice') || $outputDS == 1">
+            <Message nlsKey="outputNotSelectedMsg">Select some statistics to display or request an output data set.</Message>
+        </Requirement>
+    </Requirements>
+
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+*****************   All continuous variables will be treated as Continuous. This optional binning process *****;
+*****************   is only for display purposes. You have 3 algorithms to choose from. For an example to help *******;
+*****************   you understand the difference between algorithms see paper Binning Algorithms for IRMT.xlsx *****;
+*****************   Below is a brief explanation of the algorithms;
+
+***************** 1. Algorithm=Bucket    will keep the ranges equal. If your range is 0-100 and select 20 bins, ;
+*****************    each range =5,000 regardless of the number of observations or frequency;
+
+***************** 2. Algorithm=Pseudo-Quantile  will keep the frequencies equal regardless of range. ;
+*****************    can result it extreme differences in ranges for your bins;
+
+***************** 3. Algorithm=Winsor  Hybrid of Bucket\Pseudo-Quantile, added flexibility using winsorrate;
+%LET USING_DATA=$dataset;
+
+%MACRO SRC_FROM_WHERE;
+	%GLOBAL BIN_ID;
+	%*BELOW WILL FIGURE OUT WHICH DATA SOURCE TO USE;
+
+	%IF &USING_DATA=DATAFLDR.BIN_FROM_NEURAL&MDLUZER %THEN
+		%DO;
+		
+
+			%LET BIN_ID=&ColFromNerl NEURAL_PREDICTED;
+		%END;
+	%ELSE
+		%DO;
+	
+
+			%LET BIN_ID=&COLORDER;
+		%END;
+%MEND SRC_FROM_WHERE;
+
+%SRC_FROM_WHERE;
+
+%BIN_PATH;
+
+proc hpbin data=&BIN_IN output=&BIN_FLDR..Bring_back_bind&MDLUZER numbin=$nBins
+#if ($binMethod == "bucketChoice") bucket 
+#elseif ($binMethod == "winsorChoice") winsor winsorrate=$winsorRate
+#else pseudo_quantile
+#end
+## COMMENTED OUT if ($woe == 1) woe woeadjust=$woeAdjust #end
+#if ($statsCombo == "noneChoice") noprint#elseif ($statsCombo == "customChoice") #if ($basicStats == 1) computestats #end #if ($quantileStats == 1) computequantile #end
+#end
+#if ($outputDS == 1) output=$outputDSName#end
+;
+#if ( $analysisVariables.size() > 0 )   
+   input #foreach( $item in $analysisVariables ) $item #end; 
+#end
+#if ( $targetVariable.size() > 0 )   
+   target #foreach( $item in $targetVariable ) $item #end / level=nominal ; 
+#end
+
+ID &BIN_ID;
+#if( $idVariables.size() > 0 )
+    id #foreach( $item in $idVariables ) $item #end;
+#end
+
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+run;
+
+#if ($showData == '1')
+#if($showDataCombo == 'showSubsetDataChoice')
+#set( $finalTitle = $subsetTitle.replace("{dataSetName}", $outputDSName) )
+#end
+proc print data=$outputDSName#if($showDataCombo == 'showSubsetDataChoice')(obs=$subsetNobs)#end;
+title "#if($showDataCombo == 'showSubsetDataChoice')$finalTitle#{else}$outputDSName#end";
+run;
+#end
+PROC CONTENTS DATA=&BIN_FLDR..Bring_back_bind&MDLUZER(DROP=&BIN_ID) 
+        OUT=NUM_TO_CHAR(KEEP=NAME) NODETAILS NOPRINT;
+RUN;
+
+PROC SQL ;
+    SELECT COUNT(*) INTO :N2C_CNT FROM NUM_TO_CHAR;
+    SELECT DISTINCT(NAME) INTO :N2C_NM1-:N2C_NM%TRIM(%LEFT(&N2C_CNT)) FROM 
+        NUM_TO_CHAR;
+QUIT;
+
+RUN;
+
+*the process below will take our bin values and make them character;
+*use the z format so that numbers with only one digit will have a zero placed in front;
+*this is so that the VA sort works Properly;
+
+%MACRO BIN2CHAR;
+	DATA DATAFLDR.BIN_CHAR&MDLUZER;
+		SET &BIN_FLDR..Bring_back_bind&MDLUZER;
+
+        %DO I=1 %TO &N2C_CNT;
+            LENGTH %SYSFUNC(CAT(&&N2C_NM&I, C)) $8.;
+            %SYSFUNC(CAT(&&N2C_NM&I, C))=PUT(&&N2C_NM&I,z2.);
+            DROP &&N2C_NM&I;
+        %END;
+    RUN;
+    
+    %IF %VarExist(DATAFLDR.BIN_CHAR&MDLUZER,NEURAL_PREDICTED) %THEN
+		%DO;
+			PROC DATASETS LIB=DATAFLDR NODETAILS NOLIST;
+			MODIFY BIN_CHAR&MDLUZER;
+			LABEL NEURAL_PREDICTED='NEURAL_PREDICTED';
+			QUIT;RUN;
+		%END;
+    
+    
+    PROC DATASETS LIB=DATAFLDR NODETAILS NOLIST;
+    MODIFY BIN_CHAR&MDLUZER;
+    RENAME 
+    %DO J=1 %TO &N2C_CNT;
+    	%SYSFUNC(CAT(&&N2C_NM&J, C))=&&N2C_NM&J
+    %END;
+    ;
+    QUIT;RUN;
+       
+%MEND BIN2CHAR;
+
+%BIN2CHAR;
+
+
+]]></CodeTemplate>
+</Task>
+
+

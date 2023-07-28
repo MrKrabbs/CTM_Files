@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task runNLS="never" schemaVersion="3.0">
+    <Registration>
+        <Name>B_Version1_DATA_SOURCE_FORM</Name>
+        <Description>Set Model Data and Name</Description>
+        <GUID>fa508d07-4394-4667-a08f-5e23029016a6</GUID>
+        <Procedures>TBD</Procedures> 
+        <Version>3.3</Version> 
+   <!--    <Links>
+            <Link href="http://support.sas.com/software/products/sasstudio/index.html#s1=2">SAS Studio Documentation</Link>
+        </Links>
+  
+        <Category>Auto_Severity_2015 templates</Category> -->
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="DATASOURCE"/>
+        </DataSources>
+        <Options>
+        	<Option inputType="string" name="SELECT_DATA">SELECT DATA FROM LIBRAY "DATA_IN" THAT WILL BE USED TO BUILD MODEL</Option>
+            <Option inputType="string" name="OPTIONSTAB">Model Data and Model Name</Option>
+            <Option inputType="string" name="GROUP_MODEL_NAME">MODEL NAME</Option>
+            <Option inputType="string" name="label_MODEL_NAME">An example of a Model Name: "Auto_Severity_92015". Leave no spaces in name.Model Name is required and this name will be used 
+            throughout the Model Build process.</Option>
+            <Option 
+                inputType="inputtext" missingMessage="Missing text."
+                name="text_MODEL_NAME" promptMessage="Enter Model name no spaces or specical characters" required="true">Input Model Name:</Option>
+            <Option name="GROUPRADIO" inputType="string">MODEL DISTRIBUTION</Option>
+			<Option name="labelRADIO" inputType="string">Select Distribution, link function will be log. Frequency=Poisson\Severity=Gamma\Tweedie=Pure Premium</Option>
+			<Option name="Poisson" variable="radioEXAMPLE" defaultValue="1" inputType="radio">Poisson</Option>
+			<Option name="Gamma" variable="radioEXAMPLE" inputType="radio">Gamma</Option>
+			<Option name="Tweedie" variable="radioEXAMPLE" inputType="radio">Tweedie</Option>
+			<Option name="GROUPBIN" inputType="string">Do you want to skip the binning of Continuous variables (for display only)?</Option>
+			<Option name="labelRADIOBIN" inputType="string">DEFAULT IS (NO) , LEAVE THE BINNING PROCESS ON. TO TURN OFF THE BINNING PROCESS SELECT THE YES BUTTON BELOW</Option>
+			<Option name="NO" variable="radioBIN_CHOICE" defaultValue="1" inputType="radio">NO</Option>
+			<Option name="YES" variable="radioBIN_CHOICE" inputType="radio">YES</Option>
+		    <Option inputType="string" name="GROUP_FOLDER_PATH">FOLDER PATH</Option>
+            <Option inputType="string" name="label_FOLDER_PATH">An example of a valide Folder Path: "\SAS\DATA\AUTO\9_2015\".  Folder Path is required and this folder will be used 
+            throughout the Model Build process.</Option>
+            <Option defaultValue="\FOLDER\PATH\GOES\HERE\" indent="1"
+                inputType="inputtext"
+                missingMessage="Folder path required."
+                name="text_FOLDER_PATH"
+                promptMessage="Folder path required to continue." required="true">Input Folder Path:</Option>
+            <Option inputType="string" name="GROUP_CHECK_BASELVLS">BASE LEVELS</Option>
+            <Option inputType="string" name="label_CHECK_BASELVLS">UN-CHECK BOX BELOW IF BASE LEVELS ARE NOT LOCATED IN SAME FOLDER AS MODEL DATA.</Option>
+            <Option defaultValue="1" inputType="checkbox" name="chkBase_LVLS">Check box</Option>
+            <Option inputType="string" name="GROUP_BASELVL_PATH">BASE LEVEL FOLDER PATH</Option>
+            <Option inputType="string" name="label_BASELVL_PATH">An example of a valide Base Level Folder Path:\SAS\DATA\BASE_LEVELS\  This folder will be used to obtain Base Levels.</Option>
+            <Option defaultValue="\SAS\DATA\BASE_LEVELS\" indent="1"
+                inputType="inputtext"
+                missingMessage="Base Level Folder path required."
+                name="text_BASELVL_PATH"
+                promptMessage="Base Level Folder path required to continue." required="true">Input Base Level Folder Path:</Option>
+            <Option name="GROUPCHKRIM" inputType="string">Select to run In-Memory</Option>
+			<Option name="labelCHKRIM" inputType="string"> </Option>
+			<Option name="chkRIM" defaultValue="1" inputType="checkbox">Check means the HP Procs will run In-Memory</Option>    
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="OPTIONSTAB">
+        	 <OptionItem option="SELECT_DATA"/>
+            <DataItem data="DATASOURCE"/>
+           
+      <!--      <Group open="true" option="GROUP_MODEL_NAME">
+                <OptionItem option="label_MODEL_NAME"/>
+                <OptionItem option="text_MODEL_NAME"/>
+            </Group>   -->
+			<Group option="GROUPCHKRIM" open="true">
+				<OptionItem option="labelCHKRIM"/>
+				<OptionItem option="chkRIM"/>
+			</Group>
+     <!--       <Group open="true" option="GROUPRADIO">
+            	<OptionItem option="labelRADIO"/>
+				<OptionItem option="Poisson"/>
+				<OptionItem option="Gamma"/>
+				<OptionItem option="Tweedie"/>
+			</Group>
+			-->
+	<!--    <Group open="true" option="GROUPBIN">
+            	<OptionItem option="labelRADIOBIN"/>
+		<OptionItem option="NO"/>
+		<OptionItem option="YES"/>
+	    </Group>      -->     
+			
+<!--          <Group option="GROUP_FOLDER_PATH">
+                <OptionItem option="label_FOLDER_PATH"/>
+                <OptionItem option="text_FOLDER_PATH"/>
+            </Group>
+            <Group option="GROUP_CHECK_BASELVLS">
+                <OptionItem option="label_CHECK_BASELVLS"/>
+                <OptionItem option="chkBase_LVLS"/>
+            </Group>
+            <Group option="GROUP_BASELVL_PATH">
+                <OptionItem option="label_BASELVL_PATH"/>
+                <OptionItem option="text_BASELVL_PATH"/>
+            </Group>
+-->
+        </Container>
+    </UI>
+<!--      <Dependencies>
+        <Dependency condition="($chkBase_LVLS == '0')">
+            <Target action="show" conditionResult="true" option="GROUP_BASELVL_PATH"/>
+            <Target action="hide" conditionResult="false" option="GROUP_BASELVL_PATH"/>
+        </Dependency>
+    </Dependencies>
+-->
+    <CodeTemplate><![CDATA[
+    
+*ONLY PURPOSE OF THIS STEP IS TO CAPTURE NAME OF DATASET THAT WILL BE USED TO MODEL DATA AND NAME OF MODEL;
+*THESE TWO INPUTS WILL BE USED THROUGHTOUT THE MODEL BUILD PROCESS;
+
+
+OPTIONS MERROR SYMBOLGEN MLOGIC MPRINT SOURCE SOURCE2;
+
+%LET MODEL_DATA=$DATASOURCE;
+#*%LET DISTCHOZN=$radioEXAMPLE;*#
+#*%LET REMOVE_BIN=$radioBIN_CHOICE;*#
+%LET RIM=$chkRIM;
+
+RUN;
+/*
+%MACRO BIN2CHAR;
+	DATA DATAFLDR.BIN_CHAR;
+		SET DATAFLDR.BRING_BACK_BIND;
+
+		%DO I=1 %TO &N2C_CNT;
+			LENGTH %SYSFUNC(CAT(&&N2C_NM&I, C)) $8.;
+			%SYSFUNC(CAT(&&N2C_NM&I, C))=PUT(&&N2C_NM&I, z2.);
+			DROP &&N2C_NM&I;
+		%END;
+	RUN;
+
+	PROC DATASETS LIB=DATAFLDR NODETAILS NOLIST;
+		MODIFY BIN_CHAR;
+		RENAME 
+		%DO J=1 %TO &N2C_CNT;
+			%SYSFUNC(CAT(&&N2C_NM&J, C))=&&N2C_NM&J
+    %END;
+			;
+		QUIT;
+
+		RUN;
+%MEND BIN2CHAR;
+*/
+%macro runquit;
+	;
+	run;
+
+	quit;
+
+	%if &syserr. ne 0 %then
+		%do;
+			%abort cancel;
+		%end;
+%mend runquit;
+
+%macro obsnvars(ds);
+	%global dset nvars nobs;
+	%let dset=&ds;
+
+	/* Open data set passed as the macro parameter */
+	%let dsid = %sysfunc(open(&dset));
+
+	/* If the data set exists, then grab the number of observations and variables */
+	/* then close the data set                                                    */
+	%if &dsid %then
+		%do;
+			%let nobs =%sysfunc(attrn(&dsid, nobs));
+			%let nvars=%sysfunc(attrn(&dsid, nvars));
+			%let rc = %sysfunc(close(&dsid));
+		%end;
+
+	/* Otherwise, write a message that the data set could not be opened */
+	%else %put open for data set &dset failed - %sysfunc(sysmsg());
+%mend obsnvars;
+
+*IF THE MACRO IS BLANK OR EMPTY IT WILL RETURN A VALUE OF 1. IF IT'S NOT EMPTY, WILL RETURN A VALUE OF ZERO;
+*EXECUTE MACRO LIKE THIS X=%ISBLANK(&CHECK);
+%macro isBlank(param);
+	%sysevalf(%superq(param)=, boolean)
+%mend isBlank;
+
+*MACRO BELOW WILL CREATE TEH EMBLEM SHAPE FOR ALL CATEGORICAL VARIABLES BROUGHT INTO MODEL;
+%macro makeds;
+	%do i=1 %to &nobs;
+
+		data TEST&I;
+			set WORK.MDL_DATA(KEEP=&&VAR_NM&I &TARGETMEAN PRED_MEAN _FREQ_);
+			LENGTH VARIABLZ SEGMENT $50.;
+			LENGTH SEGMENT_NBR 8.;
+			VARIABLZ="&&VAR_NM&I";
+
+			IF VARIABLZ NOT IN ('_TYPE_', '_FREQ_', 'PRED_MEAN') THEN
+				DO;
+					IF &&VARTYP&I=1 THEN
+						DO;
+							IF (&&VAR_NM&I=.) THEN
+								DELETE;
+							SEGMENT=COMPRESS(PUT(&&VAR_NM&I, 8.));
+						END;
+					ELSE
+						DO;
+							IF (&&VAR_NM&I='') THEN
+								DELETE;
+							SEGMENT=&&VAR_NM&I;
+						END;
+
+					SEGMENT_NBR=&I;
+					output;
+				END;
+
+			KEEP &TARGETMEAN VARIABLZ SEGMENT PRED_MEAN _FREQ_ SEGMENT_NBR;
+		RUN;
+
+		PROC APPEND BASE=WORK.BUILD FORCE DATA=WORK.TEST&I(where=(VARIABLZ NOT 
+			IN ('_TYPE_', '_FREQ_', 'PRED_MEAN')));
+	%END;
+
+	DATA DATAFLDR.BASE;
+		SET WORK.BUILD;
+	RUN;
+
+%MEND MAKEDS;
+
+%MACRO CALLDS;
+
+	PROC DATASETS LIB=WORK NOLIST;
+		DELETE BUILD;
+	QUIT;
+
+	PROC DATASETS LIB=DATAFLDR NOLIST;
+		DELETE BASE;
+	RUN;
+
+	%MAKEDS;
+%MEND CALLDS;
+
+%macro MAKEDSCNT;
+	%do i=1 %to &CLS_OBS;
+
+		data CONT&I;
+			set WORK.MDL_DATA(KEEP=&CLS_NAMES &CLS_AVG &TARGETMEAN PRED_MEAN _FREQ_);
+			LENGTH VARIABLZ SEGMENT $50.;
+			LENGTH SEGMENT_NBR SEGMENT_VALUE 8.;
+			VARIABLZ="&&CLS_NM&I";
+
+			IF VARIABLZ NOT IN ('_FREQ_', "&TARGETMEAN", 'PRED_MEAN') THEN
+				DO;
+					IF (&&CLS_NM&I=.) THEN
+						DELETE;
+					SEGMENT=COMPRESS(PUT(&&CLS_AVG&I, Z8.2));
+					SEGMENT_VALUE=&&CLS_AVG&I;
+					SEGMENT_NBR=%EVAL(&I + &nobs);
+					;
+					output;
+				END;
+
+			KEEP &TARGETMEAN VARIABLZ SEGMENT PRED_MEAN _FREQ_ SEGMENT_NBR 
+				SEGMENT_VALUE;
+		RUN;
+
+		PROC APPEND BASE=WORK.BUILD_CONT FORCE DATA=WORK.CONT&I(where=(VARIABLZ NOT 
+			IN ('_TYPE_', '_FREQ_', '&TARGETMEAN', 'PRED_MEAN')));
+	%END;
+
+	DATA DATAFLDR.BASE_CONT;
+		SET WORK.BUILD_CONT;
+	RUN;
+
+%MEND MAKEDSCNT;
+
+%MACRO CALLCONT;
+
+	PROC DATASETS LIB=WORK NOLIST;
+		DELETE BUILD_CONT;
+	QUIT;
+
+	PROC DATASETS LIB=DATAFLDR NOLIST;
+		DELETE BASE_CONT;
+	RUN;
+
+	%MAKEDSCNT;
+%MEND CALLCONT;
+
+*PROC SQL JUST LOADED THE MACRO WIHT SOMETHING LIKE THIE:/CAR_TYPE SUV Van/EDUCATION HS LESSHS;
+*THIS MACRO BELOW WILL USE THE \ AS A DELIMITER AND CREATED 2 MACRO VARIABLES;
+*EXAMPLE:SLSH1 WILL EQUAL [CAR_TYPE SUV VAN] SLSH2 WILL EQUAL [EDUCATION HS LESSHS];
+%macro SLASH(string);
+	%LOCAL M;
+	%GLOBAL SLSH_COUNT;
+	%let SLSH_COUNT=%sysfunc(countw(%superq(string), /));
+
+	%do M=1 %to &SLSH_COUNT;
+		%GLOBAL SLSH&M;
+		%let SLSH&M=%qscan(%superq(string), &M, %str(/));
+		%put &&SLSH&M;
+	%end;
+%mend SLASH;
+
+*NOW WE HAVE A VARIABLE LIKE THIS:CAR_TYPE SUV VAN, WE STILL NEED TO KNOW HOW MANY ELEMENTS AND A WAY OF DEALING WITH THE FIRST ELEMENT DIFFERENTLY;
+*THE FIRST ELEMENT IS TEH VARIABLE AND THE REST ARE VALUES THE VARIABLE TAKES, BELOW WILL TELL US HOW MANY ELEMENTS AND GIVE US A WAS TO WORK WITH;
+%macro SPACE_MCR(string);
+	%LOCAL N;
+	%GLOBAL SPACE_COUNT;
+	%let SPACE_COUNT=%sysfunc(countw(%superq(string)));
+
+	%do N=1 %to &SPACE_COUNT;
+		%GLOBAL SPACE&N;
+		%let SPACE&N=%qscan(%superq(string), &N, %str( ));
+		%put &&SPACE&N;
+	%end;
+%mend SPACE_MCR;
+
+%macro ConcatenateSkipFirst(prompt=, dlm=%str( ) );
+	%local O return;
+
+	%if &&&prompt._Count ge 2 %then
+		%do O=2 %to &&&prompt._Count;
+			%let return=&return&dlm&&&prompt&O;
+		%end;
+	%else
+		%do;
+			%let return=&&&prompt;
+		%end;
+
+	&return
+%mend ConcatenateSkipFirst;
+
+%MACRO LOOPTHRU;
+	%GLOBAL LEAVESEPARATE;
+	%GLOBAL PUSHTOGETHER;
+
+	DATA COMBINE_VW /VIEW=COMBINE_VW;
+		SET &MODEL_DATA;
+
+		%DO R=1 %TO &SLSH_COUNT;
+			%SPACE_MCR(&&SLSH&R);
+			%LET LEAVESEPARATE=%ConcatenateSkipFirst(PROMPT=SPACE);
+			%LET PUSHTOGETHER=%SYSFUNC(COMPRESS(&LEAVESEPARATE));
+
+			IF COMPRESS(&SPACE1) IN (%unquote(%SepList(&LEAVESEPARATE, nest=QQ))) THEN
+				&SPACE1="&PUSHTOGETHER";
+		%END;
+	RUN;
+
+%MEND LOOPTHRU;
+
+%MACRO LOOPTHRU_DD;
+	%GLOBAL LEAVESEPARATE;
+	%GLOBAL PUSHTOGETHER;
+
+	DATA COMB_DD_VW /VIEW=COMB_DD_VW;
+		SET DATAFLDR.DISPLAY_DATA;
+		;
+		%DO R=1 %TO &SLSH_COUNT;
+			%SPACE_MCR(&&SLSH&R);
+			%LET LEAVESEPARATE=%ConcatenateSkipFirst(PROMPT=SPACE);
+			%LET PUSHTOGETHER=%SYSFUNC(COMPRESS(&LEAVESEPARATE));
+
+			IF COMPRESS(&SPACE1) IN (%unquote(%SepList(&LEAVESEPARATE, nest=QQ))) THEN
+				&SPACE1="&PUSHTOGETHER";
+		%END;
+	RUN;
+
+%MEND LOOPTHRU_DD;
+
+*BELOW IS DEVENCIA MACRO FROM THE BELOW URL;
+*http://bi-notes.com/2013/08/sas-stored-process-taming-selection-list-prompts/;
+%macro seplist (items
+			, indlm=%str( ) , dlm=%str(,) , prefix=, nest=, suffix=);
+	%* Richard A. DeVenezia - 990902;
+	%* %* emit a list of words separated by a delimiter %* %* items  - list of 
+		items, separated by indlm %* indlm  - string that delimits each item of 
+		items %* dlm  - string that delimits list of items emitted %* 
+		prefix - string to place before each item %* nest   - Q (single quote ''), 
+	%* QQ (double quotes ""), %* P (parenthesis ()), %* C (curly braces {}), 
+	%* B (brackets []) %* suffix - string to place after each item %* %* 
+		Note: nest is a convenience, and could be accomplished using %* prefix and 
+		suffix %*;
+	%local item n emit;
+	%let emit=;
+	%let nest = %upcase (&nest);
+
+	%if (&nest=Q) %then
+		%do;
+			%let prefix = &prefix.%str(%');
+			%let suffix = %str(%')&suffix;
+		%end;
+	%else %if (&nest=QQ) %then
+		%do;
+			%let prefix = &prefix.%str(%");
+			%let suffix = %str(%")&suffix;
+		%end;
+	%else %if (&nest=P) %then
+		%do;
+			%let prefix = &prefix.%str(%();
+			%let suffix = %str(%))&suffix;
+		%end;
+	%else %if (&nest=C) %then
+		%do;
+			%let prefix = &prefix.%str({);
+			%let suffix = %str(})&suffix;
+		%end;
+	%else %if (&nest=B) %then
+		%do;
+			%let prefix = &prefix.%str([);
+			%let suffix = %str(])&suffix;
+		%end;
+
+	%let n = 1;
+	%let item = %qscan (&items, &n, %quote(&indlm));
+
+	%do %while (%superq(item) ne);
+		%if (&n=1) %then
+			%let emit = &prefix.&item.&suffix;
+		%else %let emit = &emit.&dlm.&prefix.&item.&suffix;
+		%let n = %eval (&n+1);
+		%let item = %qscan (&items, &n, %quote(&indlm));
+	%end;
+
+	&emit
+%mend;
+
+/*
+options nosource;
+%put %seplist (a b c);
+%put %seplist (a b c, dlm=+);
+%put %seplist (a|b|c, indlm=|, dlm=%str( ));
+%put %seplist (a b c, prefix=ORACLE., nest=QQ);
+%put %seplist (a$b$c, indlm=$, suffix=@mail.com, dlm=%str( ));
+%put %seplist (a$b$c, indlm=$, prefix=antispam_, suffix=@mail.com, dlm=%str( ));
+%put %seplist (a b c, dlm=||, nest=Q);
+%put %seplist (a b c, nest=C);
+%put %seplist (a b c, nest=P);
+%put %seplist (a b c, nest=B);
+%put %seplist (a xyz b xyz c, indlm=xyz, dlm=%str( or ), prefix=%str( not ));
+*/
+OPTIONS MERROR SYMBOLGEN MLOGIC MPRINT SOURCE SOURCE2;
+
+*PURPOSE OF THE STEPS BELOW IS TO GET OUR MODEL DATA COLUMNS DISPLAYING IN THE CORRECT ORDER NUMER\ALPHABETIC, THEN;
+*CATEGORICAL\ALPHABETIC THEN SET THE DATA WITH ONLY ONE RECORD SO WE CAN THEN USE THIS DATASET TO POPULATE DROP DOWNS;
+*IN THE FORM THAT ASKS THE USER HOW TO TREAT THEIR VARIABLES;
+PROC CONTENTS DATA=&MODEL_DATA OUT=DATAFLDR.VARINFO&MDLUZER(KEEP=NAME TYPE) NOPRINT;
+RUN;
+
+PROC SORT DATA=DATAFLDR.VARINFO&MDLUZER out=work.VarOrder;
+	by descending type name;
+run;
+
+proc sql;
+	SELECT NAME INTO :ColOrder SEPARATED BY ' ' FROM work.VarOrder;
+quit;
+
+run;
+
+proc sql;
+	SELECT NAME INTO :NbrVars SEPARATED BY ' ' FROM work.VarOrder where TYPE=1;
+quit;
+
+run;
+
+*THE DATASET BELOW IS THE ONE THAT IS REFERENCED BY THE TEMPLATE THAT ASKS HOW DO YOU WANT TO TREAT YOUR VARIABLES;
+data DATAFLDR.BIN_FROM_SOURCE&MDLUZER;
+	format &ColOrder;
+	set &MODEL_DATA(OBS=1);
+run;
+
+*THE DATASET BELOW IS THE ONE THAT IS REFERENCED BY THE TEMPLATE PROC HPREDUCE;
+data DATAFLDR.SEND2REDUCE&MDLUZER;
+	format &ColOrder;
+	set &MODEL_DATA(OBS=1);
+run;
+
+*THE PURPOSE OF BELOW IS TO CREATE A DEFAULT IN CASE WE DON'T HAVE A BASE LEVEL FOR A VARIABLLE. WANT TO STILL PUT;
+*ALL THE CLASS VARIABLES INTO ONE MACRO. THIS WAY IF WE DON'T HAVE A BASE LEVEL THEN WE GET THE VARIABLE NAME RETURNED;
+PROC SQL;
+	CREATE TABLE DATAFLDR.BASE_W_DEFAULT&MDLUZER AS SELECT A.NAME, COALESCE(B.BASEREF, 
+		A.NAME) AS BASE_W_NAME_DEFAULT FROM DATAFLDR.VARINFO&MDLUZER AS A LEFT JOIN 
+		BASEFLDR.BASE_LEVELS AS B ON COMPRESS(A.NAME)=COMPRESS(B.NAME);
+QUIT;
+
+RUN;
+
+
+		]]></CodeTemplate>
+</Task>

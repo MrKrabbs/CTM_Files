@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="3.0">
+    <Registration>
+        <Name>A_Version1_SelectModel</Name>
+        <Description>Select_Model_ID</Description>
+        <GUID>005ef7e3-b6e8-445c-8498-8b225a38d330</GUID>
+        <Procedures>HPREDUCE</Procedures>
+        <Version>3.3</Version>
+        <Links>
+            <Link href="http://support.sas.com/documentation/onlinedoc/sasstudio/index.html">SAS Studio User's Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/documentation/cdl/en/prochp/66704/HTML/default/viewer.htm#prochp_hpimpute_overview.htm">The HPIMPUTE Procedure</Link>
+        </Links>
+        <Category>Cramers_V templates</Category>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="DATASOURCE">
+                <Roles>
+       				<Role type="C" maxVars="1" order="true" minVars="1" name="VAR">Select the variable "Model_Name_Time":</Role>
+                </Roles> 
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="DATATAB">DATA</Option>
+        <!--    <Option inputType="string" name="optionsTab">OPTIONS</Option> -->
+            <Option inputType="string" name="DATAGROUP">Select the Dataset DATA_IN.Model_Info</Option>
+        	<Option inputType="string" name="ROLESGROUP">ROLES</Option> 
+       <!--     <Option inputType="string" name="weightRolesGroup">Select Weight Variable</Option>
+            <Option name="GROUPchkID" inputType="string">Select USER ID</Option>
+			<Option name="labelchkID" inputType="string"> </Option>-->
+			<Option name="chkID" defaultValue="0" inputType="checkbox">Stop using the default system USER_ID, use this instead</Option> 
+			<Option name="GROUPDISTINCT" inputType="string">DISTINCT</Option>
+			<Option name="labelDISTINCT" inputType="string">Select a Model Name for your Model</Option>
+			<Option name="distinctEXAMPLE" inputType="distinct" required="true" message="Must select a Model Name" source="VAR">Distinct Values:</Option>
+			<Option inputType="string" name="GROUP_txt_USERID">Replace USER ID</Option>
+			<Option inputType="string" name="label_txt_USERID">Logical choices to override default USER ID would be blank or a specific persons USER ID</Option>
+			<Option inputType="inputtext" name="text_USERID" promptMessage="Enter Model name no spaces or specical characters" required="false">Input USER ID:</Option>
+        </Options>
+    </Metadata>
+    <UI>
+    	<Container option="DATATAB">
+			<Group option="DATAGROUP" open="true">
+					<DataItem data="DATASOURCE"/>
+			</Group>
+			<Group option="ROLESGROUP" open="true">
+				<RoleItem role="VAR"/>
+			</Group>
+			<Group option="GROUPDISTINCT" open="true">
+				<OptionItem option="labelDISTINCT"/>
+				<OptionChoice option="distinctEXAMPLE"/>
+			</Group>
+			<OptionItem option="chkID"/>
+	  <!--      <Group option="GROUPchkID" open="true">
+				<OptionItem option="labelchkID"/>
+				<OptionItem option="chkID"/>
+			</Group> -->
+			<Group open="true" option="GROUP_txt_USERID">
+                <OptionItem option="label_txt_USERID"/>
+                <OptionItem option="text_USERID"/>
+            </Group>
+            
+    	</Container>
+    </UI>
+    <Dependencies>
+        <Dependency condition="($chkID=='1')">
+            <Target action="enable" conditionResult="true" option="GROUP_txt_USERID"/>
+            <Target action="disable" conditionResult="false" option="GROUP_txt_USERID"/>
+        </Dependency>
+    </Dependencies>
+  <!--   <Requirements>
+       <Requirement condition="$ContinuousVariables.size() > 0 ||    $CategoricalVariables.size() > 0 ||    $DropVariables.size() > 0">
+            <Message nlsKey="meanMedianRandomMsgKey">Select at least one variable to replace its missing values with the mean, the pseudo-median, or a random number.</Message>
+        </Requirement> 
+    </Requirements>
+ -->
+    <CodeTemplate><![CDATA[
+
+ods noproctitle;
+%LET MODEL_NAME=$distinctEXAMPLE; 
+%LET USER_ID=&SYSUSERID;
+PROC SQL ;
+	SELECT MDL_ID INTO :MDL_ID FROM DATA_IN.MODEL_INFO WHERE TRIM(MODEL_NAME_TIME)="&MODEL_NAME";
+QUIT;
+
+#if( $chkID=='1') %LET USER_ID=$text_USERID;#end
+
+%LET MDLUZER=%upcase(%cmpres(&USER_ID)%cmpres(&MDL_ID));
+
+			]]></CodeTemplate>
+
+</Task>

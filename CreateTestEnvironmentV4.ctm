@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-16"?><Task schemaVersion="7.2">
+	<Registration>
+	    <Name>CreateTestEnvironmentV4</Name>
+	    <Description>The List Data task displays the contents of a table as a report.</Description>
+	    <GUID>454536B-485B-493E-B21A-EF19345A412C</GUID>
+		<Procedures>PRINT SORT</Procedures>
+		<Version>5.2</Version>
+		<Links>
+         <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=5.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+         <Link href=""> </Link>
+         <Link href=""> </Link>
+		 <Link href="http://documentation.sas.com/?softwareId=MVADOC&amp;softwareVersion=5.2_9.4&amp;softwareContextId=proc_print&amp;requestor=inapp">The PRINT Procedure</Link>
+         <Link href=""> </Link>
+         <Link href=""> </Link>
+		 <Link href="http://documentation.sas.com/?softwareId=MVADOC&amp;softwareVersion=5.2_9.4&amp;softwareContextId=proc_sort&amp;requestor=inapp">The SORT Procedure</Link>
+         <Link href=""> </Link>
+         <Link href=""> </Link>         
+         <Link href="http://support.sas.com/training/studio">SAS Tutorials</Link>
+		</Links>
+	</Registration>
+	<Metadata>
+		<DataSources>
+			<DataSource name="DATASOURCE" where="true">
+				<Roles>
+					<Role exclude="nbrtext,multivar,snglvar" maxVars="1" minVars="0" name="targvar" order="true" type="A">Select Target (if applicable):</Role>
+					<Role exclude="nbrtext,multivar,targvar" maxVars="0" minVars="0" name="snglvar" order="true" type="A">Single select values:</Role>
+					<Role exclude="nbrtext,snglvar,targvar" maxVars="0" minVars="0" name="multivar" order="true" type="A">Multi select values:</Role>
+					<Role exclude="snglvar,multivar,targvar" maxVars="0" minVars="0" name="nbrtext" order="true" type="A">Text input box:</Role>
+					<Role maxVars="0" minVars="0" name="ID" order="true" type="A">Identifying label:</Role>
+				</Roles>
+			</DataSource>
+		</DataSources>
+
+		<Options>
+			<Option defaultValue="all" inputType="combobox" name="ROWS2LIST">Rows to list:</Option>
+			<Option inputType="string" name="all">All rows</Option>
+			<Option inputType="string" name="firstnrows">First n rows</Option>
+			<!--<Option inputType="string" name="firstnpct">First n percent of rows</Option>-->
+			<!--<Option inputType="string" name="everynrow">Every nth row</Option>-->
+				<Option decimalPlaces="0" defaultValue="10" indent="1" inputType="numstepper" maxValue="999999" minValue="1" name="NVALUE" required="true">Amount (n):</Option>
+				<!--<Option decimalPlaces="0" defaultValue="25" indent="1" inputType="numstepper" maxValue="100" minValue="1" name="NPERCENT">Percent (n):</Option>-->
+
+			<Option inputType="string" name="DATATAB">DATA</Option>
+			<Option inputType="string" name="DATAGROUP">DATA</Option>
+			<Option inputType="string" name="ROLESGROUP">ROLES</Option>
+
+			<Option inputType="string" name="OPTIONSTAB">OPTIONS</Option>
+			<Option inputType="string" name="BASICOPTIONS">BASIC OPTIONS</Option>
+
+			<Option defaultValue="1" inputType="checkbox" name="OBS">Display row numbers</Option>
+			<Option indent="1" inputType="inputtext" name="OBSHEADING" width="250px">Column label:</Option>
+
+			<Option defaultValue="1" inputType="checkbox" name="LABEL">Use column labels as column headings</Option>
+
+			<Option defaultValue="0" inputType="checkbox" name="PRINTNUMROWS">Display number of rows</Option>
+
+			<Option defaultValue="0" inputType="checkbox" name="ROUND">Round values before summing the variable</Option>
+
+			<Option defaultValue="default" inputType="combobox" name="HEADING">Heading direction:</Option>
+			<Option inputType="string" name="default">Default</Option>
+			<Option inputType="string" name="horizontal">Horizontal</Option>
+			<Option inputType="string" name="vertical">Vertical</Option>
+
+            <Option inputType="string" name="GROUPINPUTS">INPUT VARIABLES</Option>
+			<Option defaultValue="" inputType="inputtext" missingMessage="Missing text." name="textInput1" promptMessage="Enter input one." required="true">Name of variable acting as Input 1 to transformation:</Option>
+			<Option defaultValue="" inputType="inputtext" missingMessage="Missing text." name="textInput2" promptMessage="Enter input two." required="false">Name of variable acting as Input 2 to transformation:</Option>
+			<Option defaultValue="" inputType="inputtext" missingMessage="Missing text." name="textInput3" promptMessage="Enter input three." required="false">Name of variable acting as Input 3 to transformation:</Option>
+
+
+			<Option inputType="string" name="GROUPOUTPUT">OUTPUT VARIABLES</Option>
+			<Option defaultValue="" inputType="inputtext" missingMessage="Missing an output variable." name="textOUTPUT" promptMessage="Enter variable output name." required="true">Name of transformation output variable:</Option>
+
+			<Option defaultValue="Arizona_BI" inputType="combobox" name="comboModel">Select Model:</Option>
+			<Option inputType="string" name="AZ_BI">AZ_BI</Option>
+			<Option inputType="string" name="Arizona_COMP">Arizona_COMP</Option>
+			<Option inputType="string" name="Arizona_COLL">Arizona_COLL</Option>
+			<Option inputType="string" name="Arizona_MEDPAY">Arizona_MEDPAY</Option>
+			<Option inputType="string" name="Texas_BI">Texas_BI</Option>
+			<Option inputType="string" name="Texas_COMP">Texas_COMP</Option>
+			<Option inputType="string" name="Texas_COLL">Texas_COLL</Option>
+			<Option inputType="string" name="Texas_MEDPAY">Texas_MEDPAY</Option>
+
+			<Option name="textCode" required="true" inputType="textbox" width="100%" height="300px" splitlines="true"   defaultValue="">Code Window</Option>
+
+			<Option defaultValue="default" inputType="combobox" name="WIDTH">Column width:</Option>
+			<Option inputType="string" name="full">Full</Option>
+			<Option inputType="string" name="minimum">Minimum</Option>
+			<Option inputType="string" name="uniform">Uniform</Option>
+			<Option inputType="string" name="uniformby">Uniform by</Option>
+
+			<Option defaultValue="0" inputType="checkbox" name="SPLITLABEL">Split labels</Option>
+			<Option defaultValue="*" indent="1" inputType="combobox" name="SPLITLABELVALUE">Split character:</Option>
+         
+         <Option inputType="string" name="titleText">List Data for {1}</Option>
+		<Option defaultValue="0" inputType="checkbox" name="chksngl">Create variable chkSngl for coding use?</Option>
+		<Option defaultValue="0" inputType="checkbox" name="chkmulti">Create variable chkMulti for coding use?</Option>
+		<Option defaultValue="0" inputType="checkbox" name="chknbr">Create variable chknbr for coding use?</Option>
+		<Option defaultValue="0" inputType="checkbox" name="chkbox1">Create variable chkbox1 for coding use?</Option>
+		<Option defaultValue="" inputType="inputtext"  name="textchksngl" required="false">Lable for check box goes here:</Option>
+
+		</Options>
+	  </Metadata>
+	  <UI>
+		  <Container option="DATATAB">
+			  <Group open="true" option="DATAGROUP">
+				  <DataItem data="DATASOURCE"/>
+			  </Group>
+		<!--	  <Group open="true" option="ROLESGROUP">
+				  <RoleItem role="targvar"/>				  
+				  <OptionItem option="chksngl"/>
+				  <OptionItem option="textchksngl"/> 
+				  <RoleItem role="snglvar"/>
+ 				  <RoleItem role="chkmulti"/>  
+				  <RoleItem role="multivar"/>->
+				  <RoleItem role="chknbr"/>  
+				  <RoleItem role="nbrtext"/>
+				  <RoleItem role="chkbox1"/>
+				  <RoleItem role="ID"/> 
+			  </Group> -->
+			<OptionChoice option="comboModel">
+				<OptionItem option="AZ_BI"/>
+				<OptionItem option="Arizona_COMP"/>
+				<OptionItem option="Arizona_COLL"/>
+				<OptionItem option="Arizona_MEDPAY"/>
+				<OptionItem option="Texas_BI"/>
+				<OptionItem option="Texas_COMP"/>
+				<OptionItem option="Texas_COLL"/>
+				<OptionItem option="Texas_MEDPAY"/>
+			</OptionChoice>
+			<Group option="GROUPINPUTS">
+				<OptionItem option="textInput1"/>
+				<OptionItem option="textInput2"/>
+				<OptionItem option="textInput3"/>
+			</Group>
+			<Group option="GROUPOUTPUT">
+				<OptionItem option="textOUTPUT"/>
+				<OptionItem option="textCode"/>
+			</Group>
+
+		  </Container>
+
+
+
+		  <Container option="OPTIONSTAB">
+
+			  <Group open="true" option="BASICOPTIONS">
+
+			  <OptionItem option="OBS"/>			
+			  <OptionItem option="OBSHEADING"/>	      
+			  <OptionItem option="LABEL"/>
+			  <OptionItem option="PRINTNUMROWS"/>
+			  <OptionItem option="ROUND"/>
+
+			  <OptionChoice option="HEADING">
+				<OptionItem option="default"/>
+				<OptionItem option="horizontal"/>
+				<OptionItem option="vertical"/>
+			  </OptionChoice>
+
+			  <OptionChoice option="WIDTH">
+				<OptionItem option="default"/>
+				<OptionItem option="full"/>
+				<OptionItem option="minimum"/>
+				<OptionItem option="uniform"/>
+				<OptionItem option="uniformby"/>
+			  </OptionChoice>
+
+			  <OptionItem option="SPLITLABEL"/>
+			  <OptionChoice option="SPLITLABELVALUE">
+				  <OptionValue>*</OptionValue>
+				  <OptionValue>!</OptionValue>
+				  <OptionValue>@</OptionValue>
+				  <OptionValue>#</OptionValue>
+				  <OptionValue>$</OptionValue>
+				  <OptionValue>%</OptionValue>
+				  <OptionValue>^</OptionValue>
+				  <OptionValue>&amp;</OptionValue>
+				  <OptionValue>+</OptionValue>
+				</OptionChoice>	      
+
+				<OptionChoice option="ROWS2LIST">
+					<OptionItem option="all"/>
+					<OptionItem option="firstnrows"/>
+			  </OptionChoice>
+			  <OptionItem option="NVALUE"/>
+
+			</Group>
+		  </Container>
+	  </UI>
+	<Dependencies>
+		<Dependency condition="$OBS=='1'">
+			<Target action="enable" conditionResult="true" option="OBSHEADING"/>
+			<Target action="disable" conditionResult="false" option="OBSHEADING"/>
+		</Dependency>
+		<Dependency condition="$SPLITLABEL=='1'">
+			<Target action="enable" conditionResult="true" option="SPLITLABELVALUE"/>
+			<Target action="disable" conditionResult="false" option="SPLITLABELVALUE"/>
+		</Dependency>
+		<Dependency condition="$ROWS2LIST.equalsIgnoreCase('firstnrows')">
+			<Target action="enable" conditionResult="true" option="NVALUE"/>
+			<Target action="disable" conditionResult="false" option="NVALUE"/>
+		</Dependency>
+	</Dependencies>
+  	<CodeTemplate>
+		<![CDATA[
+
+
+##if ( $textCode.size() > 0 )
+##if  ($textCode)
+
+libname Projects '/home/sasdemo/CodeTable/ForPath/Projects';run;
+libname trnsFrm '/home/sasdemo/CodeTable/ForPath/trnsFrm';run;
+libname PrntChld '/home/sasdemo/CodeTable/ForPath/PrntChld';run;
+
+libname myFCMP '/home/sasdemo/CodeTable/ForPath/ProjFCMP';run;
+
+PROC SQL;
+	SELECT MAX(PROJECT_VERSION) INTO :CURRENT_VERS FROM Projects.Auto2020Projects 
+		where upcase(PROJECT_NAME)=upcase('$comboModel');
+	SELECT PROJECT_GUID INTO :PROJ_GUID_FROM_VERSION FROM 
+		Projects.Auto2020Projects where (upcase(PROJECT_NAME)=upcase('$comboModel') AND 
+		PROJECT_VERSION=&CURRENT_VERS.);
+QUIT;
+
+%LET TRANSFORM_GUID_TEMP=%UPCASE(%sysfunc(uuidgen()));
+%LET TRANSFORM_GUID=%sysfunc(cats(T,%substr(%SYSFUNC(COMPRESS(&TRANSFORM_GUID_TEMP.,'-')),1,19)));
+
+
+DATA WORK.TEMP_TRANS_INFO(DROP=PARENT_NAME PARENT_GUID TEMP_PARENT_GUID36) 
+    WORK.TEMP_PARENT_INFO(KEEP=TRANSFORM_GUID PARENT_NAME PARENT_GUID);
+	
+	LENGTH TRANSFORM_NAME PARENT_NAME USER_ID $32.;
+	LENGTH PROJECT_GUID TRANSFORM_GUID PARENT_GUID	$20.;
+	LENGTH TCREATE_DATE TLAST_MODIFIED 8.;
+	
+	PROJECT_GUID="&PROJ_GUID_FROM_VERSION.";
+
+	/* T BELOW AT AT START OF TRANSFORM_GUID STANDS FOR TRANSFORM */
+	TRANSFORM_GUID="&TRANSFORM_GUID.";
+
+	/* CP BELOW AT THE START OF PARENT_GUID STANDS FOR CHILD PARENT */
+	TEMP_PARENT_GUID36=UUIDGEN();
+	PARENT_GUID=UPCASE(cats('CP', substr(compress(TEMP_PARENT_GUID36, '-'), 1, 18)));
+	
+	TCREATE_DATE=DATETIME();
+	TLAST_MODIFIED=DATETIME();
+	FORMAT TCREATE_DATE TLAST_MODIFIED DATETIME.;
+	
+	TRANSFORM_NAME='$textOUTPUT';
+	PARENT_NAME='$textInput1';
+	USER_ID="&SYSUSERID.";
+	OUTPUT WORK.TEMP_TRANS_INFO WORK.TEMP_PARENT_INFO;
+
+#if ( $textInput2 )
+	TEMP_PARENT_GUID36=UUIDGEN();
+	PARENT_GUID=UPCASE(cats('CP', substr(compress(TEMP_PARENT_GUID36, '-'), 1, 18)));
+	TRANSFORM_NAME='$textOUTPUT';
+	PARENT_NAME='$textInput2';
+	OUTPUT WORK.TEMP_PARENT_INFO;
+#end
+
+#if ( $textInput3 )
+	TEMP_PARENT_GUID36=UUIDGEN();
+	PARENT_GUID=UPCASE(cats('CP', substr(compress(TEMP_PARENT_GUID36, '-'), 1, 18)));
+	TRANSFORM_NAME='$textOUTPUT';
+	PARENT_NAME='$textInput3';
+	OUTPUT WORK.TEMP_PARENT_INFO;
+#end
+
+
+RUN;
+
+PROC SQL;
+	SELECT TRANSFORM_GUID INTO :TRANS2_PULLGUID FROM WORK.TEMP_TRANS_INFO;
+QUIT;
+
+PROC APPEND BASE=trnsFrm.&PROJ_GUID_FROM_VERSION. FORCE DATA=WORK.TEMP_TRANS_INFO;QUIT;
+PROC APPEND BASE=PrntChld.&PROJ_GUID_FROM_VERSION. FORCE DATA=WORK.TEMP_PARENT_INFO;QUIT;
+
+PROC DELETE DATA=WORK.TEMP_TRANS_INFO;
+PROC DELETE DATA=WORK.TEMP_PARENT_INFO;RUN;
+
+
+proc fcmp outlib = myFCMP.fcmpsubs.&PROJ_GUID_FROM_VERSION.;
+   subroutine &TRANS2_PULLGUID($textOUTPUT,#if ( $textInput1 )$textInput1#end #if ( $textInput2 ),$textInput2#end #if ( $textInput3 ),$textInput3#end); 
+      outargs $textOUTPUT;
+		
+		output1='$textOUTPUT';
+		input1='$textInput1';
+		#if ( $textInput2 ) input2='$textInput2';
+		#else input2='';
+		#end
+
+/* BELOW IS THE SAS CODE */
+      $textCode
+	endsub;
+ 	run;
+    quit;
+
+		]]>
+	</CodeTemplate>
+</Task>

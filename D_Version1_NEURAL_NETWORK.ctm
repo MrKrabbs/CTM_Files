@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="3.0">
+    <Registration>
+        <Name>NEURALNETWORK</Name>
+        <Description>D_Version1_NEURAL_NETWORK</Description>
+        <GUID>ac15ebb4-f8da-4fd3-b35a-8eb8da3e3c35</GUID>
+        <Procedures>HPREDUCE</Procedures>
+        <Version>3.3</Version>
+        <Links>
+            <Link href="http://support.sas.com/documentation/onlinedoc/sasstudio/index.html">SAS Studio User's Guide</Link>
+            <Link href=""/>
+            <Link href=""/>
+            <Link href="http://support.sas.com/documentation/cdl/en/prochp/66704/HTML/default/viewer.htm#prochp_hpimpute_overview.htm">The HPIMPUTE Procedure</Link>
+        </Links>
+        <Category>Auto_Severity_2015 templates</Category>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource name="dataset">
+                <Roles>
+                    <Role
+                        exclude="CategoricalVariables,DropVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0"
+                        name="ContinuousVariables" type="A">Select Input Variables</Role>
+                    <Role
+                        exclude="ContinuousVariables,DropVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0"
+                        name="CategoricalVariables" type="A">Select Categorical Variables</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,targetVariable,copyVariables,weightVariable,IDVariable"
+                        maxVars="0" minVars="0" name="DropVariables" type="A">Select Variables to drop</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,targetVariable"
+                        indent="1" maxVars="0" minVars="0"
+                        name="copyVariables" type="A">Additional variables to include in the output data set</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,weightVariable,IDVariable"
+                        maxVars="1" minVars="1" name="targetVariable" type="A">Target Variable</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,targetVariable,IDVariable"
+                        maxVars="1" minVars="0" name="weightVariable" type="A">Weight Variable (Optional !)</Role>
+                    <Role
+                        exclude="ContinuousVariables,CategoricalVariables,DropVariables,copyVariables,targetVariable,weightVariable"
+                        maxVars="1" minVars="0" name="IDVariable" type="A">Unique ID Variable</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="optionsTab">OPTIONS</Option>
+            <Option inputType="string" name="dataGroup">DATA (Default=DataFldr.Send2Neural)</Option>
+            <Option inputType="string" name="rolesGroup">ROLES</Option>
+            <Option inputType="string" name="targetRolesGroup">Select Target Variable</Option>
+            <Option inputType="string" name="weightRolesGroup">Select Weight Variable</Option>
+            <Option inputType="string" name="UniqueIDRolesGroup">Select Unique ID Variable</Option>
+            <Option inputType="string" name="explicitDropGroup"><![CDATA[<b><font color=#FF0000>Explicitly select variables to drop, this will help you account for all variables</b>]]></Option> 
+            <Option defaultValue="1" inputType="checkbox" name="outputDS">Create output data set</Option>
+            <Option defaultValue="HPimpute_scores" indent="1"
+                inputType="outputdata" name="outputDSName" required="true">Data set name:</Option>
+            <Option name="GROUPNUMSTEPPER" inputType="string">Select % of Vairance and Max Number of effects. Type or use arrows</Option>
+			<Option name="labelNumStepperEXAMPLE2" inputType="string">Percentage of explained variance desired: minimum value of 10% a maximum value of 100%. Default is 90%.</Option>
+			<Option name="advancedStepperEXAMPLE" defaultValue="90" inputType="numstepper" increment="10" minValue="10" maxValue="100" decimalPlaces="0,3" indent="1">Select Variance to explain:</Option>  
+			<Option name="labelNumStepperEXAMPLE3" inputType="string">Select the maximum number of variables that you think could be predictive: minimum value of 1 a maximum value of 2000.</Option>
+			<Option name="advancedStepperEXAMPLE3" defaultValue="2000" inputType="numstepper" increment="10" minValue="1" maxValue="2000" decimalPlaces="0,0" indent="1">Select Maximum Effects:</Option>      
+        </Options>
+    </Metadata>
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="targetRolesGroup">
+                <RoleItem role="targetVariable"/>
+            </Group>
+            <Group open="true" option="weightRolesGroup">
+                <RoleItem role="weightVariable"/>
+            </Group>
+     <!--      <Group open="true" option="UniqueIDRolesGroup">
+                <RoleItem role="IDVariable"/>
+            </Group> -->
+            <Group open="true" option="rolesGroup">
+                <RoleItem role="ContinuousVariables"/>
+          <!--      <RoleItem role="CategoricalVariables"/> -->
+             
+          </Group>
+     <!--     <Group open="true" option="GROUPNUMSTEPPER">
+				<OptionItem option="labelNumStepperEXAMPLE2"/>
+				<OptionItem option="advancedStepperEXAMPLE"/>
+				<OptionItem option="labelNumStepperEXAMPLE3"/>
+				<OptionItem option="advancedStepperEXAMPLE3"/>
+		</Group> -->
+
+   <!--         <Group open="true" option="explicitDropGroup">
+            	<RoleItem role="DropVariables"/>
+            </Group> -->
+        </Container>
+   <!--     <Container option="optionsTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <RoleItem role="copyVariables"/>
+            </Group>
+        </Container> 
+    -->
+    </UI>
+    <Dependencies>
+   <!--     <Dependency condition="($outputDS=='1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+        </Dependency> -->
+    </Dependencies>
+    <Requirements>
+ <!--       <Requirement condition="$ContinuousVariables.size() > 0 ||    $CategoricalVariables.size() > 0 ||    $DropVariables.size() > 0">
+            <Message nlsKey="meanMedianRandomMsgKey">Select at least one variable to replace its missing values with the mean, the pseudo-median, or a random number.</Message>
+        </Requirement> -->
+    </Requirements>
+    <CodeTemplate><![CDATA[
+ods noproctitle;
+#if ( $ContinuousVariables.size() > 0 )   
+   %LET CONT_RDC_4NERL=#foreach( $item in $ContinuousVariables )%bquote(')%substr($item,2,%eval(%index($item,\) -2))%bquote(') #end; 
+#end
+* THE DATASET BELOW(DATAFLDR.SRC_RDC_NAMES&MDLUZER) WAS CREATED IN THE REDUCE PROCESS;
+
+proc sql ;
+	select NAME INTO:CONT_NERL SEPARATED BY ' ' FROM DATAFLDR.SRC_RDC_NAMES&MDLUZER WHERE NAME 
+		IN (%UNQUOTE(&CONT_RDC_4NERL)) AND TYPE=1;
+	select NAME INTO:CATG_NERL SEPARATED BY ' ' FROM DATAFLDR.SRC_RDC_NAMES&MDLUZER WHERE NAME 
+		IN (%UNQUOTE(&CONT_RDC_4NERL)) AND TYPE=2;
+	select COUNT(*) INTO:NBR_CONT_NERL FROM DATAFLDR.SRC_RDC_NAMES&MDLUZER WHERE NAME 
+		IN (%UNQUOTE(&CONT_RDC_4NERL)) AND TYPE=1;
+	SELECT NAME INTO:ALL_NERL_VARS SEPARATED BY ' ' FROM DATAFLDR.SRC_RDC_NAMES&MDLUZER;
+QUIT;
+RUN;
+
+%NERL_PATH;
+
+********************* GET CATG NUMBER OF LEVELS *********************************;
+PROC HPSUMMARY DATA=&NERL_FOLDER..REDUCE_OUT&MDLUZER MISSING;
+	CLASS &CATG_NERL;
+	WAYS 1;
+	OUTPUT OUT=LVL_DATA;
+RUN;
+
+ods output Nlevels=WORK.Levels_out;
+/* One PROC FREQ step can handle many variables */
+     proc freq data=WORK.LVL_DATA nlevels ;
+        tables &CATG_NERL / noprint ;
+	
+     run;
+
+*BELOW WILL LOAD NUMBER OF CATG LEVELS INTO MACRO VARIABLES CALLED CATG_LVLS_NERL;
+PROC SQL;
+  *CREATE TABLE WORK.SumUp_Levels AS ;
+   SELECT /* SUM_of_NLevels */
+            (SUM(t1.NLevels)) INTO:CATG_LVLS_NERL
+      FROM WORK.Levels_out t1;
+QUIT;
+RUN;
+******************* WE NOW HAVE NUMBER OF CATG LEVELS ***************************;
+
+*BELOW WILL SUM ALL CATG LEVELS AND NUMBER OF CONT VARIABLES TO COME UP WITH OUR NEURONS;
+*WE WILL USE ONE HIDDEN STATEMENT AS OUR DEFAULT;
+%LET NEURONS=%EVAL(&CATG_LVLS_NERL + &NBR_CONT_NERL);
+
+##if ( $ContinuousVariables.size() > 0 )   
+##   %LET CONT_RDC=#foreach( $item in $ContinuousVariables )$item #end; 
+##end
+
+##if ( $ContinuousVariables.size() > 0 )   
+##   %LET CONT_QTE_RDC=#foreach( $item in $ContinuousVariables )'$item' #end; 
+##end
+##if ( $CategoricalVariables.size() > 0 )   
+##   %LET CATG_RDC=#foreach( $item in $CategoricalVariables )$item #end; 
+##end
+##if ( $CategoricalVariables.size() > 0 )   
+##   %LET CATG_QTE_RDC=#foreach( $item in $CategoricalVariables )'$item' #end; 
+##end
+
+#if( $targetVariable.size() > 0 )
+    %LET TRGT_NERL=#foreach( $item in $targetVariable )$item#end;
+#end
+ 
+%LET WEGHTNERL=1; 
+#if( $weightVariable.size() > 0 )
+%LET WEGHTNERL=#foreach( $item in $weightVariable )$item#end;
+#end
+
+proc hpneural data=&NERL_FOLDER..REDUCE_OUT&MDLUZER;
+input &CONT_NERL /LEVEL=INT;
+INPUT &CATG_NERL /LEVEL=NOM;
+target &TRGT_NERL / level=INT;
+hidden &NEURONS;
+WEIGHT &WEGHTNERL;
+ID &ALL_NERL_VARS;
+train  numtries=10 maxiter=1000;
+score out=&NERL_FOLDER..NERL_OUT&MDLUZER(RENAME=(P_&TRGT_NERL=NEURAL_PREDICTED));
+
+
+
+*BELOW WILL JOIN REDUCE RANK INFORMATION WITH A FLAG FOR IF USED IN NEURAL NETWORK;
+DATA DATAFLDR.COMBINE_REDUCE_NERL&MDLUZER;
+	SET DATAFLDR.RANK_W_VAR_RNK_IMPACT&MDLUZER;
+
+LENGTH IN_NEURAL $1.;
+LENGTH WGT_USED_NERL $32.;
+
+IF VARIABLE='' THEN VARIABLE=VARS_4_NEURAL;
+
+IN_NEURAL='N';
+WGT_USED_NERL="&WEGHTNERL";
+
+IF VARIABLE IN (%UNQUOTE(&CONT_RDC_4NERL)) THEN IN_NEURAL = 'Y';
+
+RUN;
+
+PROC CONTENTS DATA=&NERL_FOLDER..NERL_OUT&MDLUZER 
+		OUT=DATAFLDR.SRC_PLS_INFO&MDLUZER(KEEP=NAME TYPE) NOPRINT;
+RUN;
+
+PROC SORT DATA=DATAFLDR.SRC_PLS_INFO&MDLUZER out=work.SRC_PLS_Order;
+	by descending type name;
+run;
+
+proc sql ;
+    SELECT NAME INTO :ColFromNerl SEPARATED BY ' ' FROM work.SRC_PLS_Order WHERE NAME NOT IN ('NEURAL_PREDICTED');
+quit;run;
+
+*THE DATASET BELOW IS THE ONE THAT IS REFERENCED BY THE GLM;
+data DATAFLDR.BIN_FROM_NEURAL&MDLUZER;
+	format &ColFromNerl;
+	set &NERL_FOLDER..NERL_OUT&MDLUZER(OBS=1);
+
+	DROP I _WARN_ NEURAL_PREDICTED;
+run;
+
+]]></CodeTemplate>
+</Task>
