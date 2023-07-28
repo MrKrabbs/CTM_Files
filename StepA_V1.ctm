@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task schemaVersion="7.2">
+
+	<!--- Define the registration properties for this task. -->
+	<Registration>
+		<Name>New Task</Name>
+		<Description> </Description>
+		<Procedures> </Procedures>
+		<Version>5.2</Version>
+		<Links>
+			<Link href="http://support.sas.com/software/products/sasstudio/index.html#s1=2">SAS Studio Documentation</Link>
+		</Links>
+	</Registration>
+	
+	<Metadata>
+	
+		<!--- Define the data and roles for this task. -->
+		<DataSources>	
+			<DataSource name="DATASOURCE" where="false" defaultValue="" active="true">
+                <Roles>
+				<!--	<Role maxVars="1" minVars="1" name="TARGET_VAR" order="true" type="N"  active="true">Target variable(required):</Role>
+					<Role exclude="VAR" maxVars="0" minVars="0" name="OPTNVAR" order="true" type="N">Numeric variable:</Role>
+					<Role maxVars="3" minVars="0" name="OPTCVAR" order="true" type="C">Character variable:</Role> -->
+                </Roles>
+            </DataSource>
+		</DataSources>
+		
+		<!--- Define the task options. -->
+		<Options>
+			<Option inputType="string" name="DATATAB">DATA</Option>
+			<Option inputType="string" name="DATAGROUP">DATA</Option>
+			<Option inputType="string" name="ROLESGROUP">ROLES</Option>
+			<Option inputType="string" name="strBlankLine"></Option>
+			<Option name="folderSelector" inputType="sasserverpath" required="true" active="true"
+			pathType="folder"></Option>
+			<Option name="text_FILE_EXT" defaultValue="" indent="1" required="true"	inputType="validationtext" 	promptMessage="Enter a string 7 characters or less in lenght."
+			invalidMessage="Invalid value. No spaces and you can only use up to 7 characters."
+			regExp="\w{0,7}">Example:put Liab2019 in box below and that will be embedded into output dataset names</Option>
+			<Option inputType="markdown" name="markdownDataSource">
+			# **Select Project Folder**
+			</Option>
+			<Option inputType="markdown" name="markdownFileExtension">
+			# **One time creation of file extension**
+			</Option>
+	<!--		<Option inputType="markdown" name="markdownBlankLine">
+			#
+			</Option> -->
+			<Option inputType="markdown" name="markdownDataSelect">
+			# **Select source data to be used in model**
+			</Option>
+			<Option defaultValue="1" inputType="radio" name="radioNew1" variable="radioNewProj">New Project</Option>
+			<Option inputType="radio" name="radioNew2" variable="radioNewProj">Returning to my project</Option>
+			<Option inputType="radio" name="radioNew3" variable="radioNewProj">Returning to my project and want to see available data files</Option>
+			<Option inputType="markdown" name="markdownRadioProj">
+			# **Setting up a new project or returning to an existing project?**
+			</Option>
+		    <Option name="Create_Partition" variable="radioPartition" 	defaultValue="1" inputType="radio">Create Partitions</Option>
+			<Option name="Have_Partition" variable="radioPartition"  inputType="radio">Data has partition variable I would like to use</Option>
+			<Option name="Skip_Partion" variable="radioPartition" inputType="radio">Skip partition</Option>
+			<Option name="Two_Parts" variable="radioNbrParts" 	defaultValue="1" inputType="radio">Create Validation Flag</Option>
+			<Option name="Three_Parts" variable="radioNbrParts"  inputType="radio">Create Validation and Test Flags</Option>
+			<Option name="textRenamePartition"  inputType="inputtext"
+				indent="1"
+				required="true"
+				promptMessage="Enter the name of the variable you are using as a partition variable"
+				missingMessage="Missing text.">Enter the name of the variable you are using as a partition variable</Option>
+           <Option inputType="string" name="rolesGroup">SAMPLING METHOD</Option>
+           <Option inputType="radio" name="simpleSamplingChoice" variable="samplingType">Simple random sampling</Option>
+           <Option inputType="radio" name="stratifiedSamplingChoice" variable="samplingType">Stratified sampling</Option>
+		   <Option name="textTarget"  inputType="inputtext"
+			indent="1"
+			required="false"
+			promptMessage="Enter Target variable being used in model"
+			missingMessage="Missing text.">Enter Target variable being used in model</Option>
+			<Option defaultValue="0" inputType="checkbox" name="chk_showColumnNames">Show column names to help select target variable</Option>
+			<Option defaultValue="CASUSER" inputType="combobox" readonly="true" name="comboCASLib">Default CAS Libary: Information only cannot be changed:</Option>
+			<Option inputType="string" name="DEFAULT_LIBRARY">CASUSER</Option>
+            <Option inputType="string" name="partitionsGroup">PARTITIONS</Option>
+            <Option inputType="combobox" name="nPartitions" width="150px" active="true">Number of partitions:</Option>
+            <Option inputType="string" name="nPartition2Choice">Validation</Option>
+            <Option inputType="string" name="nPartition3Choice">Validation and Testing</Option>
+            <Option decimalPlaces="0,15" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                maxValue="99.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                name="sampPct1"
+                promptMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 1 in the data set"
+                required="true" width="100px">Percentage of total data to allocate to Validation:</Option>
+            <Option decimalPlaces="0,15" inputType="numbertext"
+                invalidMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                maxValue="99.9999999999" minValue="0.0000000001"
+                missingMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                name="sampPct2"
+                promptMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                rangeMessage="Enter a value greater than 0 and less than 100 for the sampling percentage for partition 2 in the data set"
+                required="true" width="100px">Percentage of total data to allocate to Testing:</Option>
+            <Option inputType="string" name="samppct1Note">The sampling percentage can range between 0 and 100.</Option>
+            <Option inputType="string" name="samppct2Note">The sampling percentages can range between 0 and 100.</Option>
+            <Option inputType="string" name="partition2Note">If you select 30 for validation(Valdtn_flag=1) then training(Valdtn_flag=0) will equal 70%</Option>
+            <Option inputType="string" name="partition3Note">If you select 30 for validation(Valdtn_flag=1) and 20 for testing(Valdtn_flag=2) then training(Valdtn_flag=0) will equal 50%</Option>
+            <Option defaultValue="VALDTN_FLAG" inputType="validationtext"
+                invalidMessage="Enter a valid SAS variable name"
+                missingMessage="Enter a valid SAS variable name"
+                name="partitionVarName" regExp=".{1,32}" required="true" width="200px">Variable name for partition values:</Option>
+            <Option defaultValue="1" indent="1" inputType="radio"
+                name="numPartVarType" variable="partitionVarType">Use numeric partition values</Option>
+            <Option indent="1" inputType="radio" name="charPartVarType" variable="partitionVarType">Use character partition values</Option>
+            <Option defaultValue="Partition 1" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 1"
+                missingMessage="Enter a value to identify data partition 1"
+                name="charPartitionDataValue1" regExp=".*"
+                required="true" width="200px">ID value for partition 1 data:</Option>
+            <Option defaultValue="Partition 2" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 2"
+                missingMessage="Enter a value to identify data partition 2"
+                name="charPartitionDataValue2" regExp=".*"
+                required="true" width="200px">ID value for partition 2 data:</Option>
+            <Option defaultValue="Partition 3" indent="2"
+                inputType="validationtext"
+                invalidMessage="Enter a value to identify data partition 3"
+                missingMessage="Enter a value to identify data partition 3"
+                name="charPartitionDataValue3" regExp=".*"
+                required="true" width="200px">ID value for partition 3 data:</Option>
+            <Option decimalPlaces="0" defaultValue="1" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                name="numPartitionDataValue1"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 1"
+                required="true" width="100px">ID value for partition 1:</Option>
+            <Option decimalPlaces="0" defaultValue="0" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                name="num2PartitionsDataValue2"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                required="true" width="100px">ID value for partition 2:</Option>
+            <Option decimalPlaces="0" defaultValue="2" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                name="num3PartitionsDataValue2"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 2"
+                required="true" width="100px">ID value for partition 2:</Option>
+            <Option decimalPlaces="0" defaultValue="0" indent="1"
+                inputType="numbertext"
+                invalidMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                maxValue="1000000" minValue="-1000000"
+                missingMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                name="num3PartitionsDataValue3"
+                promptMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                rangeMessage="Enter an integer between -1,000,000 and 1,000,000 to identify data partition 3"
+                required="true" width="100px">ID value for partition 3:</Option>
+            <Option indent="1" inputType="string" name="numTwoPartitionsDataValueNote">ID value for partition 2: 0</Option>
+            <Option indent="1" inputType="string" name="numThreePartitionsDataValueNote">ID value for partition 3: 0</Option>
+            <Option inputType="string" name="methodsGroup">METHODS</Option>
+            <Option inputType="string" name="sampleByPct">Percentage</Option>
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext"
+                invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                maxValue="2147483647" minValue="1"
+                missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                name="randomSeed"
+                promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed"
+                required="true" width="100px">Random seed:</Option>
+		   </Options>		
+		
+	</Metadata>
+
+	<!--- Define the UI for task options -->
+	<!--- The UI engine will determine the best representation. -->
+	<UI>
+	<Container option="DATATAB">
+		<OptionChoice option="comboCASLib">
+			<OptionItem option="DEFAULT_LIBRARY"/>
+		</OptionChoice>
+		<OptionItem option="markdownRadioProj"/>
+		<OptionItem option="radioNew1"/>
+		<OptionItem option="radioNew2"/>
+		<OptionItem option="strBlankLine"/>
+		<DataItem data="DATASOURCE"/>
+		<OptionItem option="markdownDataSource"/>
+		<OptionItem option="folderSelector"/>
+	<!--	<OptionItem option="markdownDataSelect"/>
+		<OptionItem option="dataSelector"/>  
+		<OptionItem option="chk_showColumnNames"/> -->
+	<!--	<OptionItem option="textTarget"/>  -->
+		<OptionItem option="markdownFileExtension"/>
+		<OptionItem option="text_FILE_EXT"/>
+	    <OptionItem option="Create_Partition"/>
+		<OptionItem option="Have_Partition"/>
+		<OptionItem option="Skip_Partion"/>
+		<OptionItem option="textRenamePartition"/>
+            <Group open="true" option="partitionsGroup">
+                <OptionChoice option="nPartitions">
+                	<OptionItem option="nPartition2Choice"/>
+                    <OptionItem option="nPartition3Choice"/>
+                </OptionChoice>
+                <OptionItem option="sampPct1"/>
+                <OptionItem option="sampPct2"/>
+                <OptionItem option="samppct1Note"/>
+                <OptionItem option="samppct2Note"/>
+                <OptionItem option="partition2Note"/>
+                <OptionItem option="partition3Note"/>
+                <OptionItem option="useRandomSeed"/>
+                <OptionItem option="randomSeed"/>
+             </Group>
+
+	</Container>
+	</UI>
+	<Dependencies>
+<!--		<Dependency condition="$chk_showColumnNames == '1'">
+		<Target action="set" conditionResult="true" option="$textTarget"
+		property="value" value=$DATASOURCE/>
+		<Target action="set" conditionResult="false" option="chk_showColumnNames"
+		property="value" value="0"/>  
+		</Dependency> -->
+ 
+<Dependency condition="!($radioPartition=='Create_Partition')">
+            <Target action="show" conditionResult="false" option="rolesGroup"/>
+            <Target action="hide" conditionResult="true" option="rolesGroup"/>
+            <Target action="show" conditionResult="false" option="partitionsGroup"/>
+            <Target action="hide" conditionResult="true" option="partitionsGroup"/>          
+        </Dependency>
+        <Dependency condition="!($radioPartition=='Have_Partition')">
+            <Target action="show" conditionResult="false" option="textRenamePartition"/>
+            <Target action="hide" conditionResult="true" option="textRenamePartition"/>
+        </Dependency>
+        <Dependency condition="($useRandomSeed==1)">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="randomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="randomSeedNote"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice')">
+            <Target action="show" conditionResult="true" option="sampPct2"/>
+            <Target action="hide" conditionResult="false" option="sampPct2"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition2Choice')">
+            <Target action="show" conditionResult="true" option="partition2Note"/>
+            <Target action="hide" conditionResult="false" option="partition2Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice')">
+            <Target action="show" conditionResult="true" option="partition3Note"/>
+            <Target action="hide" conditionResult="false" option="partition3Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition2Choice' &amp;&amp; $sampPct1 &lt; 1.0)">
+            <Target action="show" conditionResult="true" option="samppct1Note"/>
+            <Target action="hide" conditionResult="false" option="samppct1Note"/>
+        </Dependency>
+        <Dependency condition="($nPartitions == 'nPartition3Choice' &amp;&amp; ($sampPct1 &lt; 1.0 || $sampPct2 &lt; 1.0))">
+            <Target action="show" conditionResult="true" option="samppct2Note"/>
+            <Target action="hide" conditionResult="false" option="samppct2Note"/>
+        </Dependency>
+		<Dependency condition="$radioNewProj == 'radioNew2'">
+           <Target option="DATASOURCE" conditionResult="true"  action="disable"/>
+<Target option="rolesGroup" conditionResult="true"  action="disable"/>
+<Target option="folderSelector" conditionResult="true"  action="disable"/>
+<Target option="text_FILE_EXT" conditionResult="true"  action="disable"/>
+<Target option="Create_Partition" conditionResult="true"  action="disable"/>
+<Target option="Have_Partition" conditionResult="true"  action="disable"/>
+<Target option="Skip_Partion" conditionResult="true"  action="disable"/>
+<Target option="partitionsGroup" conditionResult="true"  action="disable"/>
+<Target option="nPartitions" conditionResult="true"  action="disable"/>
+<Target option="sampPct1" conditionResult="true"  action="disable"/>
+<Target option="sampPct2" conditionResult="true"  action="disable"/>
+<Target option="textRenamePartition" conditionResult="true"  action="disable"/>
+<Target option="DATASOURCE" conditionResult="false" action="enable"/>
+<Target option="rolesGroup" conditionResult="false"  action="enable"/>
+<Target option="folderSelector" conditionResult="false"  action="enable"/>
+<Target option="text_FILE_EXT" conditionResult="false"  action="enable"/>
+<Target option="Create_Partition" conditionResult="false"  action="enable"/>
+<Target option="Have_Partition" conditionResult="false"  action="enable"/>
+<Target option="Skip_Partion" conditionResult="false"  action="enable"/>
+<Target option="partitionsGroup" conditionResult="false"  action="enable"/>
+<Target option="nPartitions" conditionResult="false"  action="enable"/>
+<Target option="sampPct1" conditionResult="false"  action="enable"/>
+<Target option="sampPct2" conditionResult="false"  action="enable"/>
+<Target option="textRenamePartition" conditionResult="false"  action="enable"/>
+ 		</Dependency> 
+	</Dependencies>
+	<!--- Define the velocity code template. -->
+  	<CodeTemplate>
+		<![CDATA[
+OPTIONS MERROR SYMBOLGEN MLOGIC MPRINT SOURCE SOURCE2;
+
+/* note did not use a data selector as that would require libraries to be created in advance */
+
+
+LIBNAME DATAFLDR "$folderSelector.path/DATAFLDR/";
+LIBNAME myxlsx XLSX "$folderSelector.path/EXCEL_GRP/VAR_INFO.xlsx";
+
+
+
+#set($fext = $text_FILE_EXT.length())
+#set($ucase_ext=$text_FILE_EXT.toUpperCase())
+#if ($fext > 0) 
+	%LET MDLUZER=_%UPCASE(%SYSFUNC(COMPRESS(&SYSUSERID,.)))_$ucase_ext;
+#else 
+	%LET MDLUZER=_%UPCASE(%SYSFUNC(COMPRESS(&SYSUSERID,.)));
+#end
+
+cas casauto;   
+libname casuser cas DATALIMIT=ALL;  
+%LET CAZ=CASUSER;
+%LET SEZ=CASAUTO;
+
+%let SourceTableName=%upcase(%scan($DATASOURCE,2,.));;
+
+%include '$folderSelector.path/REQUIRED_CODE/REQUIRED_MACROS.sas';run;
+
+##below is the start of our if to check if a new project is being created
+#if ($radioNewProj == 'radioNew1')
+
+
+#if ($DATASOURCE.getEngine()=='V9')
+/* below checks to see if library is a V9 library, if it is we load data into default CAS library */
+DATA $DEFAULT_LIBRARY.&SourceTableName.;
+SET $DATASOURCE;
+RUN;
+#end
+
+
+
+
+%PUT VALUE OF DATASOURCE IS $DATASOURCE  ;
+
+
+
+#if ($radioPartition=='Create_Partition') 
+	#if ($DATASOURCE.getEngine()=='V9')  
+		proc partition data=$DEFAULT_LIBRARY.&SourceTableName. partind samppct=$sampPct1 
+	#else
+		proc partition data=$DATASOURCE partind samppct=$sampPct1 
+	#end
+#if ($nPartitions == 'nPartition3Choice') samppct2=$sampPct2#end
+#if($useRandomSeed == 1) seed=$randomSeed#end
+;
+ output out=$DEFAULT_LIBRARY.&SourceTableName._W_PTN ;run;
+#end
+
+  
+#if ($radioPartition=='Skip_Partion')
+%FORMAT_EXPOSURE(COMING_IN=$DEFAULT_LIBRARY.&SourceTableName.,PASS_RENAME=,DS_END=_NO_PTN);
+#elseif ($radioPartition=='Have_Partition') 
+%FORMAT_EXPOSURE(COMING_IN=$DEFAULT_LIBRARY.&SourceTableName.,PASS_RENAME=$textRenamePartition,DS_END=_W_PTN);
+#elseif ($radioPartition=='Create_Partition') 
+%FORMAT_EXPOSURE(COMING_IN=$DEFAULT_LIBRARY.&SourceTableName._W_PTN,PASS_RENAME=,DS_END=);
+#end
+
+#if ($radioPartition=='Skip_Partion')
+proc casutil;
+    save casdata="&SourceTableName._NO_PTN" incaslib="$DEFAULT_LIBRARY" outcaslib="$DEFAULT_LIBRARY"
+	     casout="&SourceTableName._NO_PTN" replace;
+run;
+quit;
+#else 
+proc casutil;
+    save casdata="&SourceTableName._W_PTN" incaslib="$DEFAULT_LIBRARY" outcaslib="$DEFAULT_LIBRARY"
+	     casout="&SourceTableName._W_PTN" replace;
+run;
+quit;
+#end
+
+#if ($DATASOURCE.getEngine()=='V9') 
+/* if our source is a sas V9 library we loaded it into our default cas library and now we no longer need this table as it has been partitioned*/
+PROC DELETE DATA=$DEFAULT_LIBRARY.&SourceTableName.;
+#end
+
+
+
+##below is the end of our if to check if a new project is being created
+#end
+
+#if ($radioNewProj == 'radioNew2')
+#if ($radioPartition=='Skip_Partion')
+proc cas;
+	session casauto;
+   table.tableExists result=results status=rc /
+	caslib="$DEFAULT_LIBRARY"
+	name="&SourceTableName._NO_PTN";
+	
+	print "value of results is " results["exists"];
+run;
+	if results["exists"] ==0 then 
+		do;
+			action table.loadTable result=goodLoad status=rc2 /
+				casout={caslib="$DEFAULT_LIBRARY",name="&SourceTableName._NO_PTN"}
+				caslib="$DEFAULT_LIBRARY"
+				importoptions={filetype="hdat"}
+				path="&SourceTableName._NO_PTN.sashdat";	
+		end;
+quit;
+#else
+proc cas;
+	session casauto;
+   table.tableExists result=results status=rc /
+	caslib="$DEFAULT_LIBRARY"
+	name="&SourceTableName._W_PTN";
+	
+	print "value of results is " results["exists"];
+run;
+	if results["exists"] ==0 then 
+		do;
+			action table.loadTable result=goodLoad status=rc2 /
+				casout={caslib="$DEFAULT_LIBRARY",name="&SourceTableName._W_PTN"}
+				caslib="$DEFAULT_LIBRARY"
+				importoptions={filetype="hdat"}
+				path="&SourceTableName._W_PTN.sashdat";	
+		end;
+quit;
+#end
+
+#end
+
+
+
+		]]>
+	</CodeTemplate>
+	
+</Task>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><Task revision="1" schemaVersion="7.3">
+    <Registration>
+        <Name>Scoring</Name>
+        <Description>The Scoring task scores a data table by using SAS DATA step code generated from a prior modeling task.</Description>
+        <GUID>b1d3737e-3552-4b28-9941-7296555686d1</GUID>
+        <Procedures/>
+        <Links>
+            <Link href="https://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=01&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href="https://documentation.sas.com/?softwareId=PGMVIYA&amp;softwareVersion=01&amp;softwareContextId=data_step_cas&amp;requestor=inapp">The DATA Step</Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true">
+            </DataSource>
+            <DataSource indent="1" libraryEngineInclude="CAS" name="astoreName">        
+            </DataSource>
+        </DataSources>
+        
+        <Options>
+            <Option inputType="string" name="dataTab">Data</Option> 
+            <Option inputType="string" name="dataGroup">Data</Option>
+            <Option inputType="string" name="scoringGroup">Output Data</Option>
+            <Option inputType="string" name="codeGroup">Scoring Type</Option> 
+            <Option defaultValue="1" inputType="radio" name="sasDataset" variable="scoreType">Use scoring code</Option>
+            <Option indent="1" inputType="string" name="astoreMsg">Specify a CAS table:</Option>
+            <Option inputType="radio" name="astoreData" variable="scoreType">Use saved scoring model</Option>
+            
+            
+            <Option inputType="string" name="outputLibrefNote">The following table must use a CAS engine libref.</Option>
+            <Option inputType="outputdata" libraryEngineInclude="CAS" name="outScoredDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+            <Option defaultExtension="sas" defaultName="score" indent="1" inputType="sasserverpath" name="scoringCodeFileName">Specify the SAS scoring code file.</Option>
+        </Options>
+    </Metadata>
+
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>          
+            </Group>
+            <Group open="true" option="codeGroup">
+                <OptionItem option="sasDataset"/>
+                <OptionItem option="scoringCodeFileName"/>
+                <OptionItem option="astoreData"/>
+                <OptionItem option="astoreMsg"/>
+                <DataItem data="astoreName"/>                
+            </Group>
+            <Group open="true" option="scoringGroup">
+                <OptionItem option="outputLibrefNote"/>
+                <OptionItem option="outScoredDSName"/>
+
+            </Group>
+        </Container>
+
+    </UI>
+    
+    <Dependencies>
+      <Dependency condition="$scoreType == 'sasDataset'">
+         <Target action="show" conditionResult="true" option="scoringCodeFileName"/>
+         <Target action="hide" conditionResult="false" option="scoringCodeFileName"/>
+         <Target action="hide" conditionResult="true" option="astoreName"/>
+         <Target action="show" conditionResult="false" option="astoreName"/>  
+         <Target action="hide" conditionResult="true" option="astoreMsg"/>
+         <Target action="show" conditionResult="false" option="astoreMsg"/>          
+      </Dependency>
+    </Dependencies>
+    
+    <CodeTemplate>
+        <![CDATA[
+ods noproctitle;
+
+### libname of the input dataset
+#set ($index = $dataset.toString().indexOf('.'))
+#set ($inLib = $dataset.toString().substring(0,$index))
+
+#if($scoreType == "sasDataset")
+
+#if($scoringCodeFileName.pathLocation == "sascontent")
+filename sfile filesrvc folderpath=$CTMUtil.quoteString($scoringCodeFileName.path) filename=$CTMUtil.quoteString($scoringCodeFileName.name);
+#else
+filename sfile $CTMUtil.quoteString($scoringCodeFileName.fullPath);
+#end
+
+data $outScoredDSName;
+  set $dataset#if($dataset.getWhereClause()!='') (where=($dataset.getWhereClause()))#end;
+  %include sfile;
+run;
+filename sfile CLEAR;
+
+#else
+proc astore;
+   score data=$dataset out=$outScoredDSName rstore=$astoreName;
+run;
+#end
+proc contents data=$outScoredDSName;
+run;
+]]>
+    </CodeTemplate>
+</Task>

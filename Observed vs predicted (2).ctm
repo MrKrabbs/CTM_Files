@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task schemaVersion="7.1">
+    <Registration>
+        <Name>Observed_VS_Target_w_Lift</Name> 
+        <Description>Will shape data so that the user can immediately access multiple graphs</Description> 
+        <GUID>17cc2a70-9e00-4reo-9frg-321xyx63pavm</GUID>
+        <Procedures>Uses Binning detail and proc summary</Procedures>
+        <Version>5.1</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=5.1&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://documentation.sas.com/?softwareId=ANVIYA&amp;softwareVersion=5.1_8.3&amp;softwareContextId=proc_binning&amp;requestor=inapp">The BINNING Procedure</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    
+    <Metadata>
+        <DataSources>
+            <DataSource name="dataset" where="true" >
+<!--<DataSource name="dataset" where="false" libraryIncludeExclude="CAS" > -->
+                <Roles>
+                    <Role name="analysisVariables" type="N" minVars="0" maxVars="0" order="true" exclude="myPart,myTarget,freqVariable,myPredicted,nominalVariables">Interval variables only:</Role>
+					<Role name="nominalVariables"  type="C" minVars="0" maxVars="0" order="true" exclude="myPart,analysisVariables,myTarget,freqVariable,myPredicted">Categorical\Nominal variables only:</Role>
+					<Role name="myPredicted"   type="N" minVars="1" maxVars="1" order="true" exclude="myPart,analysisVariables,myTarget,freqVariable,nominalVariables">Below Select Predicted variable:</Role>
+					<Role name="myTarget"        type="A" minVars="1" maxVars="1" order="true" exclude="myPart,analysisVariables,freqVariable,nominalVariables,myPredicted">Below Select Target variable:</Role>
+					<Role name="myPart"        type="A" minVars="0" maxVars="1" order="true" exclude=" myTarget,analysisVariables,freqVariable,nominalVariables,myPredicted">Below Select Partition variable (if used):</Role>
+                    <Role name="copyVariables" indent="2" type="A" minVars="1" maxVars="0" order="true">Include these variables:</Role>
+                    <Role name="freqVariable" type="N" minVars="0" maxVars="1" exclude="myPart,analysisVariables,myTarget,myPredicted">Frequency count:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+
+        <Options>
+            <Option name="dataTab" inputType="string">DATA</Option> 
+            <Option name="optionsTab" inputType="string">OPTIONS\OUTPUT</Option> 
+            <Option name="dataGroup" inputType="string">DATA</Option> 
+            <Option name="rolesGroup" inputType="string">ROLES</Option> 
+            <Option name="otherRolesGroup" inputType="string">ADDITIONAL ROLES</Option> 
+
+            <Option name="methodsGroup" inputType="string">METHODS</Option>
+            <Option name="binMethod" inputType="combobox" defaultValue="bucketChoice" width="200px">Method:</Option>
+            <Option name="bucketChoice" inputType="string">Bucket binning (default)</Option>
+            <Option name="winsorChoice" inputType="string">Winsorized binning</Option>
+            <Option name="quantileChoice" inputType="string">Quantile binning</Option>
+
+<!-- nBins: 2 <= nBins <= 1000 -->          
+            <Option name="nBins" inputType="numbertext" required="true" width="100px" minValue="2" maxValue="1000" decimalPlaces="0" defaultValue="16" invalidMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" missingMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" promptMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins" rangeMessage="Enter a integer number greater than 1 and less than or equal to 1000 for the number of bins">Number of bins:</Option>
+<!-- winsorRate: 0 < winsorRate < 0.5-->
+            <Option indent="1" name="winsorRate" inputType="numbertext" required="true" width="100px" minValue="0.00000000001" maxValue="0.49999999999" defaultValue="0.05" decimalPlaces="1,15" invalidMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" missingMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" promptMessage="Enter a number greater than zero and less than 0.5 for the winsor rate" rangeMessage="Enter a number greater than zero and less than 0.5 for the winsor rate">Winsor rate:</Option>
+                
+            <Option name="woe" inputType="checkbox">Compute weight of evidence and information value</Option>   
+            <Option name="responseOrderLabel" indent="1" inputType="string">Order of the target variable:</Option>
+            <Option name="ascResponseOrderChoice" indent="1" inputType="radio" variable="responseOrder">Ascending</Option>
+            <Option name="descResponseOrderChoice" indent="1" inputType="radio" variable="responseOrder" defaultValue="1">Descending</Option>           
+
+<!-- woeAdjust: 0 <= woeAdjust <= 1.0 -->
+            <Option name="useWoeAdjust" indent="1" inputType="checkbox">Specify adjustment factor</Option>
+            <Option name="woeAdjust" indent="1" inputType="numbertext" required="true" width="100px" minValue="0" maxValue="1" defaultValue="0.5" decimalPlaces="0,15" invalidMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor" missingMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor" promptMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor" rangeMessage="Enter a number greater than or equal to zero and less than or equal to 1.0 for the weight of evidence adjustment factor">Adjustment factor:</Option>
+            
+            <Option name="outputTab" inputType="string">OUTPUT</Option>
+            <Option name="outputGroup" inputType="string">OUTPUT DATA</Option>
+            <Option name="casOutputLibrefNote" inputType="string">The following table must use a CAS engine libref:</Option>
+			<Option name="IntervalNote" inputType="string">Below select Interval variables you wish to graph against target\predicted:</Option>
+			<Option name="NominalNote" inputType="string">Below select Categorical\Nominal variables you wish to graph against target\predicted:</Option>
+			<Option name="MetricNote" inputType="string">Below you must select your target and predicted variables:</Option>
+            <Option name="outputDS" inputType="checkbox">Save binned data</Option>
+            <Option name="outputDSName" indent="1" inputType="outputdata" unique="true" libraryEngineInclude="cas" required="true">Specify a CAS table:</Option>
+
+            <Option name="includeVarsInstruction" indent="1" inputType="string">Include variables from the input CAS table:</Option>
+            <Option name="includeAllVars" indent="1" inputType="radio" variable="includeVars">All variables</Option>
+            <Option name="includeAnalysisVars" indent="1" inputType="radio" variable="includeVars">Variables used in the analysis</Option>
+            <Option name="includeSelectedVars" indent="1" inputType="radio" variable="includeVars">Selected variables</Option>
+            <Option name="includeNoVars" indent="1" inputType="radio" variable="includeVars" defaultValue="1">No variables</Option>
+
+            <Option name="scoreCodeFileNote" inputType="string">Specify a path name for the scoring code:</Option>
+            <Option name="scoreCode" inputType="checkbox">Save scoring code</Option>
+<!-- Note: The sasserverpath component is for internal use only -->
+            <Option name="scoringCodeFileName" indent="1" inputType="sasserverpath" defaultExtension="sas" defaultName="score"/>
+
+            <Option name="showDataGroup" inputType="string">Show Output Data</Option>
+            <Option name="showData" inputType="checkbox" defaultValue="0">Show output data</Option>
+            <Option name="showDataCombo" inputType="combobox" defaultValue="showSubsetDataChoice">Show:</Option>
+            <Option name="showSubsetDataChoice" inputType="string">Show subset of output data</Option>
+            <Option name="showAllDataChoice" inputType="string">Show all output data</Option>
+            <Option name="subsetNobs" indent="1" inputType="numstepper" minValue="1" decimalPlaces="0" increment="1" defaultValue="10" required="true" width="100px" promptMessage="Enter an integer greater than 0 for the number of observations to be shown" missingMessage="Enter an integer greater than 0 for the number of observations to be shown" invalidMessage="Enter an integer greater than 0 for the number of observations to be shown" rangeMessage="Enter an integer greater than 0 for the number of observations to be shown">Number of observations to show:</Option>
+        
+            <Option name="subsetTitle" inputType="string">Subset of {1}</Option>
+			<Option name="labelDescriptive_Name" inputType="string">Your Visual Analytics(VA) will have the same name as below</Option>
+			<Option name="textDescriptive_Name"  inputType="inputtext" required="true" >OUTPUT Table\dataset name. Table name only, no library and no spaces</Option>
+			<Option name="chkAddVarImp" defaultValue="0" inputType="checkbox">Show Variable Importance Rank</Option>
+			<Option name="PreReQ0" inputType="string">Prerequisites !!!!!!!!!!</Option>	
+			<Option name="PreReQ1" inputType="string">1-You have a CAS Library called CASUSER up and running</Option>
+			<Option name="PreReQ2" inputType="string">2-If you need to create your CAS Library run the code below:</Option>
+			<Option name="PreReQ3" inputType="string">3-cas;caslib _all_ assign;run;(or similar code)</Option>
+			<Option name="PreReQ31" inputType="string">Notes:</Option>
+			<Option name="PreReQ4" inputType="string">A-Library used for intermediate steps will be CASUSER</Option>
+			<Option name="PreReQ5" inputType="string">B-Session reference will be casauto (created in Prerequisite 3)</Option>
+			<Option name="PreReQ6" inputType="string">Note: After running your code look in the VA folder called Public for your dataset</Option>
+			<Option name="PreReQBlankLine" inputType="string"></Option>
+			<Option name="PreReQBlankLine2" inputType="string"></Option>
+			<Option name="PreReQBlankLine3" inputType="string"></Option>
+        </Options>
+    </Metadata>
+
+    <UI>
+        <Container option="dataTab">
+		<!--		<OptionItem option="PreReQ0"/>
+				<OptionItem option="PreReQ1"/>
+				<OptionItem option="PreReQ2"/>
+				<OptionItem option="PreReQ3"/>
+				<OptionItem option="PreReQBlankLine"/>
+				<OptionItem option="PreReQ31"/>
+				<OptionItem option="PreReQ4"/>
+				<OptionItem option="PreReQ5"/> -->
+				
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+            </Group>
+            <Group open="true" option="rolesGroup">
+
+	<!--			<OptionItem option="chkAddVarImp"/>  
+				<OptionItem option="PreReQBlankLine"/> -->
+				<RoleItem role="myTarget"/>
+		<!--		<OptionItem option="MetricNote"/> -->
+                <RoleItem role="myPredicted"/>
+				<RoleItem role="myPart"/>
+				<OptionItem option="PreReQBlankLine2"/>
+				<OptionItem option="IntervalNote"/>
+                <RoleItem role="analysisVariables"/>
+				<OptionItem option="PreReQBlankLine3"/>
+				<OptionItem option="NominalNote"/>
+				<RoleItem role="nominalVariables"/>
+				
+           </Group>
+      <!--      <Group option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+            </Group> -->
+        </Container>
+        
+        <Container option="optionsTab"> 
+            <Group option="methodsGroup" open="true">
+                <OptionItem option="nBins"/>
+                <OptionChoice option="binMethod">
+                    <OptionItem option="bucketChoice"/>
+                    <OptionItem option="quantileChoice"/>
+                    <OptionItem option="winsorChoice"/>
+                </OptionChoice>
+                <OptionItem option="winsorRate"/>
+<!-- not supported yet
+            <OptionItem option="woe"/>
+            <RoleItem role="targetVariable"/>
+            <OptionItem option="responseOrderLabel"/>
+            <OptionItem option="ascResponseOrderChoice"/>
+            <OptionItem option="descResponseOrderChoice"/>
+
+            <OptionItem option="useWoeAdjust"/>
+            <OptionItem option="woeAdjust"/>
+-->
+            </Group>
+		<!--		<OptionItem option="labelDescriptive_Name"/> -->
+				
+				<OptionItem option="textDescriptive_Name"/>
+                <OptionItem option="PreReQ6"/>
+        </Container>
+<!--
+        <Container option="outputTab">  
+            <Group option="outputGroup" open="true">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeAllVars"/>
+                <OptionItem option="includeAnalysisVars"/>
+                <OptionItem option="includeNoVars"/>
+                <OptionItem option="includeSelectedVars"/>
+                <RoleItem role="copyVariables"/>
+
+                <OptionItem option="scoreCodeFileNote"/>
+                <OptionItem option="scoreCode"/>   
+                <OptionItem option="scoringCodeFileName"/>
+                    
+                <Group option="showDataGroup" open="true">
+                    <OptionItem option="showData"/>
+                    <OptionChoice option="showDataCombo">
+                        <OptionItem option="showSubsetDataChoice"/>
+                        <OptionItem option="showAllDataChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="subsetNobs"/>
+                </Group>
+            </Group>
+        </Container> -->
+    
+            
+    </UI>
+    <Dependencies>
+        <Dependency condition="($binMethod=='winsorChoice')">
+            <Target option="winsorRate" conditionResult="true" action="show"/>
+            <Target option="winsorRate" conditionResult="false" action="hide"/>
+        </Dependency>   
+
+        <Dependency condition="($woe=='1')">
+            <Target option="targetVariable" conditionResult="true" action="show"/>
+            <Target option="targetVariable" conditionResult="false" action="hide"/>
+            <Target option="useWoeAdjust" conditionResult="true" action="show"/>
+            <Target option="useWoeAdjust" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($woe=='1' &amp;&amp; $useWoeAdjust == 1)">
+            <Target option="woeAdjust" conditionResult="true" action="show"/>
+            <Target option="woeAdjust" conditionResult="false" action="hide"/>
+        </Dependency>
+        <!--Dependency condition="($woe=='1' &amp;&amp; $targetVariable.size() > 0 &amp;&amp; $dataset.getDistinctCount($targetVariable[0]) > 2)">
+            <Target option="responseOrderLabel" conditionResult="true"  action="show"/>
+            <Target option="responseOrderLabel" conditionResult="false" action="hide"/>
+            <Target option="responseOrder" conditionResult="true"  action="show"/>
+            <Target option="responseOrder" conditionResult="false" action="hide"/>
+        </Dependency-->
+
+        <Dependency condition="($outputDS=='1')">
+            <Target option="outputDSName" conditionResult="true" action="enable"/>
+            <Target option="outputDSName" conditionResult="false" action="disable"/>
+            <Target option="showDataGroup" conditionResult="true" action="show"/>
+            <Target option="showDataGroup" conditionResult="false" action="hide"/>          
+            <Target option="includeVarsInstruction" conditionResult="true" action="show"/>
+            <Target option="includeVarsInstruction" conditionResult="false" action="hide"/>
+            <Target option="includeVars" conditionResult="true" action="show"/>
+            <Target option="includeVars" conditionResult="false" action="hide"/>
+       </Dependency>
+
+        <Dependency condition="($outputDS=='1' &amp;&amp; $includeVars == 'includeSelectedVars')">
+            <Target option="copyVariables" conditionResult="true" action="show"/>
+            <Target option="copyVariables" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($scoreCode=='1')">
+            <Target option="scoringCodeFileName" conditionResult="true" action="enable"/>
+            <Target option="scoringCodeFileName" conditionResult="false" action="disable"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS=='1' &amp;&amp; $showData == '1')">
+            <Target option="showDataCombo" conditionResult="true" action="show"/>
+            <Target option="showDataCombo" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; $showData == '1' &amp;&amp; $showDataCombo == 'showSubsetDataChoice')">
+            <Target option="subsetNobs" conditionResult="true" action="show"/>
+            <Target option="subsetNobs" conditionResult="false" action="hide"/>
+        </Dependency>
+    </Dependencies>
+    
+    <Requirements> 
+        <Requirement condition="!($statsCombo == 'noneChoice') || $outputDS == 1">
+            <Message>Select some statistics to display or request an output data set.</Message>
+        </Requirement>
+        <Requirement condition="($analysisVariables.size() > 0) || ($nominalVariables.size() > 0)">
+            <Message>Select some variables to display.</Message>
+        </Requirement>
+
+        <Requirement condition="!($outputDSName &amp;&amp; $outputDSName != '' &amp;&amp;             ($outputDSName.indexOf('.') &gt; 0 &amp;&amp;             $outputDSName.toUpperCase().substring(0,$outputDSName.indexOf('.')) == 'WORK'))">
+            <Message>The binned data set must have a two-level name that includes a CAS engine libref.</Message>
+        </Requirement> 
+    </Requirements>
+    
+    <CodeTemplate>
+        <![CDATA[
+ods noproctitle;
+
+/* MyTable will take the value of the table you pointed at in the task datasource drop down*/
+%LET MyTable=%SCAN($dataset, 2, .);
+
+/* if table that you selected in task datasource drop down does not exist in the CAS library called casuser then load it into the library casuser */
+/* if the table does exist in the CAS library called casuser then do nothing */
+/* Note:as of SAS 9.4m5 you can execute the %if%then%else construct in open code (utilized below) */
+
+%IF %sysfunc(exist(casuser.&MyTable.))=0 %THEN %DO;
+cas casauto;
+libname casuser cas;
+
+	DATA casuser.&MyTable.;
+		SET $dataset;
+	RUN;
+
+%END;
+
+ #if ($analysisVariables.size() > 0)
+/* even though our binning process takes place in-memory we want a hard copy of the binning details the ods output does that for us*/
+/* below will turn off ods output to the results window. if you are binning 1,000 variables you don't was SAS attempting to */
+/* output detailed information to the results window for 1,000 variables */
+ods graphics off;
+ods exclude all;
+ods noresults;
+ods output BinDetails=WORK.BIN_INFO;
+proc binning data=casuser.&MyTable. 
+#if (!($nBins == 16)) numbin=$nBins#end
+#if ($binMethod == "winsorChoice") method=winsor(winsorrate=$winsorRate)
+#elseif ($binMethod == "quantileChoice") method=quantile
+#end
+#if ($woe == 1) woe#if ($useWoeAdjust == 1) woeadjust=$woeAdjust#end#end
+#if ($statsCombo == "noneChoice") noprint#end
+;
+
+#if ($dataset.getWhereClause() != '')
+   where $dataset.getWhereClause();
+#end
+
+#if ( $analysisVariables.size() > 0 )   
+   input #foreach( $item in $analysisVariables ) $item #end; 
+#end
+## woe is not currently implemented so the following if will never execute
+#if ( $woe == 1 && $targetVariable.size() > 0 )   
+   target #foreach( $item in $targetVariable ) $item #end / level=#if ( $dataset.getDistinctCount($targetVariable[0]) == 2)binary#{else}nominal#end
+   #if ($responseOrder == 'ascResponseOrderChoice') order=ascending#end
+   ; 
+#end
+
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+#if ($outputDS == 1) 
+   output out=$outputDSName
+   #if ($includeVars=='includeAllVars') copyvars=(_all_)
+   #elseif ($includeVars=='includeSelectedVars')
+      #if( $copyVariables.size() > 0 )
+ copyvars=(#foreach( $item in $copyVariables ) $item#end)
+      #end
+   #elseif ($includeVars=='includeAnalysisVars')
+      #if ($analysisVariables.size() > 0 || 
+           $freqVariable.size() > 0 ||
+           ($woe == 1 && $targetVariable.size() > 0)) 
+ copyvars=(
+         #if ($analysisVariables.size() > 0)
+             #foreach( $item in $analysisVariables ) $item#end
+         #end
+         #if ($freqVariable.size() > 0)
+             #foreach( $item in $freqVariable ) $item#end
+         #end
+         #if ($woe == 1 && $targetVariable.size() > 0)
+            #foreach( $item in $targetVariable ) $item#end
+         #end
+ )
+       #end  
+   #end
+ ;
+#end
+
+#if ($scoreCode == 1)
+   code file=tempfile  
+ ;
+#end
+output out=CASUSER.My_Temp_bin_out copyvars=(_all_);
+run;
+ods WORK.BIN_INFO close;
+/* below will turn back on our ability to output information to the results window */
+ods graphics on;
+ods exclude none;
+ods results;
+#if ($showData == '1')
+#if($showDataCombo == 'showSubsetDataChoice')
+#set( $finalTitle = $subsetTitle.replace("{1}", "${outputDSName.get('value')}") )
+#end
+proc print data=$outputDSName#if($showDataCombo == 'showSubsetDataChoice')(obs=$subsetNobs)#end;
+title "#if($showDataCombo == 'showSubsetDataChoice')$finalTitle#{else}${outputDSName.get('value')}#end";
+run;
+#end
+
+#if ($scoreCode == 1)
+#if($scoringCodeFileName.pathLocation == "sascontent")
+%let x=%sysfunc(fcopy(tempfile,sfile)); 
+%if &x %then %do; %put &x - %sysfunc(sysmsg()); %end;
+filename tempfile clear;
+#end
+filename sfile CLEAR;
+#end
+
+
+#end
+##the pound sign end (#end above) checks the condition that some interval variables were selected (the input box is not empty
+
+
+/*      WE SHUT OFF ODS BELOW TO GAIN SPEED. BELOW COULD BE PERFORMING SUMMATIONS ON 1,000S OF INDIVIDUAL VARIABLES    */
+/*      NO NEED TO SEE DETAILED INFORMATION AROUND 1,0000 OF INDIVIDUAL SUMMATIONS. WRITING THE DETAILS TO RESULTS WOULD TAKE A LONG TIME*/
+/*      NOTE: WE ARE DOING MANY INDIVIDUAL VARIABLE LEVEL SUMMATIONS. THE RESULTS END UP IN ONE FILE */
+ods graphics off;
+ods exclude all;
+ods noresults;
+OPTIONS NONOTES;
+
+ODS OUTPUT MDSummary=WORK.SUM_OUT;
+proc cas;
+   session casauto;
+   simple.mdSummary result=mdsumm status=s /          
+      inputs={#foreach( $item in $myPredicted ) "$item"#end,#foreach( $item in $myTarget) "$item"#end
+#if( $freqVariable.size() > 0 )#foreach( $item in $freqVariable ),"$item"#end#end}
+     sets={
+#set ($mySpacer = " ")
+#if ($nominalVariables.size() > 0) 
+ 	#if ($myPart.size() > 0)
+		#foreach( $item in $nominalVariables ) {groupBy={"$item",#foreach( $item in $myPart ) "$item"#end}}#if( $foreach.hasNext),#end#end
+	#else
+		#foreach( $item in $nominalVariables ) {groupBy={"$item"}}#if( $foreach.hasNext),#end#end
+	#end
+#end
+
+#if ($analysisVariables.size() > 0) 
+	#if ($myPart.size() > 0)
+		$mySpacer #foreach( $item in $analysisVariables ) {groupBy={"BIN_$item",#foreach( $item in $myPart ) "$item"#end}}#if( $foreach.hasNext),#end#end
+	#else
+		$mySpacer #foreach( $item in $analysisVariables ) {groupBy={"BIN_$item"}}#if( $foreach.hasNext),#end#end
+	#end
+
+#end
+ 
+      }
+#if ( $analysisVariables.size() > 0 )
+		table={name="My_Temp_bin_out"}
+#else 
+		table={name="&MyTable."}
+#end     
+      subSet={"SUM","N"};
+ 
+run;
+   if (s.severity == 0) then
+      print mdsumm;
+run;
+quit;
+/*                       TURN ODS BACK ON             */
+ods WORK.SUM_OUT close;
+ods graphics on;
+ods exclude none;
+ods results;
+OPTIONS NOTES;
+
+
+/* BELOW YOU MIGHT NOTICE WE ARE WORKING WITH THE ODS OUTPUT FROM ABOVE USING A WORK FILE AND ARE SOURCE DATA COULD POTENTIALLY BE BIG DATA  */
+/* WORK DATASETS NOT MEANT FOR BIG DATA SO WHY ARE WE USING THIS APPROACH   ?    */
+/* BY THIS TIME WE ARE WORKING WITH SMALL DATA. IF YOU HAVE 1,000 VARIABLES AND EACH VARAIBLE HAD 20 LEVELS (NOMINAL VARS AND INTERVAL VARS AFTER BINNING) */
+/* THAT WOULD RESULT IN 20 TIMES 1,000 VARIABLES = 20,000 RECORDS. EVEN WITH BIG DATA, THAT BECOMES SMALL DATA AT THIS POINT IN OUR PROCESS */
+/* ALSO THE ABOVE CASL ACTION IS EXTREMELY FAST AND GIVES US THE DATA IN A GOOD STARTING POINT IN TERMS OF THE SHAPE OF THE DATA */
+
+/* DATA STEP BELOW WILL START THE PROCESS OF SHAPING OUR DATA */
+data work.ALL_DATA(DROP=COLUMN SUM N myCount);
+	set work.sum_out;
+    RETAIN #foreach( $item in $myPredicted ) ${item}_SUM#end #foreach( $item in $myTarget ) ${item}_SUM#end myCount;
+	
+
+	IF UPCASE(COLUMN)=UPCASE('#foreach( $item in $myPredicted )$item#end') THEN
+		DO;
+			 #foreach( $item in $myPredicted )${item}_SUM#end=SUM;
+			myCount=SUM(0,myCount,1);
+		END;
+	IF UPCASE(COLUMN)=UPCASE('#foreach( $item in $myTarget )$item#end') THEN
+		DO;
+			#foreach( $item in $myTarget )${item}_SUM#end=SUM;
+			myCount=SUM(0,myCount,1);
+		END;
+	
+	IF myCount=2 THEN 
+		DO;
+			_FREQ_=N;
+			OUTPUT;
+			myCount=0;
+		END;
+RUN;
+
+
+#if ($analysisVariables.size() > 0) 
+/* CLEAN UP SO WE DO NOT END UP WITH A BUNCH OF GARBAGE TABLES LOADED IN MEMORY */
+proc delete data=CASUSER.My_Temp_bin_out;
+#end
+/* BELOW CONTINUES THE PROCESS OF SHAPRING OUR DATA */
+proc ds2;
+	data WORK.TEMP_DATA_W_COLUMNS(overwrite=yes);
+		#if ($analysisVariables.size() > 0) 
+		vararray double interval_vars[$analysisVariables.size()] #foreach( $item in $analysisVariables ) BIN_$item #end;
+		vararray double orig_interval_vars[$analysisVariables.size()] #foreach( $item in $analysisVariables ) $item #end;
+		#end
+		#if ($nominalVariables.size() > 0) 
+		vararray char(50) nominal_vars[$nominalVariables.size()] #foreach( $item in $nominalVariables ) $item #end;
+		#end
+		vararray double nbrArraySegment[1] nbrSEGMENT;
+		vararray char(50) strNAME[1] INTERVAL_VAR_NAME;	
+		vararray char(1)  strArrayIntervFlag[1] INTERVAL_FLAG;
+		vararray char(50) strArraySegment[1] SEGMENT;
+		vararray char(50) strArrayVariablz[1] VARIABLZ;
+		#foreach( $item in $myPredicted ) declare double ${item}_SUM ; #end
+		#foreach( $item in $myTarget ) declare double ${item}_SUM ; #end
+		
+		keep VARIABLZ SEGMENT 
+				#foreach( $item in $myPredicted ) ${item}_SUM #end
+			#foreach( $item in $myTarget ) ${item}_SUM #end
+			#foreach( $item in $myPart ) ${item} #end
+	        _Freq_ nbrSEGMENT INTERVAL_FLAG INTERVAL_VAR_NAME;
+
+		method init();
+		end;
+
+		method run();
+			declare integer j k;
+			
+			
+			set WORK.ALL_DATA;
+
+ 
+#if ($analysisVariables.size() > 0)  /* OUR INTERVAL VARIABLES*/
+			do j=1 to $analysisVariables.size();
+
+				if not missing(interval_vars[j]) then
+					do;
+						strNAME[1]=UPCASE(VNAME(ORIG_INTERVAL_VARS[j]));
+						nbrArraySegment[1]=interval_vars[j];
+						strArrayVariablz[1]=UPCASE(VNAME(interval_vars[j]));
+						strArrayIntervFlag[1]='Y';
+					end;
+			end;
+#end
+#if ($nominalVariables.size() > 0)  /* OUR NOMINAL VARIABLES*/
+			do k=1 to $nominalVariables.size();
+
+				if not missing(nominal_vars[k])  then
+					do;
+						strArraySegment[1]=nominal_vars[k];
+						strArrayVariablz[1]=UPCASE(VNAME(nominal_vars[k]));
+						strArrayIntervFlag[1]='N';
+					end;
+			end;
+#end
+
+		end;
+		method term();
+		end;
+	enddata;
+	run;
+quit;
+
+#if ($analysisVariables.size() > 0) 
+/* BELOW WILL TAG BIN INFORMATION ONTO OUR DATA SUCH AS LOWER\UPPER BOUNDS,MIN,MAX   */
+/* ALONG WITH CREATING SUMMARY VARIABLES */
+PROC SQL;
+	CREATE TABLE WORK.WITH_BOUNDS AS SELECT A.*, B.BinLowerBnd, B.BinUpperBnd, 
+		B.Min, B.Max from WORK.TEMP_DATA_W_COLUMNS A left join work.bin_info B on 
+		upcase(trim(A.INTERVAL_VAR_NAME))=UPCASE(TRIM(B.VARIABLE)) AND 
+		A.NBRSEGMENT=B.BINID ORDER BY A.INTERVAL_VAR_NAME, A.nbrSEGMENT asc;
+	CREATE TABLE WORK.WITH_BOUNDS2 AS SELECT A.*, 
+#foreach( $item in $myPredicted ) SUM(${item}_SUM) AS ${item}_SUM_ALL,#end 
+#foreach( $item in $myTarget ) SUM(${item}_SUM) AS ${item}_SUM_ALL,#end 
+		SUM(_FREQ_) AS FREQ_ALL FROM WORK.WITH_BOUNDS 
+#if ($myPart.size() > 0) 		
+	A GROUP BY A.VARIABLZ, #foreach( $item in $myPart )A.${item};#end
+#else 
+	A GROUP BY A.VARIABLZ;
+#end
+	CREATE TABLE WORK.WITH_BOUNDS3 AS SELECT A.*,
+#foreach( $item in $myPredicted )A.${item}_SUM/A._FREQ_ AS ${item}_MEAN,A.${item}_SUM_ALL/A.FREQ_ALL AS ${item}_MEAN_ALL,#end
+#foreach( $item in $myTarget )A.${item}_SUM/A._FREQ_ AS ${item}_MEAN,A.${item}_SUM_ALL/A.FREQ_ALL AS ${item}_MEAN_ALL#end
+ 	FROM WORK.WITH_BOUNDS2 A ORDER BY
+#if ($myPart.size() > 0) 
+ INTERVAL_VAR_NAME, nbrSEGMENT, #foreach( $item in $myPart )A.${item};#end
+#else
+ INTERVAL_VAR_NAME, nbrSEGMENT;
+#end
+QUIT;
+
+RUN;
+#else
+/* BELOW WILL CREATE SUMMARY VARIABLES */
+PROC SQL;
+	CREATE TABLE WORK.WITH_BOUNDS2 AS SELECT A.*,  
+#foreach( $item in $myPredicted ) SUM(${item}_SUM) AS ${item}_SUM_ALL,#end 
+#foreach( $item in $myTarget ) SUM(${item}_SUM) AS ${item}_SUM_ALL,#end 
+		SUM(_FREQ_) AS FREQ_ALL FROM WORK.TEMP_DATA_W_COLUMNS 
+		#if ($myPart.size() > 0) 		
+	A GROUP BY A.VARIABLZ, #foreach( $item in $myPart )A.${item};#end
+#else 
+	A GROUP BY A.VARIABLZ;
+#end
+	CREATE TABLE WORK.WITH_BOUNDS3 AS SELECT A.*,
+#foreach( $item in $myPredicted )A.${item}_SUM/A._FREQ_ AS ${item}_MEAN,A.${item}_SUM_ALL/A.FREQ_ALL AS ${item}_MEAN_ALL,#end
+#foreach( $item in $myTarget )A.${item}_SUM/A._FREQ_ AS ${item}_MEAN,A.${item}_SUM_ALL/A.FREQ_ALL AS ${item}_MEAN_ALL#end
+ 	FROM WORK.WITH_BOUNDS2 A ORDER BY 
+#if ($myPart.size() > 0) 
+ INTERVAL_VAR_NAME, nbrSEGMENT, #foreach( $item in $myPart )A.${item};#end
+#else
+ INTERVAL_VAR_NAME, nbrSEGMENT;
+#end
+QUIT;
+
+RUN;
+#end
+
+
+
+
+
+#if ($analysisVariables.size() > 0) 
+/* BELOW WILL ACCOMPLISH 3 TASKS */
+/* 1. FIX BINID AND MAKE IT CONTIGUOUS , BEFORE THIS STEP IT IS NOT CONTIGUOUS BECAUSE THE BINNING PROCESS CAN HAVE BINS WIHT ZERO RECORDS */
+/* 2. CREATE CATEGORY_BIN VARIABLE, POPULATES WITH SEGMENT. IF OUR VARIABLE WAS STATE THIS VARIABLE WOULD HOLD VALUES LIKE AK,AL,AZ (BUT ONLY ONE STATE) */
+/* IF OUR VARIABLE WAS A BIN THIS VARIABLE WOULD HOLD VARIABLES LIKE 1,2,3,4 (BUT ONLY ONE BIN VALUE IN A RECORD) */
+/* 3. CREATE LABELS */
+/* 4. RENAME VARIABLES TO MAKE THEM MORE GENERIC FOR OUR VA REPORT, BUT OUR LABELS ARE STILL SPECIC TARGET1 LABEL  */
+#end
+
+data WORK.WITH_BOUNDS4;
+LENGTH CATEGORY_BIN $50.;
+#if ($analysisVariables.size() > 0) 
+LENGTH BIN_CHAR $2.;
+	
+			
+			set WORK.WITH_BOUNDS3;
+			by INTERVAL_VAR_NAME nbrSEGMENT;
+
+
+			
+				BINID=nbrSegment;
+		
+			BIN_CHAR=PUT(BINID,Z2.);
+
+			if INTERVAL_FLAG='Y' THEN 
+				CATEGORY_BIN=trim(BIN_CHAR);
+			else
+				CATEGORY_BIN=trim(SEGMENT);
+#else
+			
+			set  WORK.WITH_BOUNDS3;
+
+			CATEGORY_BIN=trim(SEGMENT);
+/* the variables: BinLowerBnd BinUpperBnd Min Max will be empty, reason we create them here is so that our VA Report is not surprised by missing variables*/
+/* better to send missing values that have missing variables in the VA Report */
+
+LENGTH BinLowerBnd BinUpperBnd Min Max 8;
+
+BinLowerBnd=.;BinUpperBnd=.;Min=.;Max=.;
+
+LABEL
+BinLowerBnd='Lower Bound'
+BinUpperBnd='Upper Bound'
+Min='Min'
+Max='Max';
+
+#end
+
+LABEL
+BinLowerBnd='Lower Bound'
+BinUpperBnd='Upper Bound'
+Min='Min'
+Max='Max'
+
+
+#foreach( $item in $myPredicted ) ${item}_MEAN='PREDICTED_MEAN' ${item}_SUM='PREDICTED_SUM' ${item}_MEAN_ALL ='PREDICTED_MEAN_ALL' ${item}_SUM_ALL='PREDICTED_SUM_ALL'#end
+#foreach( $item in $myTarget ) ${item}_MEAN='OBSERVED_MEAN' ${item}_SUM='OBSERVED_SUM' ${item}_MEAN_ALL ='OBSERVED_MEAN_ALL' ${item}_SUM_ALL='OBSERVED_SUM_ALL'#end;	
+
+RENAME
+#foreach( $item in $myPredicted ) ${item}_MEAN=PREDICTED_MEAN ${item}_SUM=PREDICTED_SUM ${item}_MEAN_ALL =PREDICTED_MEAN_ALL ${item}_SUM_ALL=PREDICTED_SUM_ALL#end
+#foreach( $item in $myTarget ) ${item}_MEAN=OBSERVED_MEAN ${item}_SUM=OBSERVED_SUM ${item}_MEAN_ALL =OBSERVED_MEAN_ALL ${item}_SUM_ALL=OBSERVED_SUM_ALL#end;
+
+#if ($analysisVariables.size() > 0) 
+DROP BIN_CHAR SEGMENT nbrSEGMENT BINID;
+#else
+DROP SEGMENT nbrSEGMENT; 
+#end
+
+#if ($myPart.size() > 0) 
+LENGTH PartitionVariable $1.;
+ #foreach( $item in $myPart ) PartitionVariable=put(${item},Z1.);#end
+
+LABEL #foreach( $item in $myPart ) ${item}='PartitionVariable';#end
+
+#else
+PartitionVariable=1;
+LABEL PartitionVariable='PartitionVariable';
+#end
+
+
+run;
+
+data WORK.WITH_BOUNDS5;
+set WORK.WITH_BOUNDS4;
+
+format tempnbr z2.;
+
+if substr(VARIABLZ,1,3)='MLB' AND UPCASE(CATEGORY_BIN) NOT='_OTHER_' THEN
+	DO;
+		TEMPNBR=CATEGORY_BIN*1;
+		CATEGORY_BIN=PUT(TEMPNBR,Z2.);
+	END;
+DROP tempnbr;
+RUN;
+/* LOAD OUR WORK DATASET INTO CAS LIBRARY*/
+DATA CASUSER.$textDescriptive_Name;
+	set WORK.WITH_BOUNDS5;
+run;
+
+/* DROP TABLE BEFORE LOADING INTO PUBLIC, THE QUIET OPTION MEANS IF THE TABLE DOES NOT EXIST (PRIOR TO ATTEMPT TO DELETE , DO NOT ISSUE WARNING  */
+proc casutil; 
+  droptable casdata="$textDescriptive_Name" INCASLIB="Public" QUIET;
+quit;
+
+/* WHEN YOU GO INTO VA YOU CAN FIND YOUR DATASET IN THE PUBLIC CAS LIBRARY ACCESSIBLE THRU VA */
+proc casutil outcaslib="Public";                        
+   promote incaslib="CASUSER" casdata="$textDescriptive_Name";
+quit;
+
+
+#if ($myPart.size() > 0) 
+proc cas;
+    dataPreprocess.binning /                          
+      table={name="&MyTable.", groupby=#foreach( $item in $myPart )"${item}"#end}
+      inputs={#foreach( $item in $myPredicted )"${item}"#end}
+      method="quantile"
+	copyvars={#foreach( $item in $myTarget )"${item}"#end,#foreach( $item in $myPredicted )"${item}"#end}
+casout={name="LIFT_BIN",replace=true}
+      nbins={10};
+    run;
+QUIT;
+DATA CASUSER.LIFT_BIN_OUT;
+SET CASUSER.LIFT_BIN;
+LENGTH PARTITION_VARIABLE $1.;
+ #foreach( $item in $myPart ) PARTITION_VARIABLE=put(${item},Z1.);#end
+LENGTH BINS_PREDICTED $2.;
+BINS_PREDICTED=PUT(BIN_#foreach( $item in $myPredicted )${item}#end,Z2.);
+
+RENAME
+#foreach( $item in $myPredicted ) ${item}=PREDICTED #end
+#foreach( $item in $myTarget ) ${item}=OBSERVED;#end
+
+LABEL PARTITION_VARIABLE='PartitionVariable';
+LABEL
+#foreach( $item in $myPredicted ) ${item}='PREDICTED'#end
+#foreach( $item in $myTarget ) ${item}='OBSERVED'#end;	
+
+DROP BIN_#foreach( $item in $myPredicted )${item} #end
+ #foreach( $item in $myPart )${item}#end; 
+RUN;
+
+#else
+DATA CASUSER.LIFT_BIN_OUT;
+LENGTH BINS_PREDICTED $2.;
+BINS_PREDICTED='01';
+OBSERVED=1;
+PREDICTED=1;
+PARTITION_VARIABLE='1';
+OUTPUT;
+BINS_PREDICTED='02';
+OBSERVED=1;
+PREDICTED=1;
+PARTITION_VARIABLE='2';
+OUTPUT;
+
+RUN;
+#end
+
+proc casutil;
+	droptable casdata="LIFT_BIN_OUT" INCASLIB="Public" QUIET;
+	quit;
+
+	/* WHEN YOU GO INTO VA YOU CAN FIND YOUR DATASET IN THE PUBLIC CAS LIBRARY ACCESSIBLE THRU VA */
+proc casutil outcaslib="Public";
+	promote incaslib="CASUSER" casdata="LIFT_BIN_OUT";
+	quit;
+
+]]>
+    </CodeTemplate>
+</Task>

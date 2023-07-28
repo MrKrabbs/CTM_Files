@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task schemaVersion="7.2">
+	<Registration>
+		<Name>Sample Task</Name>
+		<Description>Demonstrates the Common Task Model functionality.</Description>
+		<Procedures>PRINT</Procedures>
+		<Version>5.2</Version>
+		<Links>
+	            <Link href="http://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=5.2&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+		</Links>
+	</Registration>
+
+	<Metadata>
+
+		<!--- Define the data and roles for this task.    -->
+		<DataSources>
+			<DataSource name="DATASOURCE">
+				<Roles>
+					<Role maxVars="1" minVars="1" name="VAR" order="true" type="A">Required variable:</Role>
+					<Role exclude="VAR" maxVars="0" minVars="0" name="OPTNVAR" order="true" type="N">Numeric variable:</Role>
+					<Role maxVars="3" minVars="0" name="OPTCVAR" order="true" type="C">Character variable:</Role>
+				</Roles>
+			</DataSource>
+		</DataSources>
+
+		<!--- Define the task options.             -->
+		<Options>
+			<Option inputType="string" name="DATATAB">DATA</Option>
+			<Option inputType="string" name="DATAGROUP">DATA</Option>
+			<Option inputType="string" name="ROLESGROUP">ROLES</Option>
+
+			<Option inputType="string" name="OPTIONSTAB">OPTIONS</Option>
+
+			<Option inputType="string" name="GROUP">GROUPS</Option>
+			<Option inputType="string" name="labelEXAMPLE">An example of a group.  Groups are used to organize options.</Option>
+
+			<Option inputType="string" name="GROUPCHECK">CHECK BOX</Option>
+			<Option inputType="string" name="labelCHECK">An example of a check box.  Check boxes are either on or off.</Option>
+			<Option defaultValue="0" inputType="checkbox" name="chkEXAMPLE">Check box</Option>
+
+			<Option inputType="string" name="GROUPCOLOR">COLOR SELECTOR</Option>
+			<Option inputType="string" name="labelCOLOR">An example of a color selector.</Option>
+			<Option defaultValue="red" inputType="color" name="colorEXAMPLE">Choose a color:</Option>
+
+			<Option inputType="string" name="GROUPCOMBO">COMBOBOX</Option>
+			<Option inputType="string" name="labelCOMBO">An example of a combobox.</Option>
+			<Option defaultValue="value2" inputType="combobox" name="comboEXAMPLE">Combobox:</Option>
+			<Option inputType="string" name="value1">Value 1</Option>
+			<Option inputType="string" name="value2">Value 2</Option>
+			<Option inputType="string" name="value3">Value 3</Option>
+
+			<Option inputType="string" name="GROUPDATE">DATE AND TIME</Option>
+			<Option inputType="string" name="labelDATE">An example of a date picker.</Option>
+			<Option inputType="datepicker" name="dateEXAMPLE">Choose a date:</Option>
+			<Option inputType="string" name="labelMONTH">An example of a month picker.</Option>
+			<Option inputType="monthpicker" name="monthEXAMPLE">Choose a month:</Option>
+			<Option inputType="string" name="labelQTR">An example of a quarter picker.</Option>
+			<Option inputType="quarterpicker" name="qtrEXAMPLE">Choose a quarter:</Option>
+			<Option inputType="string" name="labelWEEK">An example of a week picker.</Option>
+			<Option inputType="weekpicker" name="weekEXAMPLE">Choose a week:</Option>
+			<Option inputType="string" name="labelDATETIME">An example of a datetime picker.</Option>
+			<Option inputType="datetimepicker" name="dateTimeEXAMPLE">Choose a date and time:</Option>
+			<Option inputType="string" name="labelTIME">An example of a time picker.</Option>
+			<Option inputType="timepicker" name="timeEXAMPLE">Choose a time:</Option>
+			<Option inputType="string" name="labelRANGE">An example of a date range picker. Note that the date type attribute can be used with the following date types: Date, Time, DateTime, Week, Month, Quarter, and Year</Option>
+			<Option dateType="Date" inputType="daterange" name="rangeEXAMPLE">Choose a date range:</Option>
+
+			<Option inputType="string" name="GROUPDISTINCT">DISTINCT</Option>
+			<Option inputType="string" name="labelDISTINCT">An example of a distinct control.  The "Required variable" must be assigned in order for this control to populate.</Option>
+			<Option inputType="distinct" name="distinctEXAMPLE" source="VAR">Distinct values:</Option>
+
+			<Option inputType="string" name="GROUPLISTS">LISTS</Option>
+			<Option inputType="string" name="labelDUALSELECTOR">An example of a dual selector control.  The Edit dialog box is used to add, remove, and move values in the list.</Option>
+			<Option inputType="dualselector" name="dualselectorEXAMPLE">Dual selector:</Option>
+			<Option inputType="string" name="labelMULTIENTRY">An example of a multiple entry.  This control allows the user to add their own values to create a list.</Option>
+			<Option inputType="multientry" name="multientryEXAMPLE">Multiple entry:</Option>
+			<Option inputType="string" name="labelSELECT">An example of a select.  This example is set up for multiple selection.</Option>
+			<Option inputType="select" multiple="true" name="selectEXAMPLE" width="100%" height="800px">Select412:</Option>
+
+			<Option inputType="string" name="GROUPNUMSTEPPER">NUMERIC STEPPER</Option>
+			<Option inputType="string" name="labelNumStepperEXAMPLE1">An example of a basic numeric stepper.</Option>
+			<Option defaultValue="5" indent="1" inputType="numstepper" name="basicStepperEXAMPLE">Basic numeric stepper:</Option>
+			<Option inputType="string" name="labelNumStepperEXAMPLE2">An example of a numeric stepper with a minimum value of -10, a maximum value of 120, and an increment of 2.</Option>
+			<Option decimalPlaces="0,2" defaultValue="80" increment="2" indent="1" inputType="numstepper" maxValue="120" minValue="-10" name="advancedStepperEXAMPLE">Advanced numeric stepper:</Option>
+
+			<Option inputType="string" name="GROUPRADIO">RADIO BUTTONS</Option>
+			<Option inputType="string" name="labelRADIO">An example of radio buttons.  One radio button can be selected at a time.</Option>
+			<Option defaultValue="1" inputType="radio" name="radioButton1" variable="radioEXAMPLE">Radio button 1</Option>
+			<Option inputType="radio" name="radioButton2" variable="radioEXAMPLE">Radio button 2</Option>
+			<Option inputType="radio" name="radioButton3" variable="radioEXAMPLE">Radio button 3</Option>
+
+			<Option inputType="string" name="GROUPSELECTORS">SELECTORS</Option>
+			<Option inputType="string" name="labelOutputDataEXAMPLE">An example of an output data selector.</Option>
+			<Option defaultValue="WORK.MYDATA" inputType="outputdata" name="outputDataEXAMPLE" unique="true">Data set name:</Option>
+			<Option inputType="string" name="labelSASServerPathEXAMPLE">An example of a SAS Server Path control.  This example allows the user to select a SAS program file.</Option>
+			<Option defaultExtension="sas" defaultName="score" inputType="sasserverpath" name="sasServerPathEXAMPLE"/>
+
+			<Option inputType="string" name="GROUPSLIDER">SLIDER</Option>
+			<Option inputType="string" name="labelSliderEXAMPLE1">An example of a slider.</Option>
+			<Option defaultValue="80.00" discreteValues="14" inputType="slider" maxValue="120" minValue="-10" name="sliderEXAMPLE1">Slider:</Option>
+
+			<Option inputType="string" name="GROUPTEXT">TEXT FIELDS</Option>
+			<Option inputType="string" name="labelTEXT">An example of an input text.  This text field is required.</Option>
+			<Option defaultValue="Text goes here" inputType="inputtext" missingMessage="Missing text." name="textEXAMPLE" promptMessage="Enter some text." required="true">Input text:</Option>
+			<Option inputType="string" name="labelVALIDATIONTEXT">An example of a validation text.  A regular expression of 5 characters has been applied.</Option>
+			<Option defaultValue="99999" inputType="validationtext" invalidMessage="Invalid value.  You must specify a string of 5 characters." name="validationTextEXAMPLE" promptMessage="Enter a string 5 characters long." regExp="\w{5}">Validation text:</Option>
+			<Option inputType="string" name="labelNUMBERTEXT">An example of a number text.  The minimum value is set to 0 and the maximum value is set to 100.</Option>
+			<Option defaultValue="1" inputType="numbertext" invalidMessage="Invalid value. Enter a number between 0 and 100." maxValue="100" minValue="0" missingMessage="Enter a number between 0 and 100." name="numberTextEXAMPLE" promptMessage="Enter a number between 0 and 100." rangeMessage="This number is out of range.  Enter a number between 0 and 100.">Number text:</Option>
+			<Option inputType="string" name="labelPasswordEXAMPLE">An example of the password control.  The password will be SAS002 encoded in the SAS code and will not be saved with the task.</Option>
+			<Option inputType="passwordtext" name="passwordEXAMPLE">Password:</Option>
+
+
+			<Option inputType="string" name="OPTIONSTABLETAB">OPTION TABLE</Option>
+
+			<Option inputType="string" name="labelOptionTableEXAMPLE">An example of an option table control.  This control allows for each column of the table to render a different CTM control.  Valid control types are:  checkbox, comobobx, numbertext, numstepper, inputtext.</Option>
+		    <OptionTable addRemoveRowTools="true" initialNumberOfRows="1" name="optionTableEXAMPLE" showColumnHeadings="true">
+				<Columns>
+					<Column label="Text" name="txt">
+					<Option defaultValue="hello" inputType="inputtext" required="false"/>
+					</Column>
+					<Column label="Number Stepper" name="numStep">
+					<Option defaultValue="3" inputType="numstepper" required="false"/>
+					</Column>
+				 </Columns>
+		    </OptionTable>
+
+			<Option inputType="string" name="MARKDOWNTAB">MARKDOWN</Option>
+			<Option inputType="markdown" name="markdownTextEXAMPLE">
+
+Examples of text formatted with Markdown.  Markdown is a lightweight syntax that enables you to add style and structure to the text in a task.  
+
+# Heading
+ 
+## Subheading
+
+### Third level subheading
+
+Horizontal rule:
+
+---
+
+Text styling:  _italic_, **bold**, `monospace`.
+
+Paragraphs are separated
+by a blank line.
+
+A line break is created by adding two spaces  
+to the end of a line.  
+
+&gt; Indented, block quote
+
+Bulleted list:
+ 
+  * Apples
+  * Oranges
+  * Bananas
+ 
+Numbered list:
+ 
+  1. Data
+  2. Discovery
+  3. Deployment
+
+Link: The [SAS website](http://www.sas.com/).
+
+Image: ![SAS](https://brand.sas.com/en/home/our-identity/visual-elements/logo/_jcr_content/par/styledcontainer/par/tabwrapper/tabwrapperpar/tab/tabpar/image.img.png/1500576966295.png)
+			
+</Option>
+
+			<Option inputType="string" name="codeCommentData">Write out data and role information.</Option>
+			<Option inputType="string" name="codeCommentOption">Write out option information.</Option>
+			<Option inputType="string" name="codeCommentOptionTable">Iterate over each row to obtain values.</Option>
+
+		</Options>
+	</Metadata>
+
+	<!--- Define the UI for task options                        -->
+	<!--- The UI engine will determine the best representation. -->
+	<UI>
+		<Container option="DATATAB">
+			<Group open="true" option="DATAGROUP">
+				<DataItem data="DATASOURCE"/>
+			</Group>
+			<Group open="true" option="ROLESGROUP">
+				<RoleItem role="VAR"/>
+				<RoleItem role="OPTNVAR"/>
+				<RoleItem role="OPTCVAR"/>
+			</Group>
+		</Container>
+
+		<Container option="OPTIONSTAB">
+			<Group open="true" option="GROUP">
+				<OptionItem option="labelEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPCHECK">
+				<OptionItem option="labelCHECK"/>
+				<OptionItem option="chkEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPCOLOR">
+				<OptionItem option="labelCOLOR"/>
+				<OptionItem option="colorEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPCOMBO">
+				<OptionItem option="labelCOMBO"/>
+				<OptionChoice option="comboEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+			</Group>
+
+			<Group option="GROUPDATE">
+				<OptionItem option="labelDATE"/>
+				<OptionItem option="dateEXAMPLE"/>
+				<OptionItem option="labelMONTH"/>
+				<OptionItem option="monthEXAMPLE"/>
+				<OptionItem option="labelQTR"/>
+				<OptionItem option="qtrEXAMPLE"/>
+				<OptionItem option="labelWEEK"/>
+				<OptionItem option="weekEXAMPLE"/>
+				<OptionItem option="labelDATETIME"/>
+				<OptionItem option="dateTimeEXAMPLE"/>
+				<OptionItem option="labelTIME"/>
+				<OptionItem option="timeEXAMPLE"/>
+				<OptionItem option="labelRANGE"/>
+				<OptionItem option="rangeEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPDISTINCT">
+				<OptionItem option="labelDISTINCT"/>
+				<OptionChoice option="distinctEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPLISTS">
+				<OptionItem option="labelDUALSELECTOR"/>
+				<OptionChoice option="dualselectorEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+
+				<OptionItem option="labelMULTIENTRY"/>
+				<OptionChoice option="multientryEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+
+				<OptionItem option="labelSELECT"/>
+				<OptionChoice option="selectEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+					<OptionItem option="value4"/>
+					<OptionItem option="value5"/>
+					<OptionItem option="value6"/>
+					<OptionItem option="value13"/>
+					<OptionItem option="value23"/>
+					<OptionItem option="value33"/>
+					<OptionItem option="value43"/>
+					<OptionItem option="value53"/>
+					<OptionItem option="value63"/>
+					<OptionItem option="value73"/>
+					<OptionItem option="value83"/>
+				</OptionChoice>
+			</Group>
+
+			<Group option="GROUPNUMSTEPPER">
+				<OptionItem option="labelNumStepperEXAMPLE1"/>
+				<OptionItem option="basicStepperEXAMPLE"/>
+				<OptionItem option="labelNumStepperEXAMPLE2"/>
+				<OptionItem option="advancedStepperEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPRADIO">
+				<OptionItem option="labelRADIO"/>
+				<OptionItem option="radioButton1"/>
+				<OptionItem option="radioButton2"/>
+				<OptionItem option="radioButton3"/>
+			</Group>
+
+			<Group option="GROUPSELECTORS">
+				<OptionItem option="labelOutputDataEXAMPLE"/>
+				<OptionItem option="outputDataEXAMPLE"/>
+				<OptionItem option="labelSASServerPathEXAMPLE"/>
+				<OptionItem option="sasServerPathEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPSLIDER">
+				<OptionItem option="labelSliderEXAMPLE1"/>
+				<OptionItem option="sliderEXAMPLE1"/>
+			</Group>
+
+			<Group option="GROUPTEXT">
+				<OptionItem option="labelTEXT"/>
+				<OptionItem option="textEXAMPLE"/>
+				<OptionItem option="labelVALIDATIONTEXT"/>
+				<OptionItem option="validationTextEXAMPLE"/>
+				<OptionItem option="labelNUMBERTEXT"/>
+				<OptionItem option="numberTextEXAMPLE"/>
+				<OptionItem option="labelPasswordEXAMPLE"/>
+				<OptionItem option="passwordEXAMPLE"/>
+			</Group>
+
+		</Container>
+
+		<Container option="OPTIONSTABLETAB">
+			<OptionItem option="labelOptionTableEXAMPLE"/>
+			<OptionItem option="optionTableEXAMPLE"/>
+		</Container>
+
+		<Container option="MARKDOWNTAB">
+			<OptionItem option="markdownTextEXAMPLE"/>
+		</Container>
+	</UI>
+
+	<!--- Define the velocity code template.        -->
+	<CodeTemplate>
+		<![CDATA[
+/*
+ * $codeCommentData
+ */
+
+%put DATASET=$DATASOURCE;
+%put SASLIBRARY=$DATASOURCE.getLibrary();
+%put SASTABLE=$DATASOURCE.getTable();
+
+#if( $VAR.size() > 0 )%put VAR=#foreach( $item in $VAR )$item #end;#end
+
+#if( $OPTNVAR.size() > 0 )%put OPTNVAR=#foreach( $item in $OPTNVAR )$item #end;#end
+
+#if( $OPTCVAR.size() > 0 )%put OPTCVAR=#foreach( $item in $OPTCVAR )$item #end;#end
+
+/*
+ * $codeCommentOption
+ */
+
+/* $GROUPCHECK */
+%put checkboxEXAMPLE=$chkEXAMPLE;
+
+/* $GROUPCOLOR */
+%put colorEXAMPLE=$colorEXAMPLE;
+
+/* $GROUPCOMBO */
+%put comboboxEXAMPLE=$comboEXAMPLE;
+
+/* $GROUPDATE */
+%put dateEXAMPLE=$dateEXAMPLE;
+%put monthEXAMPLE=$monthEXAMPLE;
+%put qtrEXAMPLE=$qtrEXAMPLE;
+%put weekEXAMPLE=$weekEXAMPLE;
+%put dateTimeEXAMPLE=$dateTimeEXAMPLE;
+%put timeEXAMPLE=$timeEXAMPLE;
+%put rangeEXAMPLE=$rangeEXAMPLE;
+
+/* $GROUPDISTINCT */
+%put distinctEXAMPLE=$distinctEXAMPLE;
+
+/* $GROUPLISTS */
+%put dualselectorEXAMPLE=$dualselectorEXAMPLE;
+%put multientryEXAMPLE=$multientryEXAMPLE;
+%put selectEXAMPLE=$selectEXAMPLE;
+
+/* $GROUPNUMSTEPPER */
+%put basicStepperEXAMPLE=$basicStepperEXAMPLE;
+%put advancedStepperEXAMPLE=$advancedStepperEXAMPLE;
+
+/* $GROUPRADIO */
+%put radioEXAMPLE=$radioEXAMPLE;
+
+/* $GROUPSELECTORS */
+%put outputDataEXAMPLE=$outputDataEXAMPLE;
+%put sasServerPathEXAMPLE=$sasServerPathEXAMPLE;
+
+/* $GROUPSLIDER */
+%put sliderEXAMPLE1=$sliderEXAMPLE1;
+
+/* $GROUPTEXT */
+%put textEXAMPLE=$textEXAMPLE;
+%put validationTextEXAMPLE=$validationTextEXAMPLE;
+%put numberTextEXAMPLE=$numberTextEXAMPLE;
+%put passwordEXAMPLE=$passwordEXAMPLE;
+
+/* $OPTIONSTABLETAB */
+/* $codeCommentOptionTable */
+#foreach($item in $optionTableEXAMPLE.rows.values)
+%put optionTableRow$item.id = $item;
+#end
+
+		]]>
+	</CodeTemplate>
+</Task>

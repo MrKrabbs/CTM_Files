@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><Task schemaVersion="5.4">
+   <Registration>
+      <Name>From Scratch Proc SQL using Except</Name>
+      <Description>Use Proc SQL Except Operator</Description>
+      <GUID>9D9A8489-F1D2-4DC2-A317-608E0A7421B4</GUID>
+      <Procedures>SORT</Procedures>
+      <Version>3.8</Version>
+	 <Category>Data</Category>
+   </Registration>
+   
+	<Metadata>
+      <DataSources>
+         <DataSource name="sourcetable" where="false">
+	         <Roles>
+	            <Role  maxVars="0" minVars="1" name="selectvars" order="true" type="A">Variables To Keep:</Role>
+	         </Roles>
+         </DataSource>
+         
+         <DataSource name="recordstoexcludetable" where="false">
+
+         </DataSource>
+
+      </DataSources>
+      
+      <Options>
+         <Option inputType="string" name="LabelDataTab">Data Tab</Option>
+         <Option inputType="string" name="LabelDataGroup">DATA</Option>
+         <Option inputType="string" name="LabelRolesGroup">ROLES</Option>
+      	 <Option name="LabelSourceTable" inputType="string">Starting Records to Keep</Option>
+      	 <Option name="LabelRecordsToExcludeTable" inputType="string">Drop Records in above table that exists in table below</Option>
+         <Option inputType="string" name="LabelOptionsTab">Options Tab</Option> 
+         <Option inputType="outputdata" name="outputDS" required="true" >Output data set</Option>
+       </Options>
+      
+   </Metadata>
+   
+   <UI>
+
+      <Container option="LabelDataTab">
+         <Group open="true" option="LabelDataGroup">
+         	<OptionItem option="LabelSourceTable"/>
+            <DataItem data="sourcetable"/>
+         	<OptionItem option="LabelRecordsToExcludeTable"/>
+            <DataItem data="recordstoexcludetable"/>
+         </Group>
+         
+         <Group open="true" option="LabelRolesGroup">
+				<RoleItem role="selectvars"/>
+         </Group>
+      </Container>
+      
+     <Container option="LabelOptionsTab">
+            <OptionItem option="outputDS"/>
+      </Container>
+
+   </UI>
+   
+   <Dependencies>
+
+   </Dependencies>
+
+  	<CodeTemplate>
+		<![CDATA[
+
+proc sql;
+create table $outputDS  as
+select #foreach($item in $selectvars) $item#if($foreach.hasNext),#end #end
+from $sourcetable
+except
+select #foreach($item in $selectvars) $item#if($foreach.hasNext),#end #end
+from $recordstoexcludetable;
+quit;
+
+		]]>
+	</CodeTemplate>      
+</Task>

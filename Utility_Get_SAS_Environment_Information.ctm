@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Task schemaVersion="4.0" runNLS="never">
+	<Registration>
+		<Name>Utility_Get_SAS_Environment_Information</Name>
+		<Description>Provides Information about SAS Environment</Description>
+		<GUID>ba6fdfd3-5a27-42f2-a880-8b289658f01f</GUID>
+		<Procedures>PRINT</Procedures>
+		<Version>3.4</Version>
+		<Links>
+			<Link href="http://www.sas.com">SAS Home page</Link>
+		</Links>
+	</Registration>
+
+	<Metadata>
+
+		<!--- Define the data and roles for this task.    -->
+		<DataSources>
+			<DataSource name="DATASOURCE">
+				<Roles>
+					<Role type="A" maxVars="1" order="true" minVars="1" name="VAR">Required variable:</Role>
+					<Role type="N" maxVars="0" order="true" minVars="0" name="OPTNVAR" exclude="VAR">Numeric variable:</Role>
+					<Role type="C" maxVars="3" order="true" minVars="0" name="OPTCVAR">Character variable:</Role>
+				</Roles>
+			</DataSource>
+		</DataSources>
+
+		<!--- Define the task options.             -->
+		<Options>
+			<Option name="DATATAB" inputType="string">DATA</Option>
+			<Option name="DATAGROUP" inputType="string">DATA</Option>
+			<Option name="OPTIONSTAB" inputType="string">OPTIONS</Option>
+			<Option name="labelCHECK" inputType="string">Select only the options you are interested in to avoid being overwhelmed with information </Option>
+			<Option name="chkEXAMPLE" defaultValue="0" inputType="checkbox">Show me my USER ID </Option> 
+			<Option name="chkEXAMPLE2" defaultValue="0" inputType="checkbox">Show me the ID I have set to identify my data</Option>
+			<Option name="chkEXAMPLE3" defaultValue="0" inputType="checkbox">Show me the file path for Library DATAFLDR</Option>
+			<Option name="chkEXAMPLE4" defaultValue="0" inputType="checkbox">Show me the file path for Library DATA_IN</Option>
+			<Option name="chkEXAMPLE5" defaultValue="0" inputType="checkbox">Show me the file path for Library BASEFLDR</Option>
+			<Option name="chkEXAMPLE6" defaultValue="0" inputType="checkbox">Show me all Global Macro Variables</Option>
+			<Option name="chkEXAMPLE7" defaultValue="0" inputType="checkbox">Show me the contents of all Work datasets</Option>
+			<Option name="chkEXAMPLE8" defaultValue="0" inputType="checkbox">Show me the contents of all DATAFLDR datasets</Option>
+			<Option name="chkEXAMPLE9" defaultValue="0" inputType="checkbox">Show me the contents of all DATA_IN</Option>
+			<Option name="chkEXAMPLE10" defaultValue="0" inputType="checkbox">Show me the contents of all BASEFLDR</Option>
+			<Option name="chkEXAMPLE11" defaultValue="0" inputType="checkbox">FUTURE USE1</Option>
+			<Option name="chkEXAMPLE12" defaultValue="0" inputType="checkbox">FUTURE USE2</Option>
+			
+			
+		</Options>
+	</Metadata>
+
+	<!--- Define the UI for task options                         -->
+	<!--- The UI engine will determine the best respresentation. -->
+	<UI>
+		<Container option="OPTIONSTAB">
+				<OptionItem option="labelCHECK"/>
+				<OptionItem option="chkEXAMPLE"/>
+				<OptionItem option="chkEXAMPLE2"/>
+				<OptionItem option="chkEXAMPLE3"/>
+				<OptionItem option="chkEXAMPLE4"/>
+				<OptionItem option="chkEXAMPLE5"/>
+				<OptionItem option="chkEXAMPLE6"/>
+				<OptionItem option="chkEXAMPLE7"/>
+				<OptionItem option="chkEXAMPLE8"/>
+				<OptionItem option="chkEXAMPLE9"/>
+				<OptionItem option="chkEXAMPLE10"/>
+				<OptionItem option="chkEXAMPLE11"/>
+				<OptionItem option="chkEXAMPLE12"/>
+		
+<!--
+			<Group option="GROUPCOLOR">
+				<OptionItem option="labelCOLOR"/>
+				<OptionItem option="colorEXAMPLE"/>
+			</Group>
+			
+			<Group option="GROUPCOMBO">
+				<OptionItem option="labelCOMBO"/>
+				<OptionChoice option="comboEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+			</Group>
+			
+			<Group option="GROUPDATE">
+				<OptionItem option="labelDATE"/>
+				<OptionItem option="dateEXAMPLE"/>
+			</Group>
+			
+			<Group option="GROUPDISTINCT">
+				<OptionItem option="labelDISTINCT"/>
+				<OptionChoice option="distinctEXAMPLE"/>
+			</Group>
+			
+			<Group option="GROUPLISTS">
+				<OptionItem option="labelDUALSELECTOR"/>
+				<OptionChoice option="dualselectorEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+
+				<OptionItem option="labelMULTIENTRY"/>
+				<OptionChoice option="multientryEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+
+				<OptionItem option="labelSELECT"/>
+				<OptionChoice option="selectEXAMPLE">
+					<OptionItem option="value1"/>
+					<OptionItem option="value2"/>
+					<OptionItem option="value3"/>
+				</OptionChoice>
+			</Group>
+
+			<Group option="GROUPNUMSTEPPER">
+				<OptionItem option="labelNumStepperEXAMPLE1"/>
+				<OptionItem option="basicStepperEXAMPLE"/>
+				<OptionItem option="labelNumStepperEXAMPLE2"/>
+				<OptionItem option="advancedStepperEXAMPLE"/>
+			</Group>
+
+			<Group option="GROUPRADIO">
+				<OptionItem option="labelRADIO"/>
+				<OptionItem option="radioButton1"/>
+				<OptionItem option="radioButton2"/>
+				<OptionItem option="radioButton3"/>
+			</Group>
+			
+
+			<Group option="GROUPSLIDER">
+				<OptionItem option="labelSliderEXAMPLE1"/>
+				<OptionItem option="sliderEXAMPLE1"/>
+				<OptionItem option="labelSliderEXAMPLE2"/>
+				<OptionItem option="sliderEXAMPLE2"/>
+			</Group>
+
+			<Group option="GROUPTEXT">
+				<OptionItem option="labelTEXT"/>
+				<OptionItem option="textEXAMPLE"/>
+   				<OptionItem option="labelVALIDATIONTEXT"/>
+				<OptionItem option="validationTextEXAMPLE"/>
+				<OptionItem option="labelNUMBERTEXT"/>
+				<OptionItem option="numberTextEXAMPLE"/> 
+			</Group> -->
+		</Container>	
+	</UI>
+<!--	<Dependencies>
+		<Dependency condition="$chkEXAMPLE2 == '0'">
+		  <Target option="labelTEXT"   conditionResult="true"  action="hide"/>
+		  <Target option="labelTEXT"   conditionResult="false" action="show"/>
+		  <Target option="textEXAMPLE" conditionResult="true"  action="hide"/>
+		  <Target option="textEXAMPLE" conditionResult="false" action="show"/>
+		</Dependency> 
+	</Dependencies> -->
+	<!--- Define the velocity code template.        -->
+	<CodeTemplate>
+		<![CDATA[
+
+#if ($chkEXAMPLE=='1')
+%PUT YOUR USERID IS %UPCASE(&SYSUSERID);
+#end
+
+#if ($chkEXAMPLE2=='1')
+%PUT THE ID YOU HAVE SET TO IDENTIFY THE DATA YOU ARE WORKIN ON IS %UPCASE(&MDLUZER);
+#end
+
+#if ($chkEXAMPLE3=='1')
+%PUT THE FOLDER USED FOR LIBNAME DATAFLDR IS %sysfunc(pathname(DATAFLDR));
+#end
+
+#if ($chkEXAMPLE4=='1')
+%PUT THE FOLDER USED FOR LIBNAME DATA_IN IS %sysfunc(pathname(DATA_IN));
+#end
+
+#if ($chkEXAMPLE5=='1')
+%PUT THE FOLDER USED FOR LIBNAME BASEFLDR IS %sysfunc(pathname(BASEFLDR));
+#end
+
+#if ($chkEXAMPLE6=='1')
+%PrintMacVars;
+#end
+
+#if ($chkEXAMPLE7=='1')
+PROC CONTENTS DATA=WORK._ALL_;RUN;
+#end
+
+#if ($chkEXAMPLE8=='1')
+PROC CONTENTS DATA=DATAFLDR._ALL_;RUN;
+#end
+
+#if ($chkEXAMPLE9=='1')
+PROC CONTENTS DATA=DATA_IN._ALL_;RUN;
+#end
+
+#if ($chkEXAMPLE10=='1')
+PROC CONTENTS DATA=BASEFLDR._ALL_;RUN;
+#end
+
+
+		]]>
+	</CodeTemplate>
+</Task>
